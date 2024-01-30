@@ -55,11 +55,13 @@
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
+        like: false
       },
       {
         name: "Варвара Н.",
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
+        like: false
       }
     ];
 
@@ -91,12 +93,23 @@
 
     renderComments();
       
-    // клик на лайк
+    // Обработчики клика на всех эдементах с классом like-button
     const likeEventListener = () => {
+      // Находит все элементы с классом в разметке
       const likeElements = document.querySelectorAll(".like-button")
+      // Проходит по каждому элементу в списке
       for(const likeElement of likeElements) {
+        // Добавляет обработчик клика на конкретнй элемент в списке 
         likeElement.addEventListener("click", () => {
-          console.log(1);
+          // если кнопка актина => удалить класс
+          
+
+          //что-то не нужное кажется
+          comments.like === true
+          if (likeElement.value === true) {
+            likeElement.classList.add("-active-like");
+          }
+
         })
       }
     };
@@ -130,7 +143,8 @@
       comments.push({
         name: nameElement.value,
         date: date,
-        text: textElement.value
+        text: textElement.value,
+        like: likeElement.value
       })  
       renderComments();
 
