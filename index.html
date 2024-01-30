@@ -63,6 +63,7 @@
       }
     ];
 
+    // рендер (html через js)
     const renderComments = () => {
       const commentsHtml = comments.map((comment) => {
         return `<li class="comment">
@@ -83,14 +84,25 @@
           </div>
         </li>`
       }).join('');
-      console.log(commentsHtml);
+      
 
       listElement.innerHTML = commentsHtml;
     };
 
     renderComments();
       
+    // клик на лайк
+    const likeEventListener = () => {
+      const likeElements = document.querySelectorAll(".like-button")
+      for(const likeElement of likeElements) {
+        likeElement.addEventListener("click", () => {
+          console.log(1);
+        })
+      }
+    };
+    likeEventListener();
 
+    // клик на "написать отзыв"
     buttonElement.addEventListener('click', () => {
       const currentDate = new Date();
       let dd = currentDate.getDate();
@@ -105,7 +117,7 @@
       if (minute < 10) minute = '0' + minute;
       const date = dd + "." + mm + "." + yy + " " + hour + ":" + minute
       
-      
+      // "Ошибка" если нет имени или текста
       nameElement.classList.remove("error");
       textElement.classList.remove("error");
       if (nameElement.value === '' || textElement.value === '') {
@@ -113,14 +125,17 @@
         textElement.classList.add("error");
         return;
       }
-      
+
+      // Добавление нового коммента
       comments.push({
         name: nameElement.value,
         date: date,
         text: textElement.value
-      })
-      
+      })  
       renderComments();
+
+      likeEventListener();
+      
     });
 
   </script>
