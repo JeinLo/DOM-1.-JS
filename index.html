@@ -55,19 +55,21 @@
         name: "Глеб Фокин",
         date: "12.02.22 12:18",
         text: "Это будет первый комментарий на этой странице",
-        like: false
+        likesQuantity: 50,
+        isLiked: false,
       },
       {
         name: "Варвара Н.",
         date: "13.02.22 19:22",
         text: "Мне нравится как оформлена эта страница! ❤",
-        like: false
+        likesQuantity: 4,
+        isLiked: false,
       }
     ];
 
     // рендер (html через js)
     const renderComments = () => {
-      const commentsHtml = comments.map((comment) => {
+      const commentsHtml = comments.map((comment, index) => {
         return `<li class="comment">
           <div class="comment-header">
             <div>${comment.name}</div>
@@ -80,8 +82,8 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
+              <span class="likes-counter">${comment.likesQuantity}</span>
+              <button class="like-button" data-index="${index}"></button>
             </div>
           </div>
         </li>`
@@ -102,13 +104,14 @@
         // Добавляет обработчик клика на конкретнй элемент в списке 
         likeElement.addEventListener("click", () => {
           // если кнопка актина => удалить класс
-          
+          const index = likeElement.dataset.index;
+          console.log(index);
+          comments.isLiked = !comments.isLiked;
+          console.log(comments.sLiked);
 
-          //что-то не нужное кажется
-          comments.like === true
-          if (likeElement.value === true) {
-            likeElement.classList.add("-active-like");
-          }
+          //if (likeElement.value === true) {
+          //likeElement.classList.add("-active-like");
+          //}
 
         })
       }
@@ -144,7 +147,6 @@
         name: nameElement.value,
         date: date,
         text: textElement.value,
-        like: likeElement.value
       })  
       renderComments();
 
