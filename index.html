@@ -70,9 +70,7 @@
 
     const likeEventListener = () => {
       const likeElements = document.querySelectorAll(".like-button")
-      // Проходит по каждому элементу в списке
       for(const likeElement of likeElements) {
-        // Добавляет обработчик клика на конкретнй элемент в списке 
         likeElement.addEventListener("click", (event) => {
           event.stopPropagation();
 
@@ -126,14 +124,11 @@
           event.stopPropagation();
           const index = commentElement.dataset.index
 
-          textElement.value = `${comments[index].text}, ${comments[index].name}`;
+          textElement.value = `> ${comments[index].text}, ${comments[index].name}, `;
         })
       }
     };
     replyEventListener();
-
-
-    // Обработчики клика на всех эдементах с классом like-button
 
 
     // клик на "написать отзыв"
