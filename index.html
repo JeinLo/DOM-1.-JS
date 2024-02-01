@@ -68,10 +68,32 @@
       }
     ];
 
+    const likeEventListener = () => {
+      const likeElements = document.querySelectorAll(".like-button")
+      // Проходит по каждому элементу в списке
+      for(const likeElement of likeElements) {
+        // Добавляет обработчик клика на конкретнй элемент в списке 
+        likeElement.addEventListener("click", (event) => {
+          event.stopPropagation();
+
+          const index = likeElement.dataset.index;
+          if (comments[index].isLiked) {
+            comments[index].isLiked = false
+            comments[index].likesQuantity -= 1
+          } else {
+            comments[index].isLiked = true
+            comments[index].likesQuantity += 1
+          }
+          
+          renderComments();
+
+        })
+      }
+    };
     // рендер (html через js)
     const renderComments = () => {
       const commentsHtml = comments.map((comment, index) => {
-        return `<li class="comment">
+        return `<li class="comment" data-index=${index}>
           <div class="comment-header">
             <div>${comment.name}</div>
             <div>${comment.date}</div>
@@ -84,7 +106,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">${comment.likesQuantity}</span>
-              <button class="like-button" data-index="${index}"></button>
+              <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
             </div>
           </div>
         </li>`
@@ -92,19 +114,19 @@
       
 
       listElement.innerHTML = commentsHtml;
+      likeEventListener();
     };
 
     renderComments();
     
     const replyEventListener = () => {
-      const commentElements = document.querySelectorAll('.comment-body')
+      const commentElements = document.querySelectorAll('.comment')
       for (const commentElement of commentElements) {
         commentElement.addEventListener('click', () => {
           event.stopPropagation();
+          const index = commentElement.dataset.index
 
-          // !дописать!    что происходит при клике на коммент
-
-          textElement.value === '';
+          textElement.value = `${comments[index].text}, ${comments[index].name}`;
         })
       }
     };
@@ -112,30 +134,7 @@
 
 
     // Обработчики клика на всех эдементах с классом like-button
-    const likeEventListener = () => {
-      const likeElements = document.querySelectorAll(".like-button")
-      // Проходит по каждому элементу в списке
-      for(const likeElement of likeElements) {
-        // Добавляет обработчик клика на конкретнй элемент в списке 
-        likeElement.addEventListener("click", (event) => {
-          event.stopPropagation();
 
-          // !дописать!
-
-          // если кнопка актина => удалить класс
-          const index = likeElement.dataset.index;
-          console.log(index);
-          comments.isLiked = !comments.isLiked;
-          console.log(comments.sLiked);
-
-          //if (likeElement.value === true) {
-          //likeElement.classList.add("-active-like");
-          //}
-
-        })
-      }
-    };
-    likeEventListener();
 
     // клик на "написать отзыв"
     buttonElement.addEventListener('click', () => {
@@ -174,8 +173,6 @@
         isLiked: false,
       })  
       renderComments();
-
-      likeEventListener();
       
     });
 
