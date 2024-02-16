@@ -57,10 +57,72 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    const commentsData = [
+      {
+        author: "Глеб Фокин",
+        dateTime: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        liked: false
+      },
+      {
+        author: "Варвара Н.",
+        dateTime: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        liked: true
+      }
+    ];
+
     const addButton = document.querySelector(".add-form-button");
     const nameInput = document.querySelector(".add-form-name");
     const commentInput = document.querySelector(".add-form-text");
     const commentsList = document.querySelector(".comments");
+
+    function renderComments(comments) {
+      commentsList.innerHTML = "";
+
+      comments.forEach(comment => {
+        const commentElement = createCommentElement(comment);
+        commentsList.appendChild(commentElement);
+      });
+    }
+
+    function createCommentElement(comment) {
+      const newComment = document.createElement("li");
+      newComment.classList.add("comment");
+      const likeClass = comment.liked ? " -active-like" : "";
+      newComment.innerHTML = `
+      <div class="comment-header">
+        <div>${comment.author}</div>
+        <div>${comment.dateTime}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${comment.text}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">${comment.likes}</span>
+          <button class="like-button${likeClass}"></button>
+        </div>
+      </div>
+    `;
+
+      const likeButton = newComment.querySelector('.like-button');
+      likeButton.addEventListener('click', function () {
+        if (comment.liked) {
+          comment.likes--;
+        } else {
+          comment.likes++;
+        }
+        comment.liked = !comment.liked;
+        renderComments(commentsData);
+      });
+
+      return newComment;
+    }
+
+    renderComments(commentsData);
 
     addButton.addEventListener("click", function () {
       const nameValue = nameInput.value.trim();
@@ -71,25 +133,16 @@
         return;
       }
 
-      const newComment = document.createElement("li");
-      newComment.classList.add("comment");
-      newComment.innerHTML = `
-      <div class="comment-header">
-        <div>${nameValue}</div>
-        <div>${getCurrentDateTime()}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">${commentValue}</div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">0</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    `;
+      const newComment = {
+        author: nameValue,
+        dateTime: getCurrentDateTime(),
+        text: commentValue,
+        likes: 0,
+        liked: false
+      };
 
-      commentsList.appendChild(newComment);
+      commentsData.push(newComment);
+      renderComments(commentsData);
 
       nameInput.value = "";
       commentInput.value = "";
