@@ -76,28 +76,28 @@
    },
   ];
 
-  const fetchPromiseGet = fetch(
-   "https://wedev-api.sky.pro/api/v1/nane-akopyan/comments",
-   {
-    method: "GET",
-   }
-  );
+  // const fetchPromiseGet = fetch(
+  //  "https://wedev-api.sky.pro/api/v1/nane-akopyan/comments",
+  //  {
+  //   method: "GET",
+  //  }
+  // );
 
-  fetchPromiseGet.then((response) => {
-    response.json().then((responseData) => {
-        const appComments = responseData.comments.map((comment => {
-          return {
-            name: comment.name,
-            date: comment.date,
-            text: comment.text,
-            likesQuantity: comment.likesQuantity,
-            isLiked: false,
-          };        
-        }));
-        let comments = appComments
-        renderComments();
-   });
-  });
+  // fetchPromiseGet.then((response) => {
+  //   response.json().then((responseData) => {
+  //       const appComments = responseData.comments.map((comment => {
+  //         return {
+  //           name: comment.name,
+  //           date: comment.date,
+  //           text: comment.text,
+  //           likesQuantity: comment.likesQuantity,
+  //           isLiked: false,
+  //         };
+  //       }));
+  //       let comments = appComments
+  //       renderComments();
+  //  });
+  // });
 
   const likeEventListener = () => {
    const likeElements = document.querySelectorAll(".like-button");
@@ -151,7 +151,7 @@
 
   renderComments();
 
-  
+
   const replyEventListener = () => {
    const commentElements = document.querySelectorAll(".comment");
    for (const commentElement of commentElements) {
@@ -167,27 +167,27 @@
 
   // клик на "написать отзыв"
   buttonElement.addEventListener("click", () => {
-   const currentDate = new Date();
-   let dd = currentDate.getDate();
-   if (dd < 10) dd = "0" + dd;
-   let mm = currentDate.getMonth() + 1;
-   if (mm < 10) mm = "0" + mm;
-   let yy = currentDate.getFullYear() % 100;
-   if (yy < 10) yy = "0" + yy;
-   let hour = currentDate.getHours();
-   if (hour < 10) hour = "0" + hour;
-   let minute = currentDate.getMinutes();
-   if (minute < 10) minute = "0" + minute;
-   const date = dd + "." + mm + "." + yy + " " + hour + ":" + minute;
+    const currentDate = new Date();
+    let dd = currentDate.getDate();
+    if (dd < 10) dd = "0" + dd;
+    let mm = currentDate.getMonth() + 1;
+    if (mm < 10) mm = "0" + mm;
+    let yy = currentDate.getFullYear() % 100;
+    if (yy < 10) yy = "0" + yy;
+    let hour = currentDate.getHours();
+    if (hour < 10) hour = "0" + hour;
+    let minute = currentDate.getMinutes();
+    if (minute < 10) minute = "0" + minute;
+    const date = dd + "." + mm + "." + yy + " " + hour + ":" + minute;
 
-   // "Ошибка" если нет имени или текста
-   nameElement.classList.remove("error");
-   textElement.classList.remove("error");
-   if (nameElement.value === "" || textElement.value === "") {
-    nameElement.classList.add("error");
-    textElement.classList.add("error");
-    return;
-   }
+    // "Ошибка" если нет имени или текста
+    nameElement.classList.remove("error");
+    textElement.classList.remove("error");
+    if (nameElement.value === "" || textElement.value === "") {
+      nameElement.classList.add("error");
+      textElement.classList.add("error");
+      return;
+    }
 
 
 
@@ -202,28 +202,47 @@
         likesQuantity: 0,
         isLiked: false,
       })
-      }).then((response) => {
-        response.json().then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.name,
-            date: comment.date,
-            text: comment.text,
-            likesQuantity: 0,
-            isLiked: false,
-          };  
-          return fetchPromiseGet;      
+    }).then((response) => {
+      response.json().then((responseData) => {
+        fetch("https://wedev-api.sky.pro/api/v1/nane-akopyan/comments",{
+          method: "GET",
+        }).then((response) => {
+          response.json().then((responseData) => {
+            const appComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.name,
+              date: comment.date,
+              text: comment.text,
+              likesQuantity: comment.likesQuantity,
+              isLiked: false,
+            };
+          });
+            let comments = appComments
+            renderComments();
+          });
         });
-        comments = appComments;
-        renderComments();
-        
       });
     });
+
+
+      // дз 2
+      // .then((response) => {
+      //   return response.json();
+      // })
+      // .then((responseData) => {
+      //     return fetchPromiseGet;
+      // })
+      // .then((response) => {
+      //   return response.json()
+      // })
+      // .then((responseData) => {
+      //   comments = appComments;
+      //   renderComments();
+      // })
     renderComments();
+    // textElement.value = "";
+    // nameElement.value = "";
   });
-
-
-
 
  </script>
 </html>
