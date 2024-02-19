@@ -75,8 +75,9 @@
         editButton = `<button class="save-button" data-index="${index}">Сохранить</button>`;
       } else {
         // Если комментарий в обычном режиме просмотра
-        commentContent = `<div class="comment-text">${user.comment}</div>`;
+        commentContent = `<div class="comment-text" data-index="${index}">${user.comment}</div>`;
         editButton = `<button class="edit-button" data-index="${index}">Редактировать</button>`;
+        commentContent = commentContent.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("CODE_BEGIN", "<code>").replaceAll("\n", "</br>");
       }
       return `
           <li class="comment">
@@ -107,6 +108,16 @@
         const index = parseInt(this.dataset.index, 10);
         users[index].isLiked = !users[index].isLiked;
         users[index].likes += users[index].isLiked ? 1 : -1;
+        renderUsers();
+      });
+    });
+
+    document.querySelectorAll('.comment-text').forEach(div => {
+      div.addEventListener('click', function () {
+        const index = this.dataset.index;
+        // users[index].isEdit = true;
+        textInputElement.value = "QUOTE_BEGIN " + users[index].name + "\n" + users[index].comment + " QUOTE_END";
+
         renderUsers();
       });
     });
@@ -155,8 +166,16 @@
     const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
     users.push({
-      name: nameInputElement.value,
-      comment: textInputElement.value,
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      comment: textInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       date: dateTime,
       likes: 0,
       isLiked: false,
@@ -178,11 +197,13 @@
   nameInputElement.addEventListener("keyup", handleEnterKeyPress);
   textInputElement.addEventListener("keyup", handleEnterKeyPress);
 
-  deleteButtonElement.addEventListener("click", function () {
+  deleteButtonElement.addEventListener("click", (event) => {
+    event.stopPropagation();
     if (users.length > 0) {
       users.pop();
       renderUsers();
     }
+    renderUsers();
   });
 
 </script>
