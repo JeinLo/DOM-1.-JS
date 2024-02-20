@@ -59,17 +59,20 @@
     //nameInputElement.addEventListener("input", input);
     //textInputElement.addEventListener("input", input);
 
+
     //buttonElement.addEventListener('click', () => {
     //  nameInputElement.classList.remove("error");
     //  textInputElement.classList.remove("error");
     //  if (nameInputElement.value === ""){
     //    nameInputElement.classList.add("error");
-    //    return;
+    //  return;
     //  } else if (textInputElement.value  ===""){
     //    textInputElement.classList.add("error")
-    //    return;
+    //   return;
     //  }
+    //  renderCommentsList()
     //})
+
 
     const commentsListData = [{
         date: "03.04.21 22:32",
@@ -151,45 +154,35 @@
     }
       renderCommentsList(); 
       
-    nameInputElement.addEventListener("click", () => {
-    const allcomments = commentsListElements.innerHTML;
-      nameInputElement.style.backgroundColor = "";
-        if (nameInputElement.value === "") {
-          nameInputElement.style.backgroundColor = "red";
-          return;
-        }
-        textInputElement.style.backgroundColor = "";
-        if (textInputElement.value === "") {
-          textInputElement.style.backgroundColor = "red";
-          return;
-        }
-        
-        commentsListData.push({
-        date: (new Date()).toLocaleString(),
-        name: nameInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll("&", "&amp;")
-          .replaceAll('"', "&quot;"),
-        comment: textInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll("&", "&amp;")
-          .replaceAll('"', "&quot;"),
-        like: likesCounterElement.value,
-        isLike: likesButtonElement.value,
+    buttonElement.addEventListener("click",
+        () => {
+// Подсветка ошибочных комментариев
+            nameInputElement.classList.remove("error");
+            textInputElement.classList.remove("error");
+
+            if (nameInputElement.value === '') {
+                nameInputElement.classList.add("error");
+                if (textInputElement.value === '') {
+                    textInputElement.classList.add("error");
+                    return;
+                };
+                return;
+            };
+            const oldListHtml = commentsListElements.innerHTML;
+            commentsListData.push({
+                name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+                comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+                date: (new Date()).toLocaleString(),
+                like: 0,
+                isLike: false,
+            });
+            renderCommentsList(); 
+
+            nameInputElement.value = '';
+            textInputElement.value = '';
+            likesCounterElement.value = ""
+            likesButtonElement.isLike = true
         });
-
-
-      nameInputElement.value = ""
-      textInputElement.value = ""
-      likesCounterElement.value = ""
-      likesButtonElement.isLike = true
-      //renderCommentsList();
-    })    
-
-    renderCommentsList();
-  
 
     console.log("It works!");
   </script>
