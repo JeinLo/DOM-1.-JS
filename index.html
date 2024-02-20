@@ -204,7 +204,7 @@
       })
     }).then((response) => {
       response.json().then((responseData) => {
-        fetch("https://wedev-api.sky.pro/api/v1/nane-akopyan/comments",{
+        const fetchPromiseGet = fetch("https://wedev-api.sky.pro/api/v1/nane-akopyan/comments",{
           method: "GET",
         }).then((response) => {
           response.json().then((responseData) => {
