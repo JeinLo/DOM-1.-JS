@@ -5,7 +5,6 @@
   <title>Проект "Комменты"</title>
   <meta charset="utf-8" />
   <link rel="stylesheet" href="styles.css" />
-  <script src="main.js"></script>
 </head>
 
 <body>
@@ -61,6 +60,15 @@
       isLiked: false,
     }
   ];
+
+  function safeHTML(text) {
+    return text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+  };
+
   const renderUsers = () => {
     const usersHtml = users.map((user, index) => {
       let activeLike = "";
@@ -73,11 +81,12 @@
         // Если комментарий в режиме редактирования
         commentContent = `<textarea class="edit-textarea" data-index="${index}">${user.comment}</textarea>`;
         editButton = `<button class="save-button" data-index="${index}">Сохранить</button>`;
+
       } else {
         // Если комментарий в обычном режиме просмотра
         commentContent = `<div class="comment-text" data-index="${index}">${user.comment}</div>`;
         editButton = `<button class="edit-button" data-index="${index}">Редактировать</button>`;
-        commentContent = commentContent.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("CODE_BEGIN", "<code>").replaceAll("\n", "</br>");
+        commentContent = commentContent.replaceAll("QUOTE_BEGIN", "<div class='quote'>").replaceAll("QUOTE_END", "</div>").replaceAll("\n", "</br>");
       }
       return `
           <li class="comment">
@@ -134,7 +143,7 @@
       button.addEventListener('click', function () {
         const index = parseInt(this.dataset.index, 10);
         const newText = document.querySelector(`.edit-textarea[data-index="${index}"]`).value;
-        users[index].comment = newText;
+        users[index].comment = safeHTML(newText);
         users[index].isEdit = false;
         renderUsers();
       });
@@ -159,6 +168,8 @@
   renderUsers();
 
   function addComment() {
+    nameInputElement.value = nameInputElement.value.trim();
+    textInputElement.value = textInputElement.value.trim();
     if (nameInputElement.value === "" || textInputElement.value === "") {
       return;
     }
@@ -166,16 +177,8 @@
     const dateTime = `${date.toLocaleDateString('ru-RU', options)} ${date.toLocaleTimeString('ru-RU', optionsTime)}`;
 
     users.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      comment: textInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
+      name: safeHTML(nameInputElement.value),
+      comment: safeHTML(textInputElement.value),
       date: dateTime,
       likes: 0,
       isLiked: false,
