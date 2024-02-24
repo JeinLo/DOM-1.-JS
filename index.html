@@ -87,9 +87,7 @@
 
     const renderCommentsList = () => {
       const commentsListHTML = commentsListData.map((com, index) => {
-        //const oldListElement = commentList.innerHTML;
-        //commentList.innerHTML = oldListElement +  `
-        //<li class="comment">  
+        // 
         return `<li class="comment" id="comment" data-index="${index}">
           <div class="comment-header" >
             <div>${com.name}</div>
