@@ -102,11 +102,11 @@
 
         });
       }
-    }
+    };
 
     //функция формата реального времени
     function clock(time) {
-      let fullDate = time.toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      let fullDate = time.toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit",}) + " " + time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       return fullDate;
     }
 
@@ -122,7 +122,7 @@
       //Вввод нового комментария
       const lastIndex = users.length - 1;
       const lastUserId = users[lastIndex]['id']
-      console.log(lastUserId);
+
       users.push({
         name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         date: clock(new Date),
@@ -142,15 +142,13 @@
         }),
       });
 
-    console.log(fetchPromise);
+      fetchPromise.then((response) => {
+        console.log(response);
+        const jsonPromise = response.json();
 
-    fetchPromise.then((response) => {
-      console.log(response);
-      const jsonPromise = response.json();
-
-      getComments();
-      renderUsers();
-    });
+        getComments();
+        renderUsers();
+      });
 
       //Очистка форм input
       nameInputElement.value = "";
@@ -170,39 +168,40 @@
       }
     }
     answerComment();
+
+    //Функция получения и преобразования данных с сервера
     function getComments() {
     const fetchPromise = fetch(
       'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
       {
         method: "GET",
       });
-    
-    console.log(fetchPromise);
 
-    fetchPromise.then((response) => {
-      console.log(response);
-      const jsonPromise = response.json();
+      fetchPromise.then((response) => {
 
-      jsonPromise.then((responseData) => {
-        console.log(responseData);
-        const appUsers = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: new Date(comment.date),
-            comment: comment.text,
-            likes: comment.likes,
-            isLiked: false,
-            id: comment.id,
-          }
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+
+          const appUsers = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              comment: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+              id: comment.id,
+            }
+          });
+
+          users = appUsers;
+          renderUsers();
         });
-
-        users = appUsers;
-        renderUsers();
       });
-    });
-  }
+    };
 
-  getComments();
+    getComments();
+
     // Код писать здесь
     console.log("It works!");
   </script>
