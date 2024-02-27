@@ -105,8 +105,8 @@
     }
 
     //функция формата реального времени
-    function clock() {
-      let fullDate = new Date().toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    function clock(time) {
+      let fullDate = time.toLocaleDateString([], { day: "2-digit", month: "2-digit", year: "2-digit" }) + " " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       return fullDate;
     }
 
@@ -125,7 +125,7 @@
       console.log(lastUserId);
       users.push({
         name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        date: clock(),
+        date: new Date,
         comment: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         likes: 0,
         isLiked: false,
@@ -189,7 +189,7 @@
         const appUsers = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: comment.date,
+            date: new Date(comment.date),
             comment: comment.text,
             likes: comment.likes,
             isLiked: false,
