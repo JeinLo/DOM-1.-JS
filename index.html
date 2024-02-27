@@ -131,21 +131,22 @@
 
       
     buttonElement.addEventListener("click", () => {
+      
 // Подсветка ошибочных комментариев
           nameInputElement.classList.remove("error");
           textInputElement.classList.remove("error");
-
-            if (nameInputElement.value === '') {
+            if (nameInputElement.value.trim() === '') {
                 nameInputElement.classList.add("error");
-                if (textInputElement.value === '') {
+                if (textInputElement.value.trim() === '') {
                     textInputElement.classList.add("error");
                     return;
                 };
                 return;
             };
+
             const oldListHtml = commentsListElements.innerHTML;
             commentsListData.push({
-                name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+                name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
                 comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote' white-space: pre-line>").replaceAll("QUOTE_END", "</div>"),
                 date: (new Date()).toLocaleString(),
                 like: 0,
