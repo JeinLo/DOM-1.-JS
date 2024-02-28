@@ -125,7 +125,7 @@
 
       users.push({
         name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        date: clock(new Date),
+        date: new Date(),
         comment: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         likes: 0,
         isLiked: false,
