@@ -146,7 +146,7 @@
 
             const oldListHtml = commentsListElements.innerHTML;
             commentsListData.push({
-                name: nameInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("&", "&amp;"),
+                name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
                 comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote' white-space: pre-line>").replaceAll("QUOTE_END", "</div>"),
                 date: (new Date()).toLocaleString(),
                 like: 0,
