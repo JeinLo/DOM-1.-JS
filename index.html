@@ -104,6 +104,7 @@
     });
   };
 
+  listElement.innerHTML = '<li>Комментарии загружаются...</li>'
   fetchPromiseGet();
 
 
@@ -171,9 +172,6 @@
     replyEventListener();
   };
 
-  renderComments();
-
-
 
 
   // клик на "написать отзыв"
@@ -209,27 +207,22 @@
         buttonElement.textContent = 'Написать';
         return response.json();
       })
-      .then((responseData) => {
+      .then(() => {
         return fetchPromiseGet();
       })
-      .then((response) => {
-        return response.json();
+      .then(() => {
+        textElement.value = "";
+        nameElement.value = "";
       })
-      .then((responseData) => {
-        comments = appComments;
-        renderComments();
-        
+      .catch((error) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+        alert("Кажется что-то пошло не так")
       })
-      // .catch((error) => {
-      //   buttonElement.disabled = false;
-      //   buttonElement.textContent = 'Написать';
-      //   alert("Кажется что-то пошло не так")
-      // })
     };
     fetchPromisePost();
 
-    textElement.value = "";
-    nameElement.value = "";
+    
   });  
   
 
