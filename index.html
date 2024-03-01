@@ -218,10 +218,15 @@
       .then((responseData) => {
         comments = appComments;
         renderComments();
+        
       })
+      // .catch((error) => {
+      //   buttonElement.disabled = false;
+      //   buttonElement.textContent = 'Написать';
+      //   alert("Кажется что-то пошло не так")
+      // })
     };
     fetchPromisePost();
-    //renderComments();
 
     textElement.value = "";
     nameElement.value = "";
