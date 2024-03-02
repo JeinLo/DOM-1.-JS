@@ -123,29 +123,30 @@
       const lastIndex = users.length - 1;
       const lastUserId = users[lastIndex]['id']
 
-      users.push({
-        name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        date: new Date(),
-        comment: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        likes: 0,
-        isLiked: false,
-        id: lastUserId + 1,
-      });
+
+      // users.push({
+      //   name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      //   date: new Date(),
+      //   comment: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+      //   likes: 0,
+      //   isLiked: false,
+      //   id: lastUserId + 1,
+      // });
 
       const fetchPromise = fetch(
       'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
       {
         method: "POST",
         body: JSON.stringify({
-          text: textInputElement.value,
-          name: nameInputElement.value,
+          text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+          name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         }),
       });
 
       fetchPromise.then((response) => {
         console.log(response);
         const jsonPromise = response.json();
-
+        
         getComments();
         renderUsers();
       });
