@@ -12,7 +12,7 @@
       <ul class="comments" id = 'list'>
         <!-- Список комментариев пользователей -->
       </ul>
-      <div class="add-form">
+      <div class="add-form" id="addForm">
         <input
           type="text" 
           class="add-form-name"
@@ -31,11 +31,15 @@
           <button class="add-form-button" id="addCommentButton">Написать</button>
         </div>
       </div>
+      <div class="loader"></div> <!-- Лоадер -->
     </div>
   </body>
   <style>
     .error {
       background-color: red;
+    }
+    .hidden {
+      display: none;
     }
   </style>
   <script>
@@ -44,6 +48,8 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
+    const addForm = document.getElementById("addForm");
+    const loader = document.querySelector(".loader");
 
     //массив пользователей
     let users = [];
@@ -118,6 +124,9 @@
         textInputElement.classList.add("error") || nameInputElement.classList.add("error");
         return;        
       }
+      //Скрыть форму ввода во время загрузки
+      addForm.classList.add("hidden");
+      loader.textContent = 'Комментарий добавляется...';
 
       //Вввод нового комментария
       const lastIndex = users.length - 1;
@@ -146,10 +155,16 @@
       fetchPromise.then((response) => {
         console.log(response);
         const jsonPromise = response.json();
-        
+
+        loader.textContent = '';
+        addForm.classList.remove("hidden");//отобразить форму ввода
+       
         getComments();
         renderUsers();
       });
+      
+     
+      
 
       //Очистка форм input
       nameInputElement.value = "";
