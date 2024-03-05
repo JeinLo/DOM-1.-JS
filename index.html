@@ -56,6 +56,15 @@
 </body>
 
 <script>
+  function escapeHTML(text) {
+    return text
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     const commentsData = [
       {
@@ -86,6 +95,18 @@
         const commentElement = createCommentElement(comment);
         commentsList.appendChild(commentElement);
       });
+
+      const commentElements = document.querySelectorAll('.comment');
+      commentElements.forEach(commentElement => {
+        commentElement.addEventListener('click', function () {
+          const author = commentElement.querySelector('.comment-header div').innerText;
+          const text = commentElement.querySelector('.comment-text').innerText;
+
+          nameInput.value = author;
+          commentInput.value = `@${author}: ${text}\n`;
+          commentInput.focus();
+        });
+      });
     }
 
     function createCommentElement(comment) {
@@ -93,23 +114,24 @@
       newComment.classList.add("comment");
       const likeClass = comment.liked ? " -active-like" : "";
       newComment.innerHTML = `
-      <div class="comment-header">
-        <div>${comment.author}</div>
-        <div>${comment.dateTime}</div>
+    <div class="comment-header">
+      <div>${escapeHTML(comment.author)}</div>
+      <div>${comment.dateTime}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">${escapeHTML(comment.text)}</div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${comment.likes}</span>
+        <button class="like-button${likeClass}"></button>
       </div>
-      <div class="comment-body">
-        <div class="comment-text">${comment.text}</div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">${comment.likes}</span>
-          <button class="like-button${likeClass}"></button>
-        </div>
-      </div>
-    `;
+    </div>
+  `;
 
       const likeButton = newComment.querySelector('.like-button');
-      likeButton.addEventListener('click', function () {
+      likeButton.addEventListener('click', function (event) {
+        event.stopPropagation();
         if (comment.liked) {
           comment.likes--;
         } else {
@@ -134,9 +156,9 @@
       }
 
       const newComment = {
-        author: nameValue,
+        author: escapeHTML(nameValue),
         dateTime: getCurrentDateTime(),
-        text: commentValue,
+        text: escapeHTML(commentValue),
         likes: 0,
         liked: false
       };
