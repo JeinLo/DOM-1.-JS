@@ -8,7 +8,9 @@
   </head>
 
   <body>
-    <div class="mask" id="preLoader"></div>
+    <div id='preloader'>
+      <p class="preloader-text">Пожалуйста подождите, загружаю комментарии...</p>
+    </div>
     <div class="container">
       <ul class="comments" id = 'list'>
         <!-- Список комментариев пользователей -->
@@ -39,25 +41,16 @@
     .error {
       background-color: red;
     }
-    .hidden {
-      display: none;
-    }
-    .hide {
-      opacity: 0;
-    }
   </style>
   <script>
-    // //Прелоудер
-    // let mask = document.querySelector('.mask');
-
-    // window.addEventListener('load', () => {
-
-    //   mask.classList.add('hide');
-    //   mask.textContent = 'Страница загружается...';
-    //   setTimeout(() => {
-    //     mask.remove();
-    //   }, 600)
-    // })
+    //Прелоудер
+    window.onload = function() {
+    let preloader = document.getElementById('preloader');
+    // preloader.classList.add('hide-preloader');
+    setInterval(function() {
+          preloader.classList.add('preloader-hidden');
+    }, 1000);
+}
 
     //Обработчики событий
     const buttonElement = document.getElementById("addCommentButton");
