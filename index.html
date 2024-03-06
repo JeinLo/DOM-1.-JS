@@ -46,10 +46,6 @@
     //Прелоудер
     window.onload = function() {
     let preloader = document.getElementById('preloader');
-    // preloader.classList.add('hide-preloader');
-    setInterval(function() {
-          preloader.classList.add('preloader-hidden');
-    }, 1000);
 }
 
     //Обработчики событий
@@ -92,6 +88,42 @@
     };
 
     renderUsers();
+
+        //Функция получения и преобразования данных с сервера
+        function getComments() {
+    const fetchPromise = fetch(
+      'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
+      {
+        method: "GET",
+      });
+
+      fetchPromise.then((response) => {
+
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+
+          const appUsers = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: new Date(comment.date),
+              comment: comment.text,
+              likes: comment.likes,
+              isLiked: false,
+              id: comment.id,
+            }
+          });
+
+          users = appUsers;
+          renderUsers();
+          loader.textContent = '';
+          addForm.classList.remove("hidden");//отобразить форму ввода
+          preloader.classList.add('preloader-hidden');
+        });
+      });
+    };
+
+    getComments();
 
     //функция лайков
     function initLikeButtonListeners () {
@@ -149,19 +181,19 @@
           text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
           name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         }),
-      });
-
-      fetchPromise.then((response) => {
-        console.log(response);
+      }).then((response) => {
         const jsonPromise = response.json();
        
         getComments();
+
+        //Очистка форм input
+        nameInputElement.value = "";
+        textInputElement.value = "";
+
         renderUsers();
+      }).catch((error) => {
+        alert("Кажется что-то пошло не так, попробуйте позже");
       });
-      
-      //Очистка форм input
-      nameInputElement.value = "";
-      textInputElement.value = "";
     });
 
     //Функция ответа на комментарий
@@ -176,41 +208,6 @@
       }
     }
     answerComment();
-
-    //Функция получения и преобразования данных с сервера
-    function getComments() {
-    const fetchPromise = fetch(
-      'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
-      {
-        method: "GET",
-      });
-
-      fetchPromise.then((response) => {
-
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
-
-          const appUsers = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date),
-              comment: comment.text,
-              likes: comment.likes,
-              isLiked: false,
-              id: comment.id,
-            }
-          });
-
-          users = appUsers;
-          renderUsers();
-          loader.textContent = '';
-          addForm.classList.remove("hidden");//отобразить форму ввода
-        });
-      });
-    };
-
-    getComments();
 
     // Код писать здесь
     console.log("It works!");
