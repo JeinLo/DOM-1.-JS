@@ -182,17 +182,29 @@
           name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         }),
       }).then((response) => {
-        const jsonPromise = response.json();
-       
-        getComments();
+        if (response.status === ERR_INTERNET_DISCONNECTED) {
+          alert('Что-то не так с интернетом');
+          throw new error("Оффлайн");
+        } else if (response.status === 500) {
+          alert('Сервер сломался, попробуйте позже');
+          throw new error("Сервер упал");
+        } else if (response.status === 400) {
+          alert('Имя и комментарий должны быть не короче 3х символов');
+          throw new error("Короткие вводимые данные");
+        } else {
+          const jsonPromise = response.json();
+        }
+      }).then((response) => {
+          getComments();
+          //Очистка форм input
+          nameInputElement.value = "";
+          textInputElement.value = "";
 
-        //Очистка форм input
-        nameInputElement.value = "";
-        textInputElement.value = "";
-
-        renderUsers();
+          renderUsers();
       }).catch((error) => {
-        alert("Кажется что-то пошло не так, попробуйте позже");
+        // alert("Кажется что-то пошло не так, попробуйте позже");
+        console.warn(error);
+        loader.textContent = '';
       });
     });
 
