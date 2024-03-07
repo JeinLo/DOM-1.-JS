@@ -92,38 +92,32 @@
 
     renderUsers();
 
-        //Функция получения и преобразования данных с сервера
-        function getComments() {
-    const fetchPromise = fetch(
-      'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
-      {
-        method: "GET",
-      });
+    //Функция получения и преобразования данных с сервера
+    function getComments() {
+      return fetch(
+        'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
+        {
+          method: "GET",
+        }).then((response) => {
+          return response.json();
+        }).then((responseData) => {
+            const appUsers = responseData.comments.map((comment) => {
+              return {
+                name: comment.author.name,
+                date: new Date(comment.date),
+                comment: comment.text,
+                likes: comment.likes,
+                isLiked: false,
+                id: comment.id,
+              }
+            });
 
-      fetchPromise.then((response) => {
-
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
-
-          const appUsers = responseData.comments.map((comment) => {
-            return {
-              name: comment.author.name,
-              date: new Date(comment.date),
-              comment: comment.text,
-              likes: comment.likes,
-              isLiked: false,
-              id: comment.id,
-            }
+            users = appUsers;
+            renderUsers();
+            loader.textContent = '';
+            addForm.classList.remove("hidden");//отобразить форму ввода
+            preloader.classList.add('preloader-hidden');
           });
-
-          users = appUsers;
-          renderUsers();
-          loader.textContent = '';
-          addForm.classList.remove("hidden");//отобразить форму ввода
-          preloader.classList.add('preloader-hidden');
-        });
-      });
     };
 
     getComments();
@@ -172,7 +166,7 @@
       addForm.classList.add("hidden");
       loader.textContent = 'Комментарий добавляется...';
 
-      //Вввод нового комментария
+      //Ввод нового комментария
       const lastIndex = users.length - 1;
       const lastUserId = users[lastIndex]['id']
 
@@ -185,19 +179,15 @@
           name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         }),
       }).then((response) => {
-        // if (response.status === ERR_INTERNET_DISCONNECTED) {
-        //   alert('Что-то не так с интернетом');
-        //   throw new error("Оффлайн");
-        // } else 
         if (response.status === 500) {
           alert('Сервер сломался, попробуйте позже');
           throw new error("Сервер упал");
-        } else if (response.status === 400) {
+        };
+        if (response.status === 400) {
           alert('Имя и комментарий должны быть не короче 3х символов');
           throw new error("Короткие вводимые данные");
-        } else {
-          const jsonPromise = response.json();
-        }
+        };
+        return response.json();
       }).then((response) => {
           getComments();
           //Очистка форм input
@@ -206,7 +196,16 @@
 
           renderUsers();
       }).catch((error) => {
-        // alert("Кажется что-то пошло не так, попробуйте позже");
+        if (error.message === 'Failed to fetch') {
+          alert("Кажется что-то пошло не так, попробуйте позже");
+        };
+        // if (error.message === "Сервер упал") {
+        //   alert('Сервер сломался, попробуйте позже');
+        // };
+        // if (error.message === "Короткие вводимые данные") {
+        //   alert('Имя и комментарий должны быть не короче 3х символов');
+        // };
+
         console.warn(error);
         loader.textContent = '';
         addForm.classList.remove("hidden");
