@@ -41,6 +41,9 @@
     .error {
       background-color: red;
     }
+    .hidden {
+      display: none;
+    }
   </style>
   <script>
     //Прелоудер
@@ -53,7 +56,7 @@
     const listElement = document.getElementById("list");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
-    const addForm = document.getElementById("addForm");
+    const addForm = document.querySelector(".add-form");
     const loader = document.querySelector(".loader");
 
     //массив пользователей
@@ -182,10 +185,11 @@
           name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
         }),
       }).then((response) => {
-        if (response.status === ERR_INTERNET_DISCONNECTED) {
-          alert('Что-то не так с интернетом');
-          throw new error("Оффлайн");
-        } else if (response.status === 500) {
+        // if (response.status === ERR_INTERNET_DISCONNECTED) {
+        //   alert('Что-то не так с интернетом');
+        //   throw new error("Оффлайн");
+        // } else 
+        if (response.status === 500) {
           alert('Сервер сломался, попробуйте позже');
           throw new error("Сервер упал");
         } else if (response.status === 400) {
