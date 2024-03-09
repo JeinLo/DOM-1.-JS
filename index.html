@@ -98,7 +98,11 @@
         'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
         {
           method: "GET",
+          forceError: true,
         }).then((response) => {
+          if (response.status === 500) {
+          throw new Error("Сервер упал");
+          };
           return response.json();
         }).then((responseData) => {
             const appUsers = responseData.comments.map((comment) => {
@@ -111,13 +115,21 @@
                 id: comment.id,
               }
             });
-
             users = appUsers;
             renderUsers();
             loader.textContent = '';
             addForm.classList.remove("hidden");//отобразить форму ввода
             preloader.classList.add('preloader-hidden');
-          });
+        }).catch((error) => {
+          if (error.message === 'Failed to fetch') {
+            alert("Кажется что-то пошло не так, попробуйте позже");
+          };
+          if (error.message === "Сервер упал") {
+            alert('Сервер сломался, попробуйте позже');
+          };
+
+        console.warn(error);
+      });
     };
 
     getComments();
@@ -172,20 +184,20 @@
 
       const fetchPromise = fetch(
       'https://wedev-api.sky.pro/api/v1/artem-filumenov/comments',
+
       {
         method: "POST",
         body: JSON.stringify({
           text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
           name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+          forceError: true,
         }),
       }).then((response) => {
         if (response.status === 500) {
-          alert('Сервер сломался, попробуйте позже');
-          throw new error("Сервер упал");
+          throw new Error("Сервер упал");
         };
         if (response.status === 400) {
-          alert('Имя и комментарий должны быть не короче 3х символов');
-          throw new error("Короткие вводимые данные");
+          throw new Error("Короткие вводимые данные");
         };
         return response.json();
       }).then((response) => {
@@ -199,12 +211,12 @@
         if (error.message === 'Failed to fetch') {
           alert("Кажется что-то пошло не так, попробуйте позже");
         };
-        // if (error.message === "Сервер упал") {
-        //   alert('Сервер сломался, попробуйте позже');
-        // };
-        // if (error.message === "Короткие вводимые данные") {
-        //   alert('Имя и комментарий должны быть не короче 3х символов');
-        // };
+        if (error.message === "Сервер упал") {
+          alert('Сервер сломался, попробуйте позже');
+        };
+        if (error.message === "Короткие вводимые данные") {
+          alert('Имя и комментарий должны быть не короче 3х символов');
+        };
 
         console.warn(error);
         loader.textContent = '';
