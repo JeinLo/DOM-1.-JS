@@ -92,9 +92,9 @@
             <div class="comment-footer">
               <div class="likes">
                 <span class="likes-counter">${user.likes}</span>
-                <button class="like-button ${activeLike}" data-index="${index}"></button>
-                ${editButton}
-              </div>
+                <button class="like-button ${activeLike}" data-index="${index}"></button>` +
+        // ${editButton}
+        `</div>
             </div>
           </li>`;
     });
@@ -140,7 +140,7 @@
   //       // users[index].isLiked = !users[index].isLiked;
   //       // users[index].likes += users[index].isLiked ? 1 : -1;
   //       // renderUsers();
-  //       console.log("Сервер пока что не поддерживает лайки. Приходите позже");
+  //       alert("Сервер пока что не поддерживает лайки. Приходите позже");
   //     });
   //   });
 
@@ -154,10 +154,7 @@
 
   document.querySelectorAll('.edit-button').forEach(button => {
     button.addEventListener('click', function () {
-      // const index = parseInt(this.dataset.index, 10);
-      // users[index].isEdit = true;
-      // renderUsers();
-      console.log("Сервер пока что не поддерживает редактирование комментариев. Приходите позже");
+      alert("Сервер пока что не поддерживает редактирование комментариев. Приходите позже");
     });
   });
 
@@ -228,8 +225,8 @@
     fetch("https://wedev-api.sky.pro/api/v1/dz-hv/comments", {
       method: "POST",
       body: JSON.stringify({
-        name: nameInputElement.value,
-        text: textInputElement.value
+        name: safeHTML(nameInputElement.value), // nameInputElement.value,
+        text: safeHTML(textInputElement.value), // textInputElement.value
       })
     })
       .then(response => {
@@ -249,6 +246,8 @@
         document.querySelector('.add-form').classList.remove('hidden');
         updateButtonState();
       });
+    nameInputElement.value = "";
+    textInputElement.value = "";
   }
 
   buttonAddComment.addEventListener("click", addComment);
@@ -268,7 +267,7 @@
     //   renderUsers();
     // }
     // renderUsers();
-    console.log("Сервер пока что не поддерживает удаление комментариев. Приходите позже");
+    alert("Сервер пока что не поддерживает удаление комментариев. Приходите позже");
   });
 
   getComments();
