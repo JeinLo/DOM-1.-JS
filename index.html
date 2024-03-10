@@ -46,7 +46,7 @@
       </li>
     </ul>
     <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя">
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
@@ -62,10 +62,15 @@
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
+      .replaceAll("'", "&#39;")
+  };
 
   document.addEventListener("DOMContentLoaded", function () {
+
+    const addButton = document.querySelector(".add-form-button");
+    const nameInput = document.querySelector(".add-form-name");
+    const commentInput = document.querySelector(".add-form-text");
+    const commentsList = document.querySelector(".comments");
     const commentsData = [
       {
         author: "Глеб Фокин",
@@ -83,10 +88,29 @@
       }
     ];
 
-    const addButton = document.querySelector(".add-form-button");
-    const nameInput = document.querySelector(".add-form-name");
-    const commentInput = document.querySelector(".add-form-text");
-    const commentsList = document.querySelector(".comments");
+    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
+      method: "GET",
+    });
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        commentsData = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: comment.date,
+            id: coment.id,
+            isLiked: comment.isLiked,
+            likes: comment.likes,
+            text: comment.text,
+          }
+        });
+        console.log(commentsData);
+        renderComments();
+      });
+    });
+
+
 
     function renderComments(comments) {
       commentsList.innerHTML = "";
@@ -114,20 +138,20 @@
       newComment.classList.add("comment");
       const likeClass = comment.liked ? " -active-like" : "";
       newComment.innerHTML = `
-    <div class="comment-header">
-      <div>${escapeHTML(comment.author)}</div>
-      <div>${comment.dateTime}</div>
-    </div>
-    <div class="comment-body">
-      <div class="comment-text">${escapeHTML(comment.text)}</div>
-    </div>
-    <div class="comment-footer">
-      <div class="likes">
-        <span class="likes-counter">${comment.likes}</span>
-        <button class="like-button${likeClass}"></button>
-      </div>
-    </div>
-  `;
+        <div class="comment-header">
+          <div>${escapeHTML(comment.author)}</div>
+          <div>${comment.dateTime}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${escapeHTML(comment.text)}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button class="like-button${likeClass}"></button>
+          </div>
+        </div>
+      `;
 
       const likeButton = newComment.querySelector('.like-button');
       likeButton.addEventListener('click', function (event) {
@@ -142,9 +166,10 @@
       });
 
       return newComment;
-    }
+    };
 
     renderComments(commentsData);
+
 
     addButton.addEventListener("click", function () {
       const nameValue = nameInput.value.trim();
@@ -162,6 +187,46 @@
         likes: 0,
         liked: false
       };
+
+      let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInput.value,
+            text: commentInput.value,
+            date: getCurrentDateTime(new Date),
+            isLiked: false,
+            likes: 0,
+          })
+        });
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+          let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
+            method: "GET",
+          });
+
+          fetchPromise.then((response) => {
+            const jsonPromise = response.json();
+            jsonPromise.then((responseData) => {
+
+              commentsData = responseData.comments.map((comment) => {
+                return {
+                  name: comment.author.name,
+                  date: comment.date,
+                  isLiked: comment.isLiked,
+                  likes: comment.likes,
+                  text: comment.text,
+                }
+              });
+              console.log(commentsData);
+              renderComments();
+            });
+          });
+        });
+      });
+
+
 
       commentsData.push(newComment);
       renderComments(commentsData);
