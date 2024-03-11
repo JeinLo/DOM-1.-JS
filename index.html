@@ -45,8 +45,7 @@
         </div>
       </li>
     </ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя">
+    <div class="add-form"><input type="text" class="add-form-name" placeholder="Введите ваше имя">
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
       <div class="add-form-row">
         <button class="add-form-button">Написать</button>
@@ -62,8 +61,8 @@
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;")
-  };
+      .replaceAll("'", "&#39;");
+  }
 
   document.addEventListener("DOMContentLoaded", function () {
 
@@ -71,7 +70,7 @@
     const nameInput = document.querySelector(".add-form-name");
     const commentInput = document.querySelector(".add-form-text");
     const commentsList = document.querySelector(".comments");
-    const commentsData = [
+    let commentsData = [
       {
         author: "Глеб Фокин",
         dateTime: "12.02.22 12:18",
@@ -88,31 +87,31 @@
       }
     ];
 
-    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
-      method: "GET",
-    });
-
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        commentsData = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: comment.date,
-            id: coment.id,
-            isLiked: comment.isLiked,
-            likes: comment.likes,
-            text: comment.text,
-          }
-        });
-        console.log(commentsData);
-        renderComments();
+    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Ошибка при загрузке комментариев');
+        }
+        return response.json();
+      })
+      .then(responseData => {
+        const commentsData = responseData.comments.map(comment => ({
+          author: comment.author.name,
+          dateTime: comment.date,
+          text: comment.text,
+          likes: comment.likes,
+          liked: comment.isLiked
+        }));
+        renderComments(commentsData);
+      })
+      .catch(error => {
+        console.error('Ошибка при загрузке комментариев:', error);
       });
-    });
 
 
 
     function renderComments(comments) {
+      const commentsList = document.querySelector(".comments");
       commentsList.innerHTML = "";
 
       comments.forEach(comment => {
@@ -138,20 +137,20 @@
       newComment.classList.add("comment");
       const likeClass = comment.liked ? " -active-like" : "";
       newComment.innerHTML = `
-        <div class="comment-header">
-          <div>${escapeHTML(comment.author)}</div>
-          <div>${comment.dateTime}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">${escapeHTML(comment.text)}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${comment.likes}</span>
-            <button class="like-button${likeClass}"></button>
-          </div>
-        </div>
-      `;
+    <div class="comment-header">
+      <div>${escapeHTML(comment.author)}</div>
+      <div>${comment.dateTime}</div>
+    </div>
+    <div class="comment-body">
+      <div class="comment-text">${escapeHTML(comment.text)}</div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${comment.likes}</span>
+        <button class="like-button${likeClass}"></button>
+      </div>
+    </div>
+  `;
 
       const likeButton = newComment.querySelector('.like-button');
       likeButton.addEventListener('click', function (event) {
@@ -166,8 +165,7 @@
       });
 
       return newComment;
-    };
-
+    }
     renderComments(commentsData);
 
 
@@ -202,31 +200,28 @@
       fetchPromise.then((response) => {
         const jsonPromise = response.json();
         jsonPromise.then((responseData) => {
-          let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
-            method: "GET",
-          });
-
-          fetchPromise.then((response) => {
-            const jsonPromise = response.json();
-            jsonPromise.then((responseData) => {
-
-              commentsData = responseData.comments.map((comment) => {
-                return {
-                  name: comment.author.name,
-                  date: comment.date,
-                  isLiked: comment.isLiked,
-                  likes: comment.likes,
-                  text: comment.text,
-                }
-              });
-              console.log(commentsData);
-              renderComments();
+          let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments")
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Ошибка при загрузке комментариев');
+              }
+              return response.json();
+            })
+            .then(responseData => {
+              const commentsData = responseData.comments.map(comment => ({
+                author: comment.author.name,
+                dateTime: comment.date,
+                text: comment.text,
+                likes: comment.likes,
+                liked: comment.isLiked
+              }));
+              renderComments(commentsData);
+            })
+            .catch(error => {
+              console.error('Ошибка при загрузке комментариев:', error);
             });
-          });
         });
       });
-
-
 
       commentsData.push(newComment);
       renderComments(commentsData);
