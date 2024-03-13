@@ -170,13 +170,13 @@
   updateButtonState();
 
   function updateButtonState() {
-    buttonAddComment.disabled = false;
-    if (nameInputElement.value.length >= 3 && textInputElement.value.length >= 3) {
+    const nameValue = nameInputElement.value.trim();
+    const textValue = textInputElement.value.trim();
+    if (nameValue !== "" && textValue !== "") {
+      buttonAddComment.disabled = false;
       buttonAddComment.classList.remove("button-error-grey");
     } else {
-      if (nameInputElement.value === "" || textInputElement.value === "") {
-        buttonAddComment.disabled = true;
-      }
+      buttonAddComment.disabled = true;
       buttonAddComment.classList.add("button-error-grey");
     }
   }
@@ -220,13 +220,13 @@
 
 
   function addComment(event, retryCount = 0) {
+    nameInputElement.value = nameInputElement.value.trim();
+    textInputElement.value = textInputElement.value.trim();
     if (nameInputElement.value.length < 3 || textInputElement.value.length < 3) {
       alert("Имя и комментарий должны быть не короче 3 символов");
       return;
     }
     const maxRetries = 3; // Максимальное количество попыток
-    nameInputElement.value = nameInputElement.value.trim();
-    textInputElement.value = textInputElement.value.trim();
     // if (nameInputElement.value === "" || textInputElement.value === "") {
     //   return;
     // }
@@ -257,7 +257,7 @@
             console.log(`Ошибка сервера. Повторная попытка ${retryCount + 1} из ${maxRetries}`);
             return delay(1000).then(() => addComment(event, retryCount + 1)); // Повторяем запрос с задержкой
           } else {
-            throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже');
+            throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже (500)');
           }
         } else {
           throw new Error('Ошибка при добавлении комментария: ' + response.statusText);
@@ -267,7 +267,8 @@
         getComments();
       })
       .catch(error => {
-        console.error("Ошибка при добавлении комментария (500)", error);
+        console.error("Ошибка соединения. Сервер не отвечает или нет интернета", error);
+        alert("Сервер или тытэрнэт недоступен. Пожалуйста, попробуйте позже");
       })
       .finally(() => {
         document.getElementById('addComment-status').textContent = "";
