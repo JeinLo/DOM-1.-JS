@@ -49,6 +49,16 @@
     const likesButtonElement = document.querySelectorAll(".like-button");
     const likesCounterElement = document.querySelectorAll(".likes-counter");
 
+  //  let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments",{
+  //    method: "GET",
+  //  }).then((response) => {
+  //    let jsonPromise = response.json();
+  //    jsonPromise.then((responseData) => {
+//
+  //      commentsListData = responseData.todos;
+  //      renderCommentsListData();
+  //    })
+  //  });
 
     const commentsListData = [{
         date: "03.04.21 22:32",
@@ -64,6 +74,19 @@
         like: 75,
         isLike: false,
     }]; 
+
+    fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
+        method: "GET",
+    })
+        .then((response) => {
+            return response.json();
+        })
+        .then((responseData) => {
+            //comments = responseData.comments;
+            renderCommentsList();
+        });
+
+
 
     const initEventListener = () => {
     const likesButtonElement = document.querySelectorAll(".like-button");
@@ -84,14 +107,13 @@
     }
   };
 
-
     const renderCommentsList = () => {
       const commentsListHTML = commentsListData.map((com, index) => {
         // 
         return `<li class="comment" id="comment" data-index="${index}">
           <div class="comment-header" >
             <div>${com.name}</div>
-            <div>${com.date}</div>   
+           <div>${com.date}</div>   
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -102,15 +124,15 @@
             <div class="likes">
               <span class="likes-counter">${com.like}</span>
               <button class="${com.isLike ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
-            </div>
+           </div>
           </div>
         </li>`;
        })
         .join("");
         commentsListElements.innerHTML = commentsListHTML;
         initEventListener();
-    }
-      renderCommentsList(); 
+   }
+     renderCommentsList(); 
 
 
     const answerCommentListener = () => {
@@ -131,7 +153,6 @@
 
       
     buttonElement.addEventListener("click", () => {
-      
 // Подсветка ошибочных комментариев
           nameInputElement.classList.remove("error");
           textInputElement.classList.remove("error");
@@ -144,21 +165,110 @@
                 return;
             };
 
-            const oldListHtml = commentsListElements.innerHTML;
-            commentsListData.push({
-                name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-                comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote' white-space: pre-line>").replaceAll("QUOTE_END", "</div>"),
-                date: (new Date()).toLocaleString(),
-                like: 0,
-                isLike: false,
-            });
-            renderCommentsList(); 
-
+            commentsListData.push(
+                fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        text: textInputElement.value,
+                        name: nameInputElement.value,
+                    }),
+                })
+                    .then((response) => {
+                        return response.json();
+                    })
+                    .then((responseData) => {
+                        return fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments.", {
+                            method: "GET",
+                        })
+                        .then((response) => {
+                        console.log(response);
+                        return response.json();
+                    })
+                    .then((responseData) => {
+                        console.log(responseData);
+                        let addComments = responseData.comments.map((comment) => {
+                          return {
+                                name: comment.author.name,
+                                date: new Date(comment.date),
+                                text: comment.text,
+                                like: comment.likes,
+                                isLike: false,
+                              };
+                            comments = addComments;
+                        renderCommentsList();
+                        });
+                    })
+                  })
+            )
+            renderCommentsList();
             nameInputElement.value = '';
             textInputElement.value = '';
-            likesCounterElement.value = ""
-            //likesButtonElement.isLike = true 
         });
+
+
+
+        ////    const fetchPromise = fetch('https://wedev-api.sky.pro/api/v1/Anggelinna/comments',{
+        ////    method: "POST",
+        ////    body: JSON.stringify({
+        ////    text: textInputElement.value,
+        ////   name: nameInputElement.value,
+        ////    text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        ////    name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        ////    }),
+        ////  });
+
+    ////fetchPromise.then((response) => {
+      ////  console.log(response);
+      ////  const jsonPromise = response.json();
+
+        
+    ////  getComments();
+      ////  renderCommentsList();
+      ////});
+      ////nameInputElement.value = "";
+      ////textInputElement.value = "";
+   // });
+
+
+           // const oldListHtml = commentsListElements.innerHTML;
+           // commentsListData.push({
+           //     name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+           //     comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("QUOTE_BEGIN", "<div class='quote' white-space: pre-line>").replaceAll("QUOTE_END", "</div>"),
+           //     date: (new Date()).toLocaleString(),
+           //     like: 0,
+           //     isLike: false,
+           // });
+           // renderCommentsList(); 
+
+            //nameInputElement.value = '';
+            //textInputElement.value = '';
+            //likesCounterElement.value = ""
+            //likesButtonElement.isLike = true 
+        //});
+
+
+
+  //  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments",{
+  //    method: "GET",
+  //    }).then((response) => {
+  //    let jsonPromise = response.json();
+//
+  //    jsonPromise.then((responseData) => {
+  //     ?????????????????? responseData.todos.comment.map((comments) => {
+  //        return {
+  //         name: comment.author.name,
+  //          date: new Date(comment.date),
+  //          text: comment.text,
+  //          like: false,
+  //          isLike: false
+  //        };
+  //      });
+//
+    //   ??????????????? commentsListData = responseData.todos;
+    //    renderCommentsListData();
+    //  });
+   //});
+
 
     console.log("It works!");
   </script>
