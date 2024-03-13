@@ -9,8 +9,8 @@
 
 <body>
   <div class="container">
-    <div class="text" style="color:white">Комментарии загружаются...</div>
-    <ul class="comments">
+    <div class="text" style="color:white">Комментарии загружаются, пожалуйста подождите...</div>
+    <ul class="comments" id="add-comment">
 
     </ul>
     <div class="add-form"><input type="text" class="add-form-name" placeholder="Введите ваше имя">
@@ -41,6 +41,7 @@
     const commentsList = document.querySelector(".comments");
     const buttonDeleteElement = document.querySelector(".delete-form-button");
     const textDisabled = document.querySelector(".text");
+    // const addCommentElement = document.querySelector("add-comment");
 
     const fetchGetCommentsData = () => {
       let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments")
@@ -101,6 +102,35 @@
       });
     };
 
+    // function addComment() {
+    // let oldAddFormElement = addCommentElement.innerHTML;
+    // addCommentElement.textContent = "Комментарий добавляется";
+    // fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     name: nameInput.value,
+    //     text: commentInput.value,
+    //     date: getCurrentDateTime(new Date),
+    //     isLiked: false,
+    //     likes: 0,
+    //   })
+    // })
+    //   .then((response) => {
+    //     return response.json();
+    //   })
+    //   .then((response) => {
+    //     fetchGetCommentsData();
+    //   })
+    //   .then(() => {
+    //     addButton.disabled = false;
+    //     addButton.textContent = "Написать";
+    //     addCommentElement.innerHTML = oldAddFormElement;
+    //   })
+    //   .catch(error => {
+    //     console.error('Ошибка при загрузке комментариев:', error);
+    //   });
+    // };
+
     function createCommentElement(comment) {
       const newComment = document.createElement("li");
       newComment.classList.add("comment");
@@ -157,9 +187,9 @@
       };
 
       addButton.disabled = true;
-      addButton.textContent = "Комментарий добавляется"
-
-      let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
+      addButton.textContent = "Комментарий добавляется";
+      // addComment();
+      fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
         method: "POST",
         body: JSON.stringify({
           name: nameInput.value,
@@ -177,11 +207,13 @@
         })
         .then(() => {
           addButton.disabled = false;
-          addButton.textContent = "Написать"
+          addButton.textContent = "Написать";
+          // addCommentElement.innerHTML = oldAddFormElement.innerHTML;
         })
         .catch(error => {
           console.error('Ошибка при загрузке комментариев:', error);
         });
+
 
 
       commentsData.push(newComment);
