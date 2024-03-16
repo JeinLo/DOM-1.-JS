@@ -1,6 +1,6 @@
-import { postTodo, comments } from "./api.js";
-import { addForm, getComments, loader } from "./main.js";
-import { renderComments } from "./renderComments.js";
+import { postTodo } from "./api.js";
+import { addForm, getComments, loader, comments } from "./main.js";
+import { renderComments, } from "./renderComments.js";
 
 
 export function initAddCommentsListeners() {
@@ -14,11 +14,10 @@ export function initAddCommentsListeners() {
           textInputElement.classList.add("error") || nameInputElement.classList.add("error");
           return;        
         }
-        //Скрыть форму ввода во время загрузки
+
         addForm.classList.add("hidden");
         loader.textContent = 'Комментарий добавляется...';
       
-        //Ввод нового комментария
         const lastIndex = comments.length - 1;
         const lastCommentId = comments[lastIndex]['id']
       
@@ -27,8 +26,7 @@ export function initAddCommentsListeners() {
           name: nameInputElement.value,
         }).then((response) => {
           getComments();
-          appComment();
-          //Очистка форм input
+
           nameInputElement.value = "";
           textInputElement.value = "";
       
