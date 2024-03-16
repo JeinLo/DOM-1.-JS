@@ -1,4 +1,4 @@
-import { postTodo } from "./api.js";
+import { postTodo, comments } from "./api.js";
 import { addForm, getComments, loader } from "./main.js";
 import { renderComments } from "./renderComments.js";
 
