@@ -30,7 +30,9 @@ export function getComments() {
       if (error.message === "Сервер упал") {
         alert('Сервер сломался, попробуйте позже');
       };
-
+      if (error.message === "Нет авторизации") {
+        alert("Авторизируйся");
+        };
     console.warn(error);
   });
 };
