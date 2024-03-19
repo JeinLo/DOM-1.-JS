@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments" id="comments" >
+      <ul class="comments" id="comments-container" >
        <!-- список рендерится из JS -->
       </ul>
       <div class="add-form">
@@ -42,7 +42,7 @@
   const nameInputElement = document.querySelector(".add-form-name");
     const textInputElement = document.querySelector(".add-form-text");
     const buttonElement = document.querySelector(".add-form-button");
-    const commentsListElements = document.getElementById("comments");
+    //const commentsListElements = document.getElementById("comments");
     
     const commentsList = document.querySelectorAll(".comments");
     const commentElement = document.querySelectorAll(".comment");
@@ -60,7 +60,7 @@
   //    })
   //  });
 
-    const commentsListData = [{
+    let commentsListData = [{
         date: "03.04.21 22:32",
         name: "Богда П.",
         comment: "Это будет первый комментарий на этой странице",
@@ -75,16 +75,18 @@
         isLike: false,
     }]; 
 
-    fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
+    const getCommentsListData  = () => {
+      fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
         method: "GET",
-    })
+      })
         .then((response) => {
             return response.json();
         })
         .then((responseData) => {
             commentsListData = responseData.comments;
-            renderCommentsList();
+            renderCommentsListData();
         });
+    }
 
 
   const initEventListener = () => {
@@ -101,38 +103,44 @@
           commentsListData[index].isLike = false;
           commentsListData[index].like--;
         }
-        renderCommentsList()
+        renderCommentsList();
       })
     }
   };
 
 
-  const renderCommentsList = () => {
-      const commentsListHTML = commentsListData.map((com, index) => {
+
+    const renderCommentsList = () => {
+    const commentsContainer = document.getElementById("comments-container");
+        //  commentsContainer.innerHTML = "";
+        //  const commentsListHtml = commentsListData.map((comment, index) => {
+          //
+      const commentsListHTML = commentsListData.map((comment, index) => {
         // 
-        return `<li class="comment" id="comment" data-index="${index}">
+        return `<li class="comment" id="comments-container" data-index="${index}">
           <div class="comment-header" >
-            <div>${com.name}</div>
-            <div>${com.date}</div>   
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>   
           </div>
           <div class="comment-body">
             <div class="comment-text">
-              ${com.comment}
+              ${comment.comment}
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${com.like}</span>
-              <button class="${com.isLike ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
+              <span class="likes-counter">${comment.like}</span>
+              <button class="${comment.isLike ? 'like-button -active-like' : 'like-button'}" data-index="${index}"></button>
             </div>
           </div>
         </li>`;
-       })    
+        })    
         .join("");
-        commentsListElements.innerHTML = commentsListHTML;
+        commentsContainer.innerHTML = commentsListHTML;
         initEventListener();
-      }
+    }
      renderCommentsList(); 
+
 
 
     const answerCommentListener = () => {
@@ -150,39 +158,37 @@
     answerCommentListener();
 
     const sanitizeHtml = (htmlString) => {
-    return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+     return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
-
-        //добавить коммент
+    
         function addNewCommentListData() {
           commentsListData.push({
             name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-            time: currentDate,
+            date: new Date(comment.date),
             comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
             like: 0,
             isLike: false,
-          });
-          renderCommentsList();
+        });
+          //renderCommentsList();
           postPromiseFetch();
         };
         function postPromiseFetch() {
-
-      const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: sanitizeHtml(nameInputElement.value),
-        text: sanitizeHtml(textInputElement.value),
-      })
+        const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          name: sanitizeHtml(nameInputElement.value), 
+          text: sanitizeHtml(textInputElement.value), 
+       })
       }).then((response) => {
       return response.json();
       })
       .then((responseData) => {
-      getCommentsListData();
+      getCommentsList();
       })
     nameInputElement.value = "";
     textInputElement.value = "";
     };
-
+ 
      renderCommentsList();
 
 
