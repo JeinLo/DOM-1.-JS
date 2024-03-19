@@ -28,7 +28,7 @@ const likes = () => {
   for (const likeButton of likeButtons) {
     likeButton.addEventListener('click', () => {
       const index = likeButton.dataset.index;
-      if (commentsArray[index].userLike === false ) {
+      if (commentsArray[index].userLike === false) {
         commentsArray[index].paint = '-active-like';
         commentsArray[index].like += 1;
         commentsArray[index].userLike = true;
@@ -44,11 +44,11 @@ const likes = () => {
 
 
 const renderComments = () => {
-  const commentsHtml = commentsArray.map((item, index) =>{
+  const commentsHtml = commentsArray.map((item, index) => {
     let activeLike = ''
-     if (commentsArray[index].paint) {
-       paint = '-active-like'
-     }
+    if (commentsArray[index].paint) {
+      paint = '-active-like'
+    }
     return `
     <li class="comment">
           <div class="comment-header">
@@ -56,7 +56,7 @@ const renderComments = () => {
             <div>${item.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
+            <div class="comment-text" data-index="${index}">
               ${item.comment}
             </div>
           </div>
@@ -69,13 +69,23 @@ const renderComments = () => {
         </li>
     `})
     .join('');
-    listElement.innerHTML = commentsHtml;
-    likes();
+  listElement.innerHTML = commentsHtml;
+  likes();
+  
+  const commentTexts = document.querySelectorAll('.comment-text');
+  commentTexts.forEach(textElement => {
+    textElement.addEventListener('click', (event) => {
+      const index = event.target.getAttribute('data-index');
+      commentInputElement.value = `> ${commentsArray[index].comment}: ${commentsArray[index].name}`;
+      commentInputElement.focus();
+    });
+  });
 };
 renderComments();
 
+
 buttonElement.disabled = true;
-nameInputElement.addEventListener('input', () =>{
+nameInputElement.addEventListener('input', () => {
   if (nameInputElement.value === '') {
     buttonElement.disabled = true;
     return;
@@ -85,55 +95,55 @@ nameInputElement.addEventListener('input', () =>{
 })
 
 buttonElement.addEventListener('click', () => {
-    nameInputElement.classList.remove('error');
-    commentInputElement.classList.remove('error');
-    
-    if ((nameInputElement.value || commentInputElement.value) === '') {
-      nameInputElement.classList.add('error');
-      commentInputElement.classList.add('error');
-      return;
-    }
+  nameInputElement.classList.remove('error');
+  commentInputElement.classList.remove('error');
+
+  if (nameInputElement.value === '' || commentInputElement.value === '') {
+    nameInputElement.classList.add('error');
+    commentInputElement.classList.add('error');
+    return;
+  }
 
   const date = new Date();
   const formattedDate =
-  date.getDate().toString().padStart(2, '0') + '.' + 
-  (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
-  date.getFullYear().toString().slice(-2) + ' ' +
-  date.getHours().toString().padStart(2, '0') + ':' +
-  date.getMinutes().toString().padStart(2, '0');
+    date.getDate().toString().padStart(2, '0') + '.' +
+    (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+    date.getFullYear().toString().slice(-2) + ' ' +
+    date.getHours().toString().padStart(2, '0') + ':' +
+    date.getMinutes().toString().padStart(2, '0');
 
-    commentsArray.push({  
-      name: nameInputElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-      date: formattedDate,
-      comment: commentInputElement.value
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;"),
-      like: 0,
-      userLike: false,
-      paint: '',
+  commentsArray.push({
+    name: nameInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+    date: formattedDate,
+    comment: commentInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+    like: 0,
+    userLike: false,
+    paint: '',
   });
-    renderComments();
-    
-    nameInputElement.value = '';
-    commentInputElement.value = '';
-    buttonElement.disabled = true;
+  renderComments();
+
+  nameInputElement.value = '';
+  commentInputElement.value = '';
+  buttonElement.disabled = true;
 });
 
-deleteButtonElement.addEventListener('click', () =>{
-  const lastCommentIndex = listElement.innerHTML.lastIndexOf( '<li class="comment">' );
+deleteButtonElement.addEventListener('click', () => {
+  const lastCommentIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
   if (lastCommentIndex !== -1) {
-    listElement.innerHTML = listElement.innerHTML.substring( 0, lastCommentIndex ); 
+    listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex);
   }
 });
 
 
-document.addEventListener('keyup', (event) =>{
+document.addEventListener('keyup', (event) => {
   if (event.key === 'Enter') {
     buttonElement.click();
   }
