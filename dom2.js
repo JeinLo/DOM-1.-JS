@@ -98,6 +98,11 @@ buttonElement.addEventListener('click', () => {
   nameInputElement.classList.remove('error');
   commentInputElement.classList.remove('error');
 
+  if (nameInputElement.value.trim() === '' || commentInputElement.value.trim() === '') {
+    nameInputElement.classList.add('error');
+    commentInputElement.classList.add('error');
+    return; 
+ }
   if (nameInputElement.value === '' || commentInputElement.value === '') {
     nameInputElement.classList.add('error');
     commentInputElement.classList.add('error');
