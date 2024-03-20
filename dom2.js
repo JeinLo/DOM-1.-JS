@@ -103,12 +103,7 @@ buttonElement.addEventListener('click', () => {
     commentInputElement.classList.add('error');
     return; 
  }
-  if (nameInputElement.value === '' || commentInputElement.value === '') {
-    nameInputElement.classList.add('error');
-    commentInputElement.classList.add('error');
-    return;
-  }
-
+  
   const date = new Date();
   const formattedDate =
     date.getDate().toString().padStart(2, '0') + '.' +
