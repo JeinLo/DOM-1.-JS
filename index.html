@@ -39,185 +39,205 @@
 
     "use strict";
   // Код писать здесь
-  
-
   const nameInputElement = document.querySelector(".add-form-name");
-    const textInputElement = document.querySelector(".add-form-text");
-    const buttonElement = document.querySelector(".add-form-button");
-    //const commentsListElements = document.getElementById("comments");
-    
-    const commentsList = document.querySelectorAll(".comments");
-    const commentElement = document.querySelectorAll(".comment");
-    const likesButtonElement = document.querySelectorAll(".like-button");
-    const likesCounterElement = document.querySelectorAll(".likes-counter");
+  const textInputElement = document.querySelector(".add-form-text");
+  const buttonElement = document.querySelector(".add-form-button");
+
+  const commentsList = document.querySelectorAll(".comments");
+  const commentElement = document.querySelectorAll(".comment");
+  const likesButtonElement = document.querySelectorAll(".like-button");
+  const likesCounterElement = document.querySelectorAll(".likes-counter");
 
 
-    let comments = [{
-        date: "03.04.21 22:32",
-        name: "Богда П.",
-        comment: "Это будет первый комментарий на этой странице",
-        like: 3,
-        isLike: false,
-      },
-      {
-       date: "04.04.21 18:07",
-        name: "Ангелина К.",
-        comment: "Мне нравится как оформлена эта страница! ❤",
-        like: 75,
-        isLike: false,
-    }]; 
+let comments = [{
+  date: "03.04.21 22:32",
+  name: "Богда П.",
+  comment: "Это будет первый комментарий на этой странице",
+  like: 3,
+  isLike: false,
+  },
+  {
+  date: "04.04.21 18:07",
+  name: "Ангелина К.",
+  comment: "Мне нравится как оформлена эта страница! ❤",
+  like: 75,
+  isLike: false,
+}];
 
-  //  let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments",{
-  //    method: "GET",
-  //  }).then((response) => {
-  //    let jsonPromise = response.json();
-  //    jsonPromise.then((responseData) => {
+const getComments = () => {
+fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
+method: "GET"
+}).then((response) => {
+response.json().then((responseData) => {
+comments = responseData.comments.map((comment) => {
+ return {
+   name: comment.name, //author
+   date: comment.date, //new Date(comment.date),
+   comment: comment.comment,
+   like: comment.like,
+   isLike: comment.isLike,
+  };
+})
+renderCommentsList();
+});
+});
+getComments();
+};
 
-   //     commentsListData = responseData.todos;
-   //     renderCommentsListData();
-   //  })
-   //});
 
-    const getComments = () => {
-      fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
-      method: "GET"
-    }).then((response) => {
-    response.json().then((responseData) => {
-     comments = responseData.comments.map((comment) => {
-        return {
-          name: comment.name, //author
-          date: comment.date, //new Date(comment.date),
-          comment: comment.comment,
-          like: comment.like,
-          isLike: comment.isLike,
-        };
-      });
-      renderComments();
-      //getCommentsListData();
+const initEventListener = () => {
+const likesButtonElement = document.querySelectorAll(".like-button");
+for (const likeButtonElement of likesButtonElement) {
+  likeButtonElement.addEventListener("click", (event) => {
+  event.stopPropagation();
+const index = likeButtonElement.dataset.index;
+const isLike = likeButtonElement.classList.contains("-active-like");
+if (comments[index].isLike === false) {
+  comments[index].isLike = true;
+  comments[index].like++;
+} else {
+  comments[index].isLike = false;
+  comments[index].like--;
+}
+renderCommentsList();
+})
+}
+};
+
+const renderCommentsList = () => {
+const commentsContainer = document.getElementById("comments-container");
+commentsContainer.innerHTML = "";
+const commentsListHtml = comments.map((comment, index) => {
+return ` <li class="comment">
+<div class="comment-header">
+<div>${comment.name}</div>
+<div>${comment.date}</div>
+</div>
+<div class="comment-body">
+<div class="comment-text">
+${comment.comment}
+</div>
+</div>
+<div class="comment-footer">
+<div class="likes">
+<span class="likes-counter">${comments[index].like}</span>
+<button data-index= "${index}" class="like-button ${comment.isLike ? "-active-like" : ""
+}"></button>
+</div>
+</div>
+</li> `;
+})
+.join("");
+commentsContainer.innerHTML = commentsListHtml;
+initEventListener();
+answerComment();
+
+};
+// renderCommentsList();
+
+
+///const answerCommentListener = () => {
+///const commentsElement = document.querySelectorAll(".comment");
+///for (const commentElement of commentsElement) {
+///commentElement.addEventListener("click", () => {
+///const index = commentElement.dataset.index;
+///textInputElement.value =
+///`QUOTE_BEGIN ${comments[index].name}:
+///${comments[index].comment} QUOTE_END`;
+///renderCommentsList();
+///})
+///}
+///};
+///renderCommentsList();
+// answerCommentListener();
+
+  const sanitizeHtml = (htmlString) => {
+   return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  }
+
+  function addNewComment() {
+    comments.push({
+    name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+    //date: currentDate, //new Date(comment.date),
+    comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
+    like: 0,
+    isLike: false,
     });
-    });
-    getComments();
-    };
-      
+  //renderComments();
+   postPromiseFetch();
+  };
 
-    const initEventListener = () => {
-    const likesButtonElement = document.querySelectorAll(".like-button");
-    for (const likeButtonElement of likesButtonElement) {
-      likeButtonElement.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const index = likeButtonElement.dataset.index;
-        const isLike = likeButtonElement.classList.contains("-active-like");
-        if (comments[index].isLike === false) {
-          comments[index].isLike = true;
-          comments[index].like++;
-        } else {
-          comments[index].isLike = false;
-          comments[index].like--;
-        }
-        renderCommentsList();
-      })
-    }
-  }; 
-
-  const renderCommentsList = () => {
-          const commentsContainer = document.getElementById("comments-container");
-          commentsContainer.innerHTML = "";
-          const commentsListHtml = comments.map((comment, index) => {
-              return ` <li class="comment">
-              <div class="comment-header">
-                <div>${comment.name}</div>
-                <div>${comment.date}</div>
-              </div>
-              <div class="comment-body">
-                <div class="comment-text">
-                  ${comment.comment}
-                </div>
-              </div>
-              <div class="comment-footer">
-                <div class="likes">
-                  <span class="likes-counter">${comments[index].like}</span>
-                  <button data-index= "${index}" class="like-button ${comment.isLike ? "-active-like" : ""
-              }"></button>
-                </div>
-              </div>
-            </li> `;
-            })
-            .join("");
-          commentsContainer.innerHTML = commentsListHtml;
-          initEventListener();
-
-        }; 
-        renderCommentsList(); 
-
-
-    const answerCommentListener = () => {
-    const commentsElement = document.querySelectorAll(".comment");
-      for (const commentElement of commentsElement) {
-        commentElement.addEventListener("click", () => {
-          const index = commentElement.dataset.index;
-          textInputElement.value =
-          `QUOTE_BEGIN ${commentsListData[index].name}: 
-          ${commentsListData[index].comment} QUOTE_END`;
-          renderCommentsList();
-        })
-      }
-    };
-   
-    answerCommentListener();
-
-   // const sanitizeHtml = (htmlString) => {
-   // return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    //}
-
-    function addNewComment() {
-          comments.push({
-            name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-            //time: currentDate, //date: new Date(comment.date),
-            comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-            like: 0,
-            isLike: false,
-          });
-          //renderComments();
-          postPromiseFetch();
-        };
-      
-      function postPromiseFetch() {
-      let fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        name: nameInputElement.value, //sanitizeHtml(nameInputElement.value),
-        comment: textInputElement.value, //sanitizeHtml(textInputElement.value), 
-      })
+  function postPromiseFetch() {
+  const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/tanya-s/comments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: sanitizeHtml(nameInputElement.value),
+      text: sanitizeHtml(textInputElement.value),
+    })
     }).then((response) => {
-      return response.json();
+    return response.json();
     }).then((responseData) => {
     getComments();
     })
     nameInputElement.value = "";
     textInputElement.value = "";
-    }; 
-    renderCommentsList()
-   
+  };
+  renderCommentsList()
+
+
+//buttonElement.addEventListener("click", () => {
+//nameInputElement.classList.remove("error");
+//textInputElement.classList.remove("error");
+//if (nameInputElement.value.trim() === '') {
+//nameInputElement.classList.add("error");
+//if (textInputElement.value.trim() === '') {
+//textInputElement.classList.add("error");
+//return;
+//};
+//return;
+//addEventListener();
+//}
+//addNewComment();
+//renderCommentsList()
+//nameInputElement.value = "";
+//textInputElement.value = "";
+//});
 
     buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     textInputElement.classList.remove("error");
-      if (nameInputElement.value.trim() === '') {
-        nameInputElement.classList.add("error");
-          if (textInputElement.value.trim() === '') {
+      if (
+        nameInputElement.value.trim() === "" ||
+        textInputElement.value.trim() === ""
+      ) {
+          nameInputElement.classList.add("error");
           textInputElement.classList.add("error");
           return;
-            };
-          return;
-          //addEventListener();
-     }
-     addNewComment(); 
-//renderCommentsList()
-     nameInputElement.value = "";
-     textInputElement.value = "";
-    });
+        }
+        addNewComment();
 
+          nameInputElement.value = "";
+          textInputElement.value = "";
+        });
 
-    console.log("It works!");
+        //ответ на комментарий
+        function answerComment() {
+          const comment = document.querySelectorAll(".comment");
+          comment.forEach((el, index) => {
+            el.addEventListener("click", () => {
+              textInputElement.value = `${comments[index].name} \n ${comments[index].comment}`;
+            });
+          });
+        }
+        // Чтобы форма отправлялась клавишей Enter
+        textInputElement.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            buttonElement.click();
+          }
+        });
+    renderCommentsList();
+
+    //console.log("It works!");*/
   </script>
 </html>
