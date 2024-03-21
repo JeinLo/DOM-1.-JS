@@ -78,10 +78,10 @@ comments = responseData.comments.map((comment) => {
    isLike: comment.isLike,
   };
 })
-renderCommentsList();
+//renderCommentsList();
 });
 });
-getComments();
+ getComments();
 };
 
 
@@ -158,12 +158,12 @@ answerComment();
   function addNewComment() {
     comments.push({
     name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    //date: currentDate, //new Date(comment.date),
+    date: (new Date()).toLocaleString(),
     comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
     like: 0,
     isLike: false,
     });
-  //renderComments();
+    //renderCommentsList();
    postPromiseFetch();
   };
 
@@ -175,15 +175,13 @@ answerComment();
       text: sanitizeHtml(textInputElement.value),
     })
     }).then((response) => {
-    return response.json();
     }).then((responseData) => {
     getComments();
     })
     nameInputElement.value = "";
     textInputElement.value = "";
-  };
-  renderCommentsList()
-
+    }; 
+    renderCommentsList()
 
 //buttonElement.addEventListener("click", () => {
 //nameInputElement.classList.remove("error");
@@ -206,7 +204,7 @@ answerComment();
     buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     textInputElement.classList.remove("error");
-      if (
+    if (
         nameInputElement.value.trim() === "" ||
         textInputElement.value.trim() === ""
       ) {
@@ -238,6 +236,7 @@ answerComment();
         });
     renderCommentsList();
 
-    //console.log("It works!");*/
+
+   // console.log("It works!");
   </script>
 </html>
