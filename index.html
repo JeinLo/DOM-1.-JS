@@ -68,21 +68,22 @@ const getComments = () => {
 fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
 method: "GET"
 }).then((response) => {
+})
 response.json().then((responseData) => {
 comments = responseData.comments.map((comment) => {
  return {
-   name: comment.name, //author
+   name: comment.autor.name, //author
    date: comment.date, //new Date(comment.date),
    comment: comment.comment,
    like: comment.like,
    isLike: comment.isLike,
   };
 })
-//renderCommentsList();
+renderCommentsList();
 });
-});
- getComments();
 };
+ //getComments();
+
 
 
 const initEventListener = () => {
@@ -133,7 +134,7 @@ initEventListener();
 answerComment();
 
 };
-// renderCommentsList();
+ renderCommentsList();
 
 
 ///const answerCommentListener = () => {
@@ -163,7 +164,7 @@ answerComment();
     like: 0,
     isLike: false,
     });
-    //renderCommentsList();
+    renderCommentsList();
    postPromiseFetch();
   };
 
@@ -176,7 +177,7 @@ answerComment();
     })
     }).then((response) => {
     }).then((responseData) => {
-    getComments();
+    //getComments();
     })
     nameInputElement.value = "";
     textInputElement.value = "";
