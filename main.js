@@ -1,14 +1,12 @@
-"use strict";
+import { getComments, postComment } from "./api.js";
+import { renderComments } from "./render.js";
+
 const listElement = document.getElementById("list");
 const nameElement = document.getElementById("add-form-name");
 const textElement = document.getElementById("add-form-text");
 const buttonElement = document.getElementById("add-form-button");
 
 let comments = [];
-// const isLoaidng = () => {
-
-//   'Пожалуйста подождите, комментарии загружаются'
-// }
 
 const getCommentDate = (date) => {
     const currentDate = date ? new Date(date) : new Date();
@@ -26,25 +24,20 @@ const getCommentDate = (date) => {
 };
 
 const fetchPromiseGet = () => {
-    return fetch("https://wedev-api.sky.pro/api/v1/nane-akopyan/comments", {
-        method: "GET",
-    })
-    .then((response) => {
-        return response.json();
-    })
+    getComments()
     .then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
-            return {
+        return {
             name: comment.author.name,
             date: getCommentDate(comment.date),
             text: comment.text,
             likesQuantity: comment.likes,
             isLiked: false,
-            };
+        };
         });
         console.log(responseData);
         comments = appComments;
-        renderComments();
+        renderComments({ comments, likeEventListener, replyEventListener });
     });
 };
 
@@ -64,7 +57,7 @@ const likeEventListener = () => {
                 comments[index].isLiked = true;
                 comments[index].likesQuantity += 1;
             }
-            renderComments();
+            renderComments({ comments, likeEventListener, replyEventListener });
         });
     }
 };
@@ -81,41 +74,11 @@ const replyEventListener = () => {
 };
 
 // рендер (html через js)
-const renderComments = () => {
-    const commentsHtml = comments
-    .map((comment, index) => {
-        return `<li class="comment" data-index=${index}>
-            <div class="comment-header">
-                <div>${comment.name}</div>
-                <div>${comment.date}</div>
-            </div>
-            <div class="comment-body">
-                <div class="comment-text">
-                ${comment.text}
-                </div>
-            </div>
-            <div class="comment-footer">
-                <div class="likes">
-                <span class="likes-counter">${comment.likesQuantity}</span>
-                <button class="like-button ${
-                comment.isLiked ? "-active-like" : ""
-                }" data-index="${index}"></button>
-                </div>
-            </div>
-            </li>`;
-    })
-    .join("");
 
-    listElement.innerHTML = commentsHtml;
-    likeEventListener();
-    replyEventListener();
-};
 
-// клик на "написать отзыв"
 buttonElement.addEventListener("click", () => {
     const date = getCommentDate();
 
-    // "Ошибка" если нет имени или текста
     nameElement.classList.remove("error");
     textElement.classList.remove("error");
     if (nameElement.value === "" || textElement.value === "") {
@@ -128,26 +91,9 @@ buttonElement.addEventListener("click", () => {
         buttonElement.disabled = true;
         buttonElement.textContent = "Комментарий публикуется...";
         
-        return fetch("https://wedev-api.sky.pro/api/v1/nane-akopyan/comments", {
-            method: "POST",
-            body: JSON.stringify({
-                name: nameElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
-                date: date,
-                text: textElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
-                likesQuantity: 0,
-                isLiked: false,
-            }),
-        })
-        .then((response) => {
-            console.log(response);
-            if (response.status === 400) {
-                throw new Error("Плохой запрос");
-            }
-            if (response.status === 500) {
-                throw new Error("Сервер сломался");
-            } else {
-                return response.json();
-            }
+        postComment({
+            name: nameElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
+            text: textElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
         })
         .then(() => {
             return fetchPromiseGet();
