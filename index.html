@@ -5,237 +5,225 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
-      <ul class="comments" id="comments-container" >
-       <!-- список рендерится из JS -->
+      <ul id="comment-script" class="comments">
+        <!-- <li class="comment">
+          <div class="comment-header">
+            <div>Глеб Фокин</div>
+            <div>12.02.22 12:18</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              Это будет первый комментарий на этой странице
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">3</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li> -->
+        <!-- <li class="comment">
+          <div class="comment-header">
+            <div>Варвара Н.</div>
+            <div id="new-time">13.02.22 19:22</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              Мне нравится как оформлена эта страница! ❤
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">75</span>
+              <button class="like-button -active-like"></button>
+            </div>
+          </div>
+        </li> -->
       </ul>
       <div class="add-form">
-        <input
+        <input id="input-accept-name"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="textarea-accept-comment"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
+					<button id="delete-button" class="add-form-button">Удалить</button>
         </div>
       </div>
     </div>
   </body>
-
-<style>
-    .error {
-      background-color: red;
-    }
-  </style>
   <script>
 
     "use strict";
-  // Код писать здесь
-  const nameInputElement = document.querySelector(".add-form-name");
-  const textInputElement = document.querySelector(".add-form-text");
-  const buttonElement = document.querySelector(".add-form-button");
+		const buttonElement = document.getElementById('add-button');
+		const listElement = document.getElementById('comment-script');
+		const nameInputElement = document.getElementById('input-accept-name');
+		const textInputElement = document.getElementById('textarea-accept-comment');
+		const buttonDelete =  document.getElementById('delete-button');
 
-  const commentsList = document.querySelectorAll(".comments");
-  const commentElement = document.querySelectorAll(".comment");
-  const likesButtonElement = document.querySelectorAll(".like-button");
-  const likesCounterElement = document.querySelectorAll(".likes-counter");
+		function commentsFunction () {
+		const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Angelina/comments",{
+			method: "GET"
+		});
+		fetchPromise.then((response) => {
+			const jsonPromise = response.json();
+			
+			jsonPromise.then((responseData) => {
+				console.log(responseData);
 
+				comments = responseData.comments.map((comment) => {
+					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
+					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
+					return {
+						name: comment.author.name,
+						data: `${currentDate} ${currentTime}`,
+						comment: comment.text,
+						like: comment.likes, 
+						isLike: comment.isLiked
+					};
+				});
+				renderCommentators();
+			});
+		});
+		}
+		commentsFunction();
 
-let comments = [{
-  date: "03.04.21 22:32",
-  name: "Богда П.",
-  comment: "Это будет первый комментарий на этой странице",
-  like: 3,
-  isLike: false,
-  },
-  {
-  date: "04.04.21 18:07",
-  name: "Ангелина К.",
-  comment: "Мне нравится как оформлена эта страница! ❤",
-  like: 75,
-  isLike: false,
-}];
+    let comments = [];
 
-const getComments = () => {
-fetch("https://wedev-api.sky.pro/api/v1/Anggelinna/comments", {
-method: "GET"
-}).then((response) => {
-})
-response.json().then((responseData) => {
-comments = responseData.comments.map((comment) => {
- return {
-   name: comment.autor.name, //author
-   date: comment.date, //new Date(comment.date),
-   comment: comment.comment,
-   like: comment.like,
-   isLike: comment.isLike,
-  };
-})
-renderCommentsList();
-});
-};
- //getComments();
-
-
-
-const initEventListener = () => {
-const likesButtonElement = document.querySelectorAll(".like-button");
-for (const likeButtonElement of likesButtonElement) {
-  likeButtonElement.addEventListener("click", (event) => {
-  event.stopPropagation();
-const index = likeButtonElement.dataset.index;
-const isLike = likeButtonElement.classList.contains("-active-like");
-if (comments[index].isLike === false) {
-  comments[index].isLike = true;
-  comments[index].like++;
-} else {
-  comments[index].isLike = false;
-  comments[index].like--;
-}
-renderCommentsList();
-})
-}
-};
-
-const renderCommentsList = () => {
-const commentsContainer = document.getElementById("comments-container");
-commentsContainer.innerHTML = "";
-const commentsListHtml = comments.map((comment, index) => {
-return ` <li class="comment">
-<div class="comment-header">
-<div>${comment.name}</div>
-<div>${comment.date}</div>
-</div>
-<div class="comment-body">
-<div class="comment-text">
-${comment.comment}
-</div>
-</div>
-<div class="comment-footer">
-<div class="likes">
-<span class="likes-counter">${comments[index].like}</span>
-<button data-index= "${index}" class="like-button ${comment.isLike ? "-active-like" : ""
-}"></button>
-</div>
-</div>
-</li> `;
-})
-.join("");
-commentsContainer.innerHTML = commentsListHtml;
-initEventListener();
-answerComment();
-
-};
- renderCommentsList();
-
-
-///const answerCommentListener = () => {
-///const commentsElement = document.querySelectorAll(".comment");
-///for (const commentElement of commentsElement) {
-///commentElement.addEventListener("click", () => {
-///const index = commentElement.dataset.index;
-///textInputElement.value =
-///`QUOTE_BEGIN ${comments[index].name}:
-///${comments[index].comment} QUOTE_END`;
-///renderCommentsList();
-///})
-///}
-///};
-///renderCommentsList();
-// answerCommentListener();
-
-  const sanitizeHtml = (htmlString) => {
-   return htmlString.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  }
-
-  function addNewComment() {
-    comments.push({
-    name: nameInputElement.value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    date: (new Date()).toLocaleString(),
-    comment: textInputElement.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;"),
-    like: 0,
-    isLike: false,
-    });
-    renderCommentsList();
-   postPromiseFetch();
-  };
-
-  function postPromiseFetch() {
-  const fetchPromisePost = fetch("https://wedev-api.sky.pro/api/v1/tanya-s/comments", {
-    method: "POST",
-    body: JSON.stringify({
-      name: sanitizeHtml(nameInputElement.value),
-      text: sanitizeHtml(textInputElement.value),
-    })
-    }).then((response) => {
-    }).then((responseData) => {
-    //getComments();
-    })
-    nameInputElement.value = "";
-    textInputElement.value = "";
-    }; 
-    renderCommentsList()
-
-//buttonElement.addEventListener("click", () => {
-//nameInputElement.classList.remove("error");
-//textInputElement.classList.remove("error");
-//if (nameInputElement.value.trim() === '') {
-//nameInputElement.classList.add("error");
-//if (textInputElement.value.trim() === '') {
-//textInputElement.classList.add("error");
-//return;
-//};
-//return;
-//addEventListener();
-//}
-//addNewComment();
-//renderCommentsList()
-//nameInputElement.value = "";
-//textInputElement.value = "";
-//});
-
-    buttonElement.addEventListener("click", () => {
-    nameInputElement.classList.remove("error");
-    textInputElement.classList.remove("error");
-    if (
-        nameInputElement.value.trim() === "" ||
-        textInputElement.value.trim() === ""
-      ) {
-          nameInputElement.classList.add("error");
-          textInputElement.classList.add("error");
-          return;
-        }
-        addNewComment();
-
-          nameInputElement.value = "";
-          textInputElement.value = "";
-        });
-
-        //ответ на комментарий
-        function answerComment() {
-          const comment = document.querySelectorAll(".comment");
-          comment.forEach((el, index) => {
-            el.addEventListener("click", () => {
-              textInputElement.value = `${comments[index].name} \n ${comments[index].comment}`;
-            });
-          });
-        }
-        // Чтобы форма отправлялась клавишей Enter
-        textInputElement.addEventListener("keydown", function (event) {
-          if (event.key === "Enter") {
-            event.preventDefault();
-            buttonElement.click();
-          }
-        });
-    renderCommentsList();
+			//кнопка, неактивна при незаполненом поле
+		function checkInputs() {
+		if (nameInputElement.value.trim() === "" || textInputElement.value.trim() === "") {
+			buttonElement.disabled = true;
+			buttonElement.classList.add("gray");
+		} else {
+			buttonElement.disabled = false;
+			buttonElement.classList.remove("gray");
+		};
+	};
+		nameInputElement.addEventListener("input", checkInputs);
+		textInputElement.addEventListener("input", checkInputs);
+		checkInputs();
+	//кнопка удалить и её функционал
+	buttonDelete.addEventListener('click', () => {
+		comments.pop();
+		renderCommentators();
+		checkInputs();
+	});
+	
+	// Функция, которая делает кнопку "удалить" неактивной когда в массиве нет элементов
+	function inactiveDeleteButton() {
+		if (comments.length === 0) {
+			buttonDelete.disabled = true;
+			buttonDelete.classList.add("gray-delete");
+		} else {
+			buttonDelete.disabled = false;
+			buttonDelete.classList.remove("gray-delete");
+		}
+	};
+		//коммент по нажатию клавиши
+		document.addEventListener('keydown', function(e) {
+				if (e.key === 'Enter') {
+					buttonElement.click();
+				}
+			})
+		//функция лайка
+		const addLikeButtonEventListener = () => {
+			const likesButtonElement = document.querySelectorAll('.like-button');
+    for (const likeButton of likesButtonElement) {
+			let isLike = false;
+			likeButton.addEventListener("click", event => {
+				event.stopPropagation();
+				const index = likeButton.dataset.index;
+				if (comments[index].isLike === false) {
+					comments[index].isLike = true;
+					comments[index].like++;
+				} else {
+					comments[index].isLike = false;
+					comments[index].like--;
+				}
+				likeButton.classList.toggle('-active-like', comments[index].isLike);
+				renderCommentators();
+				checkInputs();
+			});
+		};
+	};
+	
+	let text; 
+	let variableUserName;
+	// 2.11 
+	const replyToCommentFunction = () => {
+		const replyComments = document.querySelectorAll('.comment-text');
+		const commentTextArea = document.getElementById('textarea-accept-comment');
+		for (const replyComment of replyComments) {
+			replyComment.addEventListener("click", event => {
+				event.stopPropagation();
+			const replyUserName = event.target.closest('.comment').querySelector('.comment-header').dataset.user;
+			text = replyComment.dataset.text;
+			commentTextArea.value = text + ' ' + '\n : - ' + replyUserName;
+				renderCommentators();
+				checkInputs();
+			});
+		};
+	};
+			//Рендер функция
+			const renderCommentators = () => {
+			const commentatorHTML = comments.map((commentator, index) => {
+					return `<li class="comment">
+          <div data-user="${commentator.name}" class="comment-header">
+            ${commentator.name}
+            <div>${commentator.data}</div>
+          </div>
+          <div class="comment-body">
+            <div data-text=">-${commentator.comment}" class="comment-text">
+              ${commentator.comment}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span data-like="0" class="likes-counter">${commentator.like}</span>
+              <button class="like-button ${commentator.isLike ? '-active-like' : ''}" data-index="${index}" ></button>
+            </div>
+          </div>
+        </li>`;
+				}).join("");
+				listElement.innerHTML = commentatorHTML;
+				addLikeButtonEventListener();
+				replyToCommentFunction();
+				inactiveDeleteButton();
+			};
+			
+			buttonElement.addEventListener("click", () => {
+        const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angelina/comments",{
+						method: "POST",	
+						body:	JSON.stringify ({
+							text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+							name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+							
+						}),
+					}
+				);
+				commentsFunction();
+				
+			// Очистка поля ввода для комментария и имени после отправления комментария
+			const clearCommmentTextArea = document.querySelector('.add-form-text');
+			const clearName = document.querySelector('.add-form-name');
+			clearCommmentTextArea.value = '';
+			clearName.value = '';
+			renderCommentators();
+			checkInputs();
+		});
+		renderCommentators();
+		checkInputs();
 
 
    // console.log("It works!");
