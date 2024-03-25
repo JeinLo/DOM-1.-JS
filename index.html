@@ -18,14 +18,14 @@
       <div class="add-form" id="addForm">
         <input
           type="text" 
-          class="add-form-name"
+          class="input-form"
           placeholder="Введите ваше имя"
           id="name-input" 
           required
         />
         <textarea
           type="textarea"
-          class="add-form-text"
+          class="text-area-form"
           placeholder="Введите ваш коментарий"
           rows="4"
           id="text-input"
@@ -33,6 +33,55 @@
         <div class="add-form-row">
           <button class="add-form-button" id="addCommentButton">Написать</button>
         </div>
+      </div>
+      <div class="add-form" id="authForm">
+        <h2>Форма входа</h2>
+        <input
+          type="text" 
+          class="input-form auth-input-form"
+          placeholder="Введите логин"
+          id="authInputName" 
+          required
+        />
+        <input
+          type="text"
+          class="text-area-form"
+          placeholder="Введите пароль"
+          rows="4"
+          id="authInputPassword"
+        />
+        <div class="add-form-row">
+          <button class="add-form-button" id="authButton">Войти</button>
+        </div>
+        <div href="#">Зарегестрироваться</div>
+      </div>
+      <div class="add-form" id="regForm">
+        <h2>Форма регистрации</h2>
+        <input
+          type="text" 
+          class="input-form auth-input-form"
+          placeholder="Введите имя"
+          id="regInputName" 
+          required
+        />
+        <input
+          type="text" 
+          class="input-form auth-input-form"
+          placeholder="Введите логин"
+          id="regInputLogin" 
+          required
+        />
+        <input
+        type="text" 
+        class="input-form auth-input-form"
+        placeholder="Введите пароль"
+        id="regInputPassword" 
+        required
+      />
+        <div class="add-form-row">
+          <button class="add-form-button" id="regButton">Зарегестрироваться</button>
+        </div>
+        <div href="#">Войти</div>
       </div>
       <div class="loader"></div> <!-- Лоадер -->
     </div>

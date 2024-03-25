@@ -1,6 +1,7 @@
 import { getTodos } from "./api.js";
 import { renderComments } from "./renderComments.js";
 import { initAddCommentsListeners } from "./initAddCommentsListeners.js";
+import { entranceUser } from "./login.js";
 
 export const addForm = document.querySelector(".add-form");
 export const loader = document.querySelector(".loader");
@@ -23,20 +24,9 @@ export function getComments() {
         loader.textContent = '';
         addForm.classList.remove("hidden");
         preloader.classList.add('preloader-hidden');
-    }).catch((error) => {
-      if (error.message === 'Failed to fetch') {
-        alert("Кажется что-то пошло не так, попробуйте позже");
-      };
-      if (error.message === "Сервер упал") {
-        alert('Сервер сломался, попробуйте позже');
-      };
-      if (error.message === "Нет авторизации") {
-        alert("Авторизируйся");
-        };
-    console.warn(error);
   });
 };
 
 getComments();
-
 initAddCommentsListeners();
+entranceUser();
