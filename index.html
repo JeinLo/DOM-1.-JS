@@ -78,9 +78,9 @@
 		fetchPromise.then((response) => {
 			const jsonPromise = response.json();
 			
-			jsonPromise.then((responseData) => {
+		    jsonPromise.then((responseData) => {
 				console.log(responseData);
-
+			
 				comments = responseData.comments.map((comment) => {
 					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
 					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
@@ -93,8 +93,8 @@
 					};
 				});
 				renderCommentators();
-			});
-		});
+			});  
+		  });
 		}
 		commentsFunction();
 
@@ -176,8 +176,8 @@
 		};
 	};
 			//Рендер функция
-			const renderCommentators = () => {
-			const commentatorHTML = comments.map((commentator, index) => {
+		const renderCommentators = () => {
+		const commentatorHTML = comments.map((commentator, index) => {
 					return `<li class="comment">
           <div data-user="${commentator.name}" class="comment-header">
             ${commentator.name}
@@ -194,13 +194,13 @@
               <button class="like-button ${commentator.isLike ? '-active-like' : ''}" data-index="${index}" ></button>
             </div>
           </div>
-        </li>`;
-				}).join("");
-				listElement.innerHTML = commentatorHTML;
-				addLikeButtonEventListener();
-				replyToCommentFunction();
-				inactiveDeleteButton();
-			};
+          </li>`;
+			}).join("");
+			listElement.innerHTML = commentatorHTML;
+			addLikeButtonEventListener();
+			replyToCommentFunction();
+			inactiveDeleteButton();
+		};
 			
 			buttonElement.addEventListener("click", () => {
         const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angelina/comments",{
@@ -222,8 +222,8 @@
 			renderCommentators();
 			checkInputs();
 		});
-		renderCommentators();
-		checkInputs();
+		//renderCommentators();
+		//checkInputs();
 
 
    // console.log("It works!");
