@@ -76,7 +76,7 @@
 
     writeButton.disabled = 'disabled';
 
-    userName.addEventListener('input', () => {
+    userName.addEventListener('input', () => {  //added event for empty input.[79 - 88]
       userComment.addEventListener('input', () => {
 
         if (userName.value === '' && userComment.value === '') {
@@ -126,7 +126,12 @@
       document.getElementById('writeButton').disabled = 'disabled';
       }
     })
-    
+
+    document.addEventListener('keyup', (el) => {      // added event for pressing Enter.[130 - 134]
+      if (el.keyCode === 13) {
+        writeButton.click();
+      }
+    })
 
     // Код писать здесь
     console.log("It works!");
