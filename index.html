@@ -149,6 +149,10 @@ ${nameComment}, `;
         ${currentDate.getHours() < 10 ? '0' + currentDate.getHours() : currentDate.getHours()}:${currentDate.getMinutes() < 10 ? '0' + currentDate.getMinutes() : currentDate.getMinutes()}`;
   }
 
+  const reAddNewComment = () => {
+    let interval = setInterval(addNewComment);
+    setTimeout(() => clearInterval(interval), 5000);
+  }
   function addNewComment() {
     if (currentInputName.value.trim().length !== 0 && currentInputText.value.trim().length !== 0) {
       let thisText = currentInputText.value;
@@ -186,9 +190,10 @@ ${nameComment}, `;
           checkStatus.style.display = "flex";
         })
         .catch((error) => {
-          if (error.message === 'Сервер сломался. Попробуйте позже.') {
+          if (error.message === 'Сервер сломался. Попробуйте позже.' && thisText.length > 2 && thisName.length > 2) {
+            reAddNewComment();
+          } else if (error.message === 'Сервер сломался. Попробуйте позже.') {
             alert('Сервер сломался. Попробуйте позже.');
-            setInterval(addNewComment);
           } else if (error.message === 'Имя и комментарий должны быть не короче 3 символов') {
             alert('Имя и комментарий должны быть не короче 3 символов');
           } else {
