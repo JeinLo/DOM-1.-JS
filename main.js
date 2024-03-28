@@ -1,13 +1,27 @@
 import { getTodos } from "./api.js";
 import { renderComments } from "./renderComments.js";
-import { initAddCommentsListeners } from "./initAddCommentsListeners.js";
-import { entranceUser } from "./login.js";
+import { renderCommentForm } from "./renderForms.js";
 
-export const addForm = document.querySelector(".add-form");
-export const loader = document.querySelector(".loader");
+export let user = null;
 export let comments = [];
+export function setUser(value) {
+  user = value;
+}
+export function renderApp() {
+
+  const container = document.querySelector('.container');
+  container.innerHTML = `
+  <ul class="comments" id = 'list'>
+  </ul>
+  <div class="form"></div>
+  <div class="loader"></div>`
+  getComments();
+  renderCommentForm();
+}
 
 export function getComments() {
+  const loader = document.querySelector(".loader");
+  const preloader = document.getElementById('preloader');
     return getTodos().then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
           return {
@@ -22,11 +36,16 @@ export function getComments() {
         comments = appComments;
         renderComments({comments});
         loader.textContent = '';
-        addForm.classList.remove("hidden");
+
+        if (user) {
+        const addForm = document.querySelector(".add-form");
+          addForm.classList.remove("hidden");
+        }
         preloader.classList.add('preloader-hidden');
   });
 };
 
-getComments();
-initAddCommentsListeners();
-entranceUser();
+renderApp();
+// renderLoginForm();
+// renderCommentForm();
+// initAddCommentsListeners();

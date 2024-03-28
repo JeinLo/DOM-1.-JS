@@ -1,10 +1,12 @@
 import { postTodo } from "./api.js";
-import { addForm, getComments, loader, comments } from "./main.js";
+import { getComments, comments, renderApp } from "./main.js";
 import { renderComments, } from "./renderComments.js";
 
 
 export function initAddCommentsListeners() {
+    const addForm = document.querySelector(".add-form");
     const buttonElement = document.getElementById("addCommentButton");
+    const loader = document.querySelector(".loader");
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
     buttonElement.addEventListener('click', () => {
