@@ -140,3 +140,18 @@ body {
     border: 3px solid red;
     box-sizing: border-box;
   }
+
+  .delete-form-button {
+    margin-top: 24px;
+    font-size: 14px;
+    padding: 8px 16px;
+    background-color: #d1e88d;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: Helvetica;
+  }
+  
+  .delete-form-button:hover {
+    opacity: 0.9;
+  }
