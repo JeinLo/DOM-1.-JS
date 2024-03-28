@@ -116,7 +116,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">0</span>
-            <button class="like-button"></button>
+            <button class="like-button" onclick="likes(this)"></button>
           </div>
         </div>
       </li>`
@@ -132,6 +132,21 @@
         writeButton.click();
       }
     })
+
+
+
+    let likesNum = 0;
+    function likes(elem) {
+
+      if (likesNum % 2 === 0) {
+        elem.classList.add('-active-like');
+        likesNum++;
+      } else {
+        elem.classList.remove('-active-like');
+        likesNum--;
+      }
+
+    }
 
     // Код писать здесь
     console.log("It works!");
