@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -46,26 +46,74 @@
       </ul>
       <div class="add-form">
         <input
+          id="nameInput"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="commentInput"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
-        <div class="add-form-row">
+        <div id="writeButton" class="add-form-row">
           <button class="add-form-button">Написать</button>
         </div>
       </div>
+    </div>
+    <div class="passive-like">
     </div>
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
+    const nameInputEl = document.getElementById('nameInput');
+    const listEL = document.getElementById('list');
+    const commentInputEl = document.getElementById('commentInput');
+    const writeButtonEl = document.getElementById('writeButton');
+    const likeButtonEl = document.getElementById('likeButton');
+    const likeChetEl = document.getElementById('likeChet');
+
+    
+
+    // writeButtonEl.addEventListener('click', function (e) {
+
+      writeButtonEl.addEventListener('click', () => {
+        nameInputEl.classList.remove("err");
+        commentInputEl.classList.remove('err');
+            if (nameInputEl.value === '') {
+              nameInputEl.classList.add("err");
+              return;
+            }
+            if (commentInputEl.value === '') {
+              commentInputEl.classList.add('err');
+              return;
+            }
+            
+
+      const addCom = listEL.innerHTML;
+      listEL.innerHTML = addCom +
+      `<li class="comment">
+          <div class="comment-header">
+            <div>${nameInputEl.value}</div>
+            <div> ${Year()}  ${MinSec()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+             ${commentInputEl.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span id="likeChet" class="likes-counter"></span>
+              <button id="likeButton" class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+    });
     console.log("It works!");
   </script>
+  <script src="script.js"></script>
 </html>
