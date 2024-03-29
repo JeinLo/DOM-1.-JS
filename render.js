@@ -1,6 +1,6 @@
-const listElement = document.getElementById("list");
 
 export const renderComments = ({ comments, likeEventListener, replyEventListener }) => {
+    const listElement = document.getElementById("list");
     const commentsHtml = comments
     .map((comment, index) => {
         return `<li class="comment" data-index=${index}>

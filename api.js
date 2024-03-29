@@ -28,3 +28,20 @@ export function postComment({ name, date, text }) {
         }
     });
 }
+
+export function loginUser({ login, password}) {
+    return fetch("https://wedev-api.sky.pro/api/user/login", {
+        method: "POST",
+        body: JSON.stringify({
+            login,
+            password,
+        }),
+    }).then((response) => {
+        console.log(response);
+        if (response.status === 400) {
+            throw new Error("Неправильный логин или пароль");
+        } else {
+            return response.json();
+        }
+    }); 
+}
