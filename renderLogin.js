@@ -33,10 +33,18 @@ export const renderLogin = () => {
             loginUser({
                 login: loginInputElement.value,
                 password: passwordInputElement.value,
-            }).then((responseData) => {
-                setUser(responseData.user.token);
-                console.log(user);
-                renderApp();
+            }).then((response) => {
+                if (response.status === 400) {
+                    throw new Error("Неправильный логин или пароль");
+                } else {
+                    setUser(response.user.token);
+                    console.log(user);
+                    renderApp();
+                }
+            }).catch((error) => {
+                if (error.message === "Неправильный логин или пароль") {
+                    alert("Неправильный логин или пароль.");
+                }
             });
         });
     };

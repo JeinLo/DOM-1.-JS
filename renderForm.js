@@ -19,12 +19,12 @@ export const renderForm = () => {
         rows="4"
     ></textarea>
     <div class="add-form-row">
-     <button
-      class="add-form-button"
-      id="add-form-button"
-     >
-      Написать
-     </button>
+        <button
+        class="add-form-button"
+        id="add-form-button"
+        >
+            Написать
+        </button>
     </div>`
      : `<div class="entryForm">Чтобы оставить комментарий, <button class="entryButton" >авторизуйтесь</button></div>`;
      const entryButton = document.querySelector(".entryButton");
