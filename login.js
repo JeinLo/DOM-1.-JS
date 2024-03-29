@@ -15,7 +15,7 @@ export const renderLoginForm = () => {
         />
         <input
             type="text"
-            class="text-area-form"
+            class="input-form auth-input-form auth-password"
             placeholder="Введите пароль"
             rows="4"
             id="authInputPassword"
@@ -23,7 +23,7 @@ export const renderLoginForm = () => {
         <div class="add-form-row">
             <button class="add-form-button" id="authButton">Войти</button>
         </div>
-        <button onclick="renderRegForm();">Зарегестрироваться</button>
+        <button class="reg-button" onclick="renderRegForm();">Зарегестрироваться</button>
     </div>`;
 
     addLoginForm.innerHTML = loginFormHtml;

@@ -25,7 +25,7 @@ export const renderCommentForm = () => {
         <div class="add-form-row">
             <button class="add-form-button" id="addCommentButton">Написать</button>
         </div>
-    </div>`: `<div>Чтобы оставить комментарий пожалуйста <button class="auth-link">авторизуйтесь</button></div>`;
+    </div>`: `<div class="auth-war">Чтобы оставить комментарий пожалуйста, <button class="auth-link">авторизуйтесь</button></div>`;
 
     addCommentForm.innerHTML = commentFormHtml;
     const authButton = document.querySelector('.auth-link');

@@ -162,3 +162,28 @@ body {
   .add-form-button:hover {
     opacity: 0.9;
   }
+
+  .auth-war,
+  .auth-link
+  .reg-button {
+    margin-top: 15px;
+    font-family: Helvetica;
+    font-size: 20px;
+  }
+
+  .auth-link,
+  .reg-button {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    text-decoration: underline;
+  }
+
+  .auth-link:hover,
+  .reg-button:hover {
+    color: rgb(180, 178, 36);
+  }
+
+  .auth-password {
+    margin-top: 12px;
+  }
