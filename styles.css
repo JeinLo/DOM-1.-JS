@@ -165,25 +165,31 @@ body {
 
   .auth-war,
   .auth-link,
-  .reg-button {
+  .reg-button,
+  .auth-button {
     margin-top: 15px;
     font-family: Helvetica;
     font-size: 20px;
   }
 
   .auth-link,
-  .reg-button {
+  .reg-button,
+  .auth-button {
     background-color: transparent;
     color: #fff;
     border: none;
+  }
+
+  .auth-link {
     text-decoration: underline;
   }
 
   .auth-link:hover,
-  .reg-button:hover {
+  .reg-button:hover,
+  .auth-button:hover {
     color: rgb(180, 178, 36);
   }
 
-  .auth-password {
+  #regInputLogin,#regInputPassword,.auth-password {
     margin-top: 12px;
   }

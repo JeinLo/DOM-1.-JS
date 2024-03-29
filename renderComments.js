@@ -53,7 +53,7 @@ export const renderComments = () => {
         renderComments();
   
       });
-    }
+    };
   };
 
   function answerComment () {
@@ -64,6 +64,6 @@ export const renderComments = () => {
         const textInputElement = document.getElementById("text-input");
         textInputElement.value = `< ${event.target.outerText} \n ${event.target.parentElement.parentElement.firstElementChild.firstElementChild.innerText},`;
       });
-    }
-  }
+    };
+  };
   

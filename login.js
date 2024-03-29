@@ -23,7 +23,7 @@ export const renderLoginForm = () => {
         <div class="add-form-row">
             <button class="add-form-button" id="authButton">Войти</button>
         </div>
-        <button class="reg-button" onclick="renderRegForm();">Зарегестрироваться</button>
+        <button class="reg-button">Зарегестрироваться</button>
     </div>`;
 
     addLoginForm.innerHTML = loginFormHtml;
@@ -53,10 +53,14 @@ export const renderLoginForm = () => {
           console.warn(error);
         });
     });
+    const regButton = document.querySelector(".reg-button");
+    regButton.addEventListener('click', () => {
+        renderRegForm();
+    });
 };
 
 export const renderRegForm = () => {
-    const addRegForm = document.getElementById("addRegForm");
+    const addRegForm = document.querySelector(".container");
     const regFormHtml = `
     <div class="add-form" id="regForm">
         <h2>Форма регистрации</h2>
@@ -75,7 +79,7 @@ export const renderRegForm = () => {
             required
         />
             <input
-            type="text" 
+            type="password" 
             class="input-form auth-input-form"
             placeholder="Введите пароль"
             id="regInputPassword" 
@@ -84,7 +88,7 @@ export const renderRegForm = () => {
         <div class="add-form-row">
             <button class="add-form-button" id="regButton">Зарегестрироваться</button>
         </div>
-        <div href="#" onclick="renderLoginForm():">Войти</div>
+        <button class="auth-button">Войти</button>
     </div>`;
     addRegForm.innerHTML = regFormHtml;
     const regButtonElement = document.getElementById("regButton");
@@ -102,6 +106,21 @@ export const renderRegForm = () => {
             setUser(responseData.user);
             renderApp();
             console.log(token);
-        })
+        }).catch((error) => {
+            if (error.message === 'Failed to fetch') {
+              alert("Кажется что-то пошло не так, попробуйте позже");
+            };
+            if (error.message === "Сервер упал") {
+              alert('Сервер сломался, попробуйте позже');
+            };
+            if (error.message === "Короткие вводимые данные") {
+              alert('Неверный логин или пароль.');
+            };
+          console.warn(error);
+        });
+    });
+    const authButton = document.querySelector(".auth-button");
+    authButton.addEventListener('click', () => {
+        renderLoginForm();
     });
 };
