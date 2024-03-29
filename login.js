@@ -14,7 +14,7 @@ export const renderLoginForm = () => {
             required
         />
         <input
-            type="text"
+            type="password"
             class="input-form auth-input-form auth-password"
             placeholder="Введите пароль"
             rows="4"
@@ -40,6 +40,17 @@ export const renderLoginForm = () => {
             setUser(responseData.user);
             renderApp();
             console.log(token);
+        }).catch((error) => {
+            if (error.message === 'Failed to fetch') {
+              alert("Кажется что-то пошло не так, попробуйте позже");
+            };
+            if (error.message === "Сервер упал") {
+              alert('Сервер сломался, попробуйте позже');
+            };
+            if (error.message === "Короткие вводимые данные") {
+              alert('Имя и комментарий должны быть не короче 3х символов');
+            };
+          console.warn(error);
         });
     });
 };

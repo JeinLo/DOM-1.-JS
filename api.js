@@ -73,18 +73,7 @@ export function authUser({login, password}) {
           throw new Error("Короткие вводимые данные");
         };
         return response.json();
-      }).catch((error) => {
-        if (error.message === 'Failed to fetch') {
-          alert("Кажется что-то пошло не так, попробуйте позже");
-        };
-        if (error.message === "Сервер упал") {
-          alert('Сервер сломался, попробуйте позже');
-        };
-        if (error.message === "Нет авторизации") {
-          alert("Авторизируйся");
-          };
-      console.warn(error);
-    });
+      });
 };
 
 export function regUser({name, login, password}) {
@@ -105,17 +94,6 @@ export function regUser({name, login, password}) {
           throw new Error("Короткие вводимые данные");
         };
         return response.json();
-      }).catch((error) => {
-        if (error.message === 'Failed to fetch') {
-          alert("Кажется что-то пошло не так, попробуйте позже");
-        };
-        if (error.message === "Сервер упал") {
-          alert('Сервер сломался, попробуйте позже');
-        };
-        if (error.message === "Нет авторизации") {
-          alert("Авторизируйся");
-          };
-      console.warn(error);
-    });
+      });
 };
 

@@ -9,10 +9,9 @@ export function initAddCommentsListeners() {
     const nameInputElement = document.getElementById("name-input");
     const textInputElement = document.getElementById("text-input");
     buttonElement.addEventListener('click', () => {
-        nameInputElement.classList.remove("error");
         textInputElement.classList.remove("error");
-        if (!textInputElement.value.trim() || !nameInputElement.value.trim()) {
-          textInputElement.classList.add("error") || nameInputElement.classList.add("error");
+        if (!textInputElement.value.trim()) {
+          textInputElement.classList.add("error");
           return;        
         }
 
@@ -28,7 +27,6 @@ export function initAddCommentsListeners() {
         }).then((response) => {
           getComments();
 
-          nameInputElement.value = "";
           textInputElement.value = "";
       
           renderComments();
