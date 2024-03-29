@@ -33,8 +33,8 @@ export function loginUser({ login, password}) {
     return fetch("https://wedev-api.sky.pro/api/user/login", {
         method: "POST",
         body: JSON.stringify({
-            login,
-            password,
+            login: login,
+            password: password,
         }),
     }).then((response) => {
         console.log(response);

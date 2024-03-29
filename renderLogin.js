@@ -1,4 +1,5 @@
 import { loginUser } from "./api.js";
+import { renderApp, setUser, user } from "./main.js";
 
 export const renderLogin = () => {
     const container = document.querySelector(".container");
@@ -23,11 +24,20 @@ export const renderLogin = () => {
             Войти
             </button>
         </div>`;
+    const loginInputElement = document.querySelector(".add-form-login");
+    const passwordInputElement = document.querySelector(".add-form-password");
     const loginButton = document.querySelector(".add-form-button");
     if (loginButton) {
         loginButton.addEventListener("click", (event) => {
             event.preventDefault();
-            loginUser();
+            loginUser({
+                login: loginInputElement.value,
+                password: passwordInputElement.value,
+            }).then((responseData) => {
+                setUser(responseData.user.token);
+                console.log(user);
+                renderApp();
+            });
         });
-    }
+    };
 };

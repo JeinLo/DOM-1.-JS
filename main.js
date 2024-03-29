@@ -11,8 +11,8 @@ export let user = null
 export const setUser = (value) => {
     user = value
 }
+
 export function renderApp () {
-    console.log('hi');
     const container = document.querySelector(".container");
     container.innerHTML = `<ul
     class="comments"
@@ -77,53 +77,52 @@ const replyEventListener = () => {
     }
 };
 
-// рендер (html через js)
 
 
-// buttonElement.addEventListener("click", () => {
-//     const date = getCommentDate();
+buttonElement.addEventListener("click", () => {
+    const date = getCommentDate();
 
-//     nameElement.classList.remove("error");
-//     textElement.classList.remove("error");
-//     if (nameElement.value === "" || textElement.value === "") {
-//         nameElement.classList.add("error");
-//         textElement.classList.add("error");
-//         return;
-//     }
+    nameElement.classList.remove("error");
+    textElement.classList.remove("error");
+    if (nameElement.value === "" || textElement.value === "") {
+        nameElement.classList.add("error");
+        textElement.classList.add("error");
+        return;
+    }
 
-//     const fetchPromisePost = () => {
-//         buttonElement.disabled = true;
-//         buttonElement.textContent = "Комментарий публикуется...";
+    const fetchPromisePost = () => {
+        buttonElement.disabled = true;
+        buttonElement.textContent = "Комментарий публикуется...";
         
-//         postComment({
-//             name: nameElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
-//             text: textElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
-//         })
-//         .then(() => {
-//             return fetchPromiseGet();
-//         })
-//         .then(() => {
-//             textElement.value = "";
-//             nameElement.value = "";
-//             buttonElement.disabled = false;
-//             buttonElement.textContent = "Написать";
-//         })
-//         .catch((error) => {
-//             if (error.message === "Сервер сломался") {
-//                 alert("Сервер сломался попробуй позже.");
-//                 buttonElement.disabled = false;
-//                 buttonElement.textContent = "Написать";
-//                 return;
-//             }
-//             if (error.message === "Плохой запрос") {
-//                 alert("Ошибка в запросе, исправь данные и попробуй снова. Имя и текст должны содержать минимум 3 символа.");
-//                 buttonElement.disabled = false;
-//                 buttonElement.textContent = "Написать";
-//                 return;
-//             } else {
-//                 alert("Кажется пропал интернет.");
-//             }
-//         });
-//     };
-//     fetchPromisePost();
-// });
+        postComment({
+            name: nameElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
+            text: textElement.value.replaceAll(">", "&gt;").replaceAll("<", "&lt;"),
+        })
+        .then(() => {
+            return fetchPromiseGet();
+        })
+        .then(() => {
+            textElement.value = "";
+            nameElement.value = "";
+            buttonElement.disabled = false;
+            buttonElement.textContent = "Написать";
+        })
+        .catch((error) => {
+            if (error.message === "Сервер сломался") {
+                alert("Сервер сломался попробуй позже.");
+                buttonElement.disabled = false;
+                buttonElement.textContent = "Написать";
+                return;
+            }
+            if (error.message === "Плохой запрос") {
+                alert("Ошибка в запросе, исправь данные и попробуй снова. Имя и текст должны содержать минимум 3 символа.");
+                buttonElement.disabled = false;
+                buttonElement.textContent = "Написать";
+                return;
+            } else {
+                alert("Кажется пропал интернет.");
+            }
+        });
+    };
+    fetchPromisePost();
+});
