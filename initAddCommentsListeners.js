@@ -1,7 +1,7 @@
 import { postTodo } from "./api.js";
-import { getComments, comments, renderApp } from "./main.js";
+import { getComments, comments } from "./main.js";
 import { renderComments, } from "./renderComments.js";
-
+import { renderCommentForm } from "./renderForms.js";
 
 export function initAddCommentsListeners() {
     const addForm = document.querySelector(".add-form");

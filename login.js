@@ -36,12 +36,11 @@ export const renderLoginForm = () => {
             login: loginInputElement.value,
             password: passwordInputElement.value,
         }).then((responseData) => {
-            console.log(token);
             setToken(responseData.user.token);
             setUser(responseData.user);
             renderApp();
             console.log(token);
-        })
+        });
     });
 };
 

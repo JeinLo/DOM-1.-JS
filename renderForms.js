@@ -9,9 +9,11 @@ export const renderCommentForm = () => {
         <input
             type="text" 
             class="input-form"
-            placeholder="Введите ваше имя"
             id="name-input" 
             required
+            value=${user.name}
+            disabled
+            readonly
         />
         <textarea
             type="textarea"

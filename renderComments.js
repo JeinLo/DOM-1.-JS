@@ -1,4 +1,4 @@
-import { comments } from "./main.js";
+import { comments, user } from "./main.js";
 import { clock } from "./helpers.js";
 
 export const renderComments = () => {
@@ -24,9 +24,11 @@ export const renderComments = () => {
     }).join('');
   
     listElement.innerHTML = commentsHtml;
-  
-    initLikeButtonListeners();
-    answerComment ();
+    
+    if (user) {
+      initLikeButtonListeners();
+      answerComment ();
+    };
   };
 
   function initLikeButtonListeners () {
@@ -38,7 +40,7 @@ export const renderComments = () => {
   
       buttonElement.addEventListener('click', (el) => {
         el.stopPropagation();
-        const found = comments.find(item => item.id === + id);
+        const found = comments.find(item => item.id === id);
         if (found.isLiked === false) {
           const result = Number(counter) + 1;
           found.likes = result;
@@ -59,7 +61,7 @@ export const renderComments = () => {
     for (const commentBlock of commentBlocks) {
       commentBlock.addEventListener('click', (event) => {
         const userNames = document.querySelectorAll('.user-name');
-        console.log(event);
+        const textInputElement = document.getElementById("text-input");
         textInputElement.value = `< ${event.target.outerText} \n ${event.target.parentElement.parentElement.firstElementChild.firstElementChild.innerText},`;
       });
     }

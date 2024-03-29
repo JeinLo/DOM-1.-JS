@@ -8,7 +8,6 @@ export function setUser(value) {
   user = value;
 }
 export function renderApp() {
-
   const container = document.querySelector('.container');
   container.innerHTML = `
   <ul class="comments" id = 'list'>
