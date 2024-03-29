@@ -26,7 +26,7 @@ export const renderForm = () => {
       Написать
      </button>
     </div>`
-     : `<div>Чтобы оставить комментарий, <button class="entryButton" >авторизуйтесь</button></div>`;
+     : `<div class="entryForm">Чтобы оставить комментарий, <button class="entryButton" >авторизуйтесь</button></div>`;
      const entryButton = document.querySelector(".entryButton");
      if (entryButton) {
         entryButton.addEventListener("click", (event) => {
