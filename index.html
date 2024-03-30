@@ -28,7 +28,7 @@
         </li>
         <li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
+            <div >Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
@@ -38,13 +38,13 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <span id="likeChet" class="likes-counter">75</span>
+              <button id="likeButton" class="like-button -active-like"></button>
             </div>
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div id="form" class="add-form">
         <input
           id="nameInput"
           type="text"
@@ -58,13 +58,14 @@
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
-        <div id="writeButton" class="add-form-row">
-          <button class="add-form-button">Написать</button>
+        <div class="add-form-row">
+          <button id="writeButton"  class="add-form-button">Написать</button>
         </div>
       </div>
+      <button id="delBut" class="deleteButton">Удалить последний комментарий</button>
     </div>
-    <div class="passive-like">
-    </div>
+
+    
   </body>
 
   <script>
@@ -73,12 +74,12 @@
     const listEL = document.getElementById('list');
     const commentInputEl = document.getElementById('commentInput');
     const writeButtonEl = document.getElementById('writeButton');
-    const likeButtonEl = document.getElementById('likeButton');
-    const likeChetEl = document.getElementById('likeChet');
+    const likeButtonEl = document.querySelector('likeButton');
+    const likeChetEl = document.querySelector('likeChet');
+    const delButEl = document.getElementById('delBut');
+    const formEl = document.getElementById('form');
+    const comEl = document.getElementById('com');
 
-    
-
-    // writeButtonEl.addEventListener('click', function (e) {
 
       writeButtonEl.addEventListener('click', () => {
         nameInputEl.classList.remove("err");
@@ -91,11 +92,10 @@
               commentInputEl.classList.add('err');
               return;
             }
-            
 
       const addCom = listEL.innerHTML;
       listEL.innerHTML = addCom +
-      `<li class="comment">
+      `<li id="com" class="comment">
           <div class="comment-header">
             <div>${nameInputEl.value}</div>
             <div> ${Year()}  ${MinSec()}</div>
@@ -105,14 +105,24 @@
              ${commentInputEl.value}
             </div>
           </div>
+
           <div class="comment-footer">
             <div class="likes">
-              <span id="likeChet" class="likes-counter"></span>
-              <button id="likeButton" class="like-button"></button>
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
             </div>
           </div>
         </li>`
+       return nameInputEl.value = ('') 
+       return commentInputEl.value = ('')
     });
+
+//     delButEl.addEventListener('click', () => {
+//       while (comEl.innerHTML ) {
+//     comEl.innerHTML = ('');
+// }
+//     });
+
     console.log("It works!");
   </script>
   <script src="script.js"></script>
