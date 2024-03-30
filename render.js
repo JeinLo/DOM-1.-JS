@@ -89,7 +89,6 @@ export const renderComments = ({
                         }
                     });
             };
-            fetchPromisePost();
         });
         replyEventListener();
     }
