@@ -43,6 +43,9 @@
           </div>
         </li> -->
       </ul>
+	  <div id="wait_for_loading">
+		<p class="comment_start_time">Пожалуйста подождите, комментарии загружаются.</p>
+	  </div>
       <div class="add-form">
         <input id="input-accept-name"
           type="text"
@@ -70,18 +73,24 @@
 		const nameInputElement = document.getElementById('input-accept-name');
 		const textInputElement = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
+		const waitForLoading = document.getElementById('wait_for_loading');
+
 
 		function commentsFunction () {
-		const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/Angelina/comments",{
+		buttonElement.disabled = true;
+		buttonElement.textContent = 'Комментарий загружается'
+
+		console.log('Запрос начался');
+
+        //данные из API 
+		fetch("https://wedev-api.sky.pro/api/v1/Angellina/comments",{
 			method: "GET"
-		});
-		fetchPromise.then((response) => {
-			const jsonPromise = response.json();
-			
-		    jsonPromise.then((responseData) => {
-				console.log(responseData);
-			
-				comments = responseData.comments.map((comment) => {
+			}).then((response) => {
+			return response.json();
+		}).then((responseData) => {
+			//массив из API
+				commentators = responseData.comments.map((comment) => {
+					// дата и время
 					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
 					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
 					return {
@@ -93,15 +102,21 @@
 					};
 				});
 				renderCommentators();
-			});  
-		  });
-		}
+				waitForLoading.classList.add('hide'); 
+			}).then((response) => {
+			buttonElement.classList.remove('gray')
+			buttonElement.disabled = false;
+			buttonElement.textContent = 'Написать';
+			nameInputElement.disabled = false;
+			textInputElement.disabled = false;
+		});
+	}
 		commentsFunction();
 
     let comments = [];
 
-			//кнопка, неактивна при незаполненом поле
-		function checkInputs() {
+		//кнопка, неактивна при незаполненом поле
+	function checkInputs() {
 		if (nameInputElement.value.trim() === "" || textInputElement.value.trim() === "") {
 			buttonElement.disabled = true;
 			buttonElement.classList.add("gray");
@@ -136,9 +151,10 @@
 					buttonElement.click();
 				}
 			})
+
 		//функция лайка
-		const addLikeButtonEventListener = () => {
-			const likesButtonElement = document.querySelectorAll('.like-button');
+	const addLikeButtonEventListener = () => {
+	const likesButtonElement = document.querySelectorAll('.like-button');
     for (const likeButton of likesButtonElement) {
 			let isLike = false;
 			likeButton.addEventListener("click", event => {
@@ -203,16 +219,21 @@
 		};
 			
 			buttonElement.addEventListener("click", () => {
-        const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angelina/comments",{
+
+			nameInputElement.disabled = true;
+			textInputElement.disabled = true;
+
+                const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
 						method: "POST",	
 						body:	JSON.stringify ({
 							text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							
 						}),
-					}
-				);
-				commentsFunction();
+				}
+				).then((response) => {
+					commentsFunction();
+				});
 				
 			// Очистка поля ввода для комментария и имени после отправления комментария
 			const clearCommmentTextArea = document.querySelector('.add-form-text');
