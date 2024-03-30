@@ -49,46 +49,45 @@ export const renderComments = ({
                 textElement.classList.add('error');
                 return;
             }
-            const fetchPromisePost = () => {
-                buttonElement.disabled = true;
-                buttonElement.textContent = 'Комментарий публикуется...';
 
-                postComment({
-                    name: nameElement.value
-                        .replaceAll('>', '&gt;')
-                        .replaceAll('<', '&lt;'),
-                    text: textElement.value
-                        .replaceAll('>', '&gt;')
-                        .replaceAll('<', '&lt;'),
+            buttonElement.disabled = true;
+            buttonElement.textContent = 'Комментарий публикуется...';
+
+            postComment({
+                name: nameElement.value
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('<', '&lt;'),
+                text: textElement.value
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('<', '&lt;'),
+            })
+                .then(() => {
+                    fetchPromiseGet();
                 })
-                    .then(() => {
-                        fetchPromiseGet();
-                    })
-                    .then(() => {
-                        textElement.value = '';
-                        nameElement.value = '';
+                .then(() => {
+                    textElement.value = '';
+                    nameElement.value = '';
+                    buttonElement.disabled = false;
+                    buttonElement.textContent = 'Написать';
+                })
+                .catch((error) => {
+                    if (error.message === 'Сервер сломался') {
+                        alert('Сервер сломался попробуй позже.');
                         buttonElement.disabled = false;
                         buttonElement.textContent = 'Написать';
-                    })
-                    .catch((error) => {
-                        if (error.message === 'Сервер сломался') {
-                            alert('Сервер сломался попробуй позже.');
-                            buttonElement.disabled = false;
-                            buttonElement.textContent = 'Написать';
-                            return;
-                        }
-                        if (error.message === 'Плохой запрос') {
-                            alert(
-                                'Ошибка в запросе, исправь данные и попробуй снова. Имя и текст должны содержать минимум 3 символа.',
-                            );
-                            buttonElement.disabled = false;
-                            buttonElement.textContent = 'Написать';
-                            return;
-                        } else {
-                            alert('Кажется пропал интернет.');
-                        }
-                    });
-            };
+                        return;
+                    }
+                    if (error.message === 'Плохой запрос') {
+                        alert(
+                            'Ошибка в запросе, исправь данные и попробуй снова. Имя и текст должны содержать минимум 3 символа.',
+                        );
+                        buttonElement.disabled = false;
+                        buttonElement.textContent = 'Написать';
+                        return;
+                    } else {
+                        alert('Кажется пропал интернет.');
+                    }
+                });
         });
         replyEventListener();
     }
