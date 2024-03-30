@@ -2,7 +2,7 @@ import { getComments } from "./api.js";
 import { getCommentDate } from "./date.js";
 import { renderComments } from "./render.js";
 import { renderForm } from "./renderForm.js";
-
+//import { format } from "date-fns";
 
 export let user = null
 export const setUser = (value) => {
