@@ -1,71 +1,154 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="input-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="write" class="add-form-button disabled">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
-  </script>
+<script>
+  // Выделяем взаимодействующие объекты с которыми нужно работать
+  const listEl = document.getElementById('list');
+  const inputNameEl = document.getElementById('input-name');
+  const inputCommentEl = document.getElementById('input-comment');
+  const writeEl = document.getElementById('write');
+
+
+
+  // Прописываем дальнейшие действия при нажатии кнопки
+  writeEl.addEventListener('click', function (e) {
+    // Не даём отправить пустую форму
+    if (inputNameEl.value === '' || inputCommentEl.value === '') {
+      if (inputNameEl.value === '') {
+        inputNameEl.style.backgroundColor = 'lightcoral';
+      }
+      if (inputCommentEl.value === '') {
+        inputCommentEl.style.backgroundColor = 'lightcoral';
+      }
+      // Возвращаем
+      return;
+    };
+    // Определяем формат времени и даты как на образце
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+    const formattedDate = `${day < 10 ? '0' : ''}${day}.${month < 10 ? '0' : ''}${month}.${year}`;
+
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const formattedTime = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+
+    // Добавляем элемент списка с данными полученными через value
+    const oldList = listEl.innerHTML;
+    listEl.innerHTML = oldList +
+
+      `<li class="comment">
+        <div class="comment-header">
+          <div>${inputNameEl.value}</div>
+          <div>${formattedDate} ${formattedTime}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${inputCommentEl.value}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">0</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>`;
+
+    // Возвращаем всё назад
+    inputNameEl.value = '';
+    inputCommentEl.value = '';
+    inputNameEl.style.backgroundColor = '';
+    inputCommentEl.style.backgroundColor = '';
+
+
+  });
+
+
+  // **************************************** ДОПОЛНИТЕЛЬНО ********************************
+
+  // Функция для проверки заполнения полей
+  function updateWriteButton() {
+
+    const isNameFilled = inputNameEl.value.trim() !== '';
+    const isCommentFilled = inputCommentEl.value.trim() !== '';
+
+    // Если оба поля заполнены, делаем кнопку активной
+    if (isNameFilled && isCommentFilled) {
+      writeEl.disabled = false;
+      writeEl.classList.remove('disabled'); // Убираем класс disabled
+    } else {
+      // Если хотя бы одно из полей не заполнено, делаем кнопку неактивной и серой
+      writeEl.disabled = true;
+      writeEl.classList.add('disabled'); // Добавляем класс disabled (ПРОПИСЫВАЕМ ЕГО В CSS И B HTML)
+    }
+  }
+  inputNameEl.addEventListener('input', updateWriteButton);
+  inputNameEl.addEventListener('change', updateWriteButton);
+  inputCommentEl.addEventListener('input', updateWriteButton);
+  inputCommentEl.addEventListener('change', updateWriteButton);
+  inputCommentEl.addEventListener('keydown', updateWriteButton);
+
+
+// для остальных задач нужно всё переписать под одну функцию выполнения
+
+  // **************************************** ДОПОЛНИТЕЛЬНО ********************************
+</script>
+
 </html>
