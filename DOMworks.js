@@ -162,6 +162,8 @@ function setFormListeners() {
             setTimeout(cleanErrorsInUI, 2000);
         } else {
             addForm.style.display = 'none';
+
+            addCommentLoader = document.querySelector('.add-comment-loader')
             addCommentLoader.style.display = 'block';
 
             setCommentToServer(name, comment, () => {

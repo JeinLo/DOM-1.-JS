@@ -94,10 +94,4 @@ export function registration({ login, name, password }) {
         .then((response) => {
             return response.json();
         })
-        .catch((error) => {
-            // Обработка ошибок
-            console.error('Ошибка:', error.message);
-            // Отображение сообщения об ошибке пользователю
-            alert('Неправильные данные');
-        })
 }

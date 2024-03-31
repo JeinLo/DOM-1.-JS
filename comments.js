@@ -1,4 +1,5 @@
 import { isAuthorized } from './api.js';
+import { format } from 'date-fns';
 
 let comments = [];
 
@@ -7,7 +8,7 @@ export function addComment(name, comment) {
     comments.push({
         id: date.getTime(),
         name: name,
-        date: date.print(),
+        date: format(date, 'yyyy-MM-dd HH.mm.ss'),
         text: comment.sterilize(),
         isLiked: false,
         likes: 0,
@@ -19,7 +20,7 @@ export function fillComments(data) {
         return {
             id: comment.id,
             name: comment.author.name,
-            date: new Date(comment.date).print(),
+            date: format(new Date(comment.date), 'yyyy-MM-dd HH.mm.ss'),
             text: comment.text,
             likes: comment.likes,
             isLiked: false,

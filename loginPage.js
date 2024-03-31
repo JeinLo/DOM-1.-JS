@@ -36,7 +36,14 @@ export const renderRegistration = () => {
             login: loginInputElement.value,
             name: nameInputElement.value,
             password: passwordInputElement.value,
-        }).then(endUserEnter)
+        })
+            .then(endUserEnter)
+            .catch((error) => {
+                // Обработка ошибок
+                console.error('Ошибка:', error.message);
+                // Отображение сообщения об ошибке пользователю
+                alert('Вы ввели неправильные данные');
+            })
     })
 }
 
@@ -71,7 +78,14 @@ export const renderLogin = () => {
         login({
             login: loginInputElement.value,
             password: passwordInputElement.value,
-        }).then(endUserEnter)
+        })
+            .then(endUserEnter)
+            .catch((error) => {
+                // Обработка ошибок
+                console.error('Ошибка:', error.message);
+                // Отображение сообщения об ошибке пользователю
+                alert('Неправильный логин или пароль');
+            })
     })
 }
 

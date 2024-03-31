@@ -16,5 +16,3 @@ Date.prototype.print = function () {
         hour12: false,
     }).replace(",", "")
 }
-// const formattedDate = format(new Date(), 'yyyy-MM-dd HH.mm.ss');
-// const date = new Date();
