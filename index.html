@@ -59,7 +59,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="writeButton"  class="add-form-button">Написать</button>
+          <button disabled id="writeButton"  class="add-form-button">Написать</button>
         </div>
       </div>
       <button id="delBut" class="deleteButton">Удалить последний комментарий</button>
@@ -80,19 +80,31 @@
     const formEl = document.getElementById('form');
     const comEl = document.getElementById('com');
 
+  
+    nameInputEl.addEventListener('input', function(event) {
+  writeButtonEl.disabled = (nameInputEl.value === '');
+});
+
 
       writeButtonEl.addEventListener('click', () => {
         nameInputEl.classList.remove("err");
         commentInputEl.classList.remove('err');
+
+       
+
             if (nameInputEl.value === '') {
               nameInputEl.classList.add("err");
+                    
               return;
             }
             if (commentInputEl.value === '') {
               commentInputEl.classList.add('err');
               return;
             }
-
+           
+           
+            if (nameInputEl.value != '') {
+                
       const addCom = listEL.innerHTML;
       listEL.innerHTML = addCom +
       `<li id="com" class="comment">
@@ -113,15 +125,11 @@
             </div>
           </div>
         </li>`
-       return nameInputEl.value = ('') 
-       return commentInputEl.value = ('')
-    });
-
-//     delButEl.addEventListener('click', () => {
-//       while (comEl.innerHTML ) {
-//     comEl.innerHTML = ('');
-// }
-//     });
+        this.disabled = true
+        nameInputEl.value = (''); 
+        commentInputEl.value = ('');
+  
+    }});
 
     console.log("It works!");
   </script>
