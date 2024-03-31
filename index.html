@@ -89,7 +89,7 @@
 			return response.json();
 		}).then((responseData) => {
 			//массив из API
-				commentators = responseData.comments.map((comment) => {
+				comments = responseData.comments.map((comment) => {
 					// дата и время
 					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
 					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
@@ -111,7 +111,7 @@
 			textInputElement.disabled = false;
 		});
 	}
-		commentsFunction();
+	commentsFunction();
 
     let comments = [];
 
