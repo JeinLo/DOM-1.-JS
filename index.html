@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -28,7 +28,7 @@
         </li>
         <li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
+            <div >Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
@@ -38,34 +38,100 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <span id="likeChet" class="likes-counter">75</span>
+              <button id="likeButton" class="like-button -active-like"></button>
             </div>
           </div>
         </li>
       </ul>
-      <div class="add-form">
+      <div id="form" class="add-form">
         <input
+          id="nameInput"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
+          id="commentInput"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button disabled id="writeButton"  class="add-form-button">Написать</button>
         </div>
       </div>
+      <button id="delBut" class="deleteButton">Удалить последний комментарий</button>
     </div>
+
+    
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
+    const nameInputEl = document.getElementById('nameInput');
+    const listEL = document.getElementById('list');
+    const commentInputEl = document.getElementById('commentInput');
+    const writeButtonEl = document.getElementById('writeButton');
+    const likeButtonEl = document.querySelector('likeButton');
+    const likeChetEl = document.querySelector('likeChet');
+    const delButEl = document.getElementById('delBut');
+    const formEl = document.getElementById('form');
+    const comEl = document.getElementById('com');
+
+  
+    nameInputEl.addEventListener('input', function(event) {
+  writeButtonEl.disabled = (nameInputEl.value === '');
+});
+
+
+      writeButtonEl.addEventListener('click', () => {
+        nameInputEl.classList.remove("err");
+        commentInputEl.classList.remove('err');
+
+       
+
+            if (nameInputEl.value === '') {
+              nameInputEl.classList.add("err");
+                    
+              return;
+            }
+            if (commentInputEl.value === '') {
+              commentInputEl.classList.add('err');
+              return;
+            }
+           
+           
+            if (nameInputEl.value != '') {
+                
+      const addCom = listEL.innerHTML;
+      listEL.innerHTML = addCom +
+      `<li id="com" class="comment">
+          <div class="comment-header">
+            <div>${nameInputEl.value}</div>
+            <div> ${Year()}  ${MinSec()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+             ${commentInputEl.value}
+            </div>
+          </div>
+
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+        this.disabled = true
+        nameInputEl.value = (''); 
+        commentInputEl.value = ('');
+  
+    }});
+
     console.log("It works!");
   </script>
+  <script src="script.js"></script>
 </html>
