@@ -139,4 +139,5 @@ body {
   .add-form-button.disabled {
     background-color: #ccc; 
     cursor: not-allowed; 
+    
 }
