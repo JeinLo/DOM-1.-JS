@@ -6,7 +6,7 @@
   </head>
 
   <body>
-    <h1>Список задач</h1>
+    <h1 id="timer-title">Список задач</h1>
     <ul class="tasks" id="list">
       <!-- Список рендерится из JS -->
     </ul>
@@ -32,16 +32,53 @@
     const listElement = document.getElementById("list");
     const textInputElement = document.getElementById("text-input");
 
+    // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
+    // Запрос может выполняться секунды и даже минуты
+    // fetch - запускает выполнение запроса к api
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos", {
+      method: "GET",
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        tasks = responseData.todos;
+        renderTasks();
+      });
+    });
+
+    // Практика 4. Получите цвет из API и покрасьте им фон приложения.
+    const fetchPromiseColor = fetch(
+      "https://wedev-api.sky.pro/api/tasks/random-red",
+      {
+        method: "GET",
+      }
+    );
+    fetchPromiseColor.then((response) => {
+      const jsonPromiseColor = response.json();
+
+      jsonPromiseColor.then((responseData) => {
+        document.body.style.backgroundColor = responseData.color;
+        renderTasks();
+      });
+    });
+
+    // TODO: Получать из хранилища данных
     let tasks = [
       {
-        text: "Купить чай"
+        text: "Купить чай",
       },
       {
-        text: "Заварить чай"
+        text: "Заварить чай",
       },
       {
-        text: "Выпить чай"
-      }
+        text: "Выпить чай",
+      },
     ];
 
     const renderTasks = () => {
@@ -50,11 +87,7 @@
           return `
           <li class="task">
             <p class="task-text">
-              ${task.text
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")}
+              ${task.text}
               <button data-index="${index}" class="button delete-button">Удалить</button>
             </p>
           </li>`;
@@ -68,24 +101,53 @@
         deleteButton.addEventListener("click", (event) => {
           event.stopPropagation();
 
-          const index = deleteButton.dataset.index;
+          // Практика 2(1) «Разминка»
+          // Используя setTimeout, сделайте так, чтобы после клика на кнопку «Удалить» элемент удалялся не сразу, а через 1 секунду. На эту секунду надпись на кликнутой кнопке должна поменяться на «Задача удаляется…».
+          deleteButton.innerHTML = "Задача удаляется...";
 
-          tasks.splice(index, 1);
+          setTimeout(() => {
+            const index = deleteButton.dataset.index;
 
-          renderTasks();
+            // TODO: Удалять из хранилища данных
+            tasks.splice(index, 1);
+
+            renderTasks();
+          }, 1000);
         });
       }
     };
 
     renderTasks();
 
+    // Практика 2(2) «Разминка»
+    // Используя setTimeout, сделайте так, чтобы после клика на заголовок «Список задач» в заголовке начинался обратный отсчет от 3 до 1 с интервалом в 1 секунду, а затем снова менялся на список задач
+    const timerTitleElement = document.getElementById("timer-title");
+
+    timerTitleElement.addEventListener("click", () => {
+      timerTitleElement.innerHTML = "3";
+      setTimeout(() => {
+        timerTitleElement.innerHTML = "2";
+        setTimeout(() => {
+          timerTitleElement.innerHTML = "1";
+          setTimeout(() => {
+            timerTitleElement.innerHTML = "Список задач";
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    });
+
     buttonElement.addEventListener("click", () => {
       if (textInputElement.value === "") {
         return;
       }
 
+      // TODO: Добавлять задачу в хранилище данных
       tasks.push({
         text: textInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
       });
 
       renderTasks();
