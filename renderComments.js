@@ -1,13 +1,16 @@
 import { comments, user } from "./main.js";
-import { clock } from "./helpers.js";
+// import { formatDateToRu, formatDateToUs } from "./lib/formatDate/formatDate.js";
+import { format } from "date-fns";
 
 export const renderComments = () => {
+    // const country = "ru";
     const listElement = document.getElementById("list");
     const commentsHtml = comments.map((item) => {
+      let createDate = format(new Date(item.date), 'yyyy-MM-dd hh.mm');
       return `<li class="comment">
                 <div class="comment-header">
                   <div class="user-name">${item.name}</div>
-                  <div>${clock(item.date)}</div>
+                  <div>${createDate}</div>
                 </div>
                 <div data-text="${item.comment}" class="comment-body">
                   <div class="comment-text">
@@ -22,7 +25,7 @@ export const renderComments = () => {
                 </div>
               </li>`;
     }).join('');
-  
+
     listElement.innerHTML = commentsHtml;
     
     if (user) {
