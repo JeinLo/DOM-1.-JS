@@ -55,10 +55,10 @@
         const addComments = responseData.comments.map((comment) => {
           return {
             name: comment.author.name,
-            date: new Date(comment.date),
+            date: correceDateApi(new Date(comment.date)),
             text: comment.text,
             likes: comment.likes,
-            isLiked: false,
+            isLiked: comment.isLiked,
           };
         });
 
@@ -100,6 +100,34 @@
 
       initLikeButtons();
       initReplyComments();
+    };
+
+    const correceDateApi = (myDate) => {
+      //Создаю объекты для работы с датой
+      let date = myDate.getDate();
+      let month = myDate.getMonth();
+      let year = myDate.getFullYear();
+      let hours = myDate.getHours();
+      let minutes = myDate.getMinutes();
+
+      //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
+      date = date < 10 ? "0" + date : date;
+      month = month < 10 ? "0" + (month + 1) : month + 1;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+
+      //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
+      return (
+        date +
+        "." +
+        month +
+        "." +
+        year.toString().slice(2) +
+        " " +
+        hours +
+        ":" +
+        minutes
+      );
     };
 
     //При нажатии на любой коммент, копирует его в commentInputElement
@@ -178,46 +206,50 @@
         return;
       }
 
-      //Создаю объекты для работы с датой
-      let myDate = new Date();
-      let date = myDate.getDate();
-      let month = myDate.getMonth();
-      let year = myDate.getFullYear();
-      let hours = myDate.getHours();
-      let minutes = myDate.getMinutes();
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInputElement.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;"),
+            date: correceDateApi(new Date()),
+            text: commentInputElement.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+              .replaceAll("QUOTE_END", "</div>"),
+            likes: 0,
+            isLiked: false,
+          }),
+        }
+      );
 
-      //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
-      date = date < 10 ? "0" + date : date;
-      month = month < 10 ? "0" + month : month;
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
 
-      //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
-      const dateElement =
-        date +
-        "." +
-        month +
-        "." +
-        year.toString().slice(2) +
-        " " +
-        hours +
-        ":" +
-        minutes;
+        jsonPromise.then((responseData) => {
 
-      comments.push({
-        name: nameInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-        date: dateElement,
-        text: commentInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          //Сделал замену элементов при добавлении нового коммента, чтобы присваивался класс и появлялась белая рамка
-          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-          .replaceAll("QUOTE_END", "</div>"),
-        isLiked: false,
-        likes: 0,
+          comments = responseData.comments;
+          renderComments();
+        });
       });
+
+      // comments.push({
+      //   name: nameInputElement.value
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;"),
+      //   date: correceDateApi(new Date()),
+      //   text: commentInputElement.value
+      //     .replaceAll("<", "&lt;")
+      //     .replaceAll(">", "&gt;")
+      //     //Сделал замену элементов при добавлении нового коммента, чтобы присваивался класс и появлялась белая рамка
+      //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+      //     .replaceAll("QUOTE_END", "</div>"),
+      //   isLiked: false,
+      //   likes: 0,
+      // });
 
       //Обнуление импутов
       nameInputElement.value = "";
