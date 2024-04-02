@@ -1,150 +1,250 @@
-const buttonElement = document.getElementById('add-button');
-const listElement = document.getElementById('list');
-const nameInputElement = document.getElementById('name-input');
-const commentInputElement = document.getElementById('comment-input');
-const deleteButtonElement = document.getElementById('delete-button');
+const massageSendButton = document.querySelector('.add-form-button');
+const listElement = document.querySelector('.comments');
+const nameInputElement = document.querySelector('.add-form-name');
+const commitInputElement = document.querySelector('.add-form-text');
+const lastCommentDeleteButton = document.querySelector('.delete-last-comment');
+const likeButtonElements = document.querySelectorAll('.like-button');
+massageSendButton.disabled = true;
 
-const commentsArray = [
-  {
-    name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    comment: 'Это будет первый комментарий на этой странице',
-    like: 3,
-    userLike: false,
-    paint: ''
-  },
-  {
-    name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    comment: 'Мне нравится как оформлена эта страница! ❤',
-    like: 75,
-    userLike: true,
-    paint: '-active-like'
-  }
-];
 
-const likes = () => {
-  const likeButtons = document.querySelectorAll('.like-button');
-  for (const likeButton of likeButtons) {
-    likeButton.addEventListener('click', () => {
-      const index = likeButton.dataset.index;
-      if (commentsArray[index].userLike === false) {
-        commentsArray[index].paint = '-active-like';
-        commentsArray[index].like += 1;
-        commentsArray[index].userLike = true;
-      } else {
-        commentsArray[index].paint = '';
-        commentsArray[index].like -= 1;
-        commentsArray[index].userLike = false;
-      }
+
+
+//Функция получения и преобразования данных с сервера
+
+function getComments() {
+  return fetch(
+    'https://wedev-api.sky.pro/api/v1/DidusAnatoliy/comments',
+    {
+      method: "GET"
+    }
+  )
+    .then((response) => {
+      return response.json();
+    })
+    .then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        return {
+          name: comment.author.name,
+          date: new Date(comment.date).toLocaleDateString('ru-RU', { year: '2-digit', month: '2-digit', day: '2-digit' }) + ' ' + new Date(comment.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+          massage: comment.text,
+          likesCounter: comment.likes,
+          isLiked: false,
+        };
+      });
+      comments = appComments;
       renderComments();
     });
-  };
 };
+getComments();
 
 
+
+//Условное ветвление отрабатывает невозможность ввода первой буквы в виде пробела
+nameInputElement.oninput = () => {
+  if (nameInputElement.value.charAt(0) === ' ') {
+    nameInputElement.value = '';
+  }
+}
+
+commitInputElement.oninput = () => {
+  if (commitInputElement.value.charAt(0) === ' ') {
+    commitInputElement.value = '';
+  }
+}
+//массив пользователей
+let comments = [];
+
+
+
+const likeButtonListners = () => {
+  const likeButtonElements = document.querySelectorAll('.like-button');
+  for (const likeButtonElement of likeButtonElements) {
+    likeButtonElement.addEventListener('click', event => {
+      event.stopPropagation();
+      const index = likeButtonElement.dataset.index;
+
+      if (comments[index].isLiked === false) {
+        comments[index].likesCounter = comments[index].likesCounter + 1;
+        comments[index].isLiked = true;
+
+      } else {
+        comments[index].isLiked = false;
+        comments[index].likesCounter = comments[index].likesCounter - 1;
+
+      }
+      renderComments();
+
+    })
+  }
+}
+
+//Функции ответа на комментарий
+
+const editButtonListners = () => {
+  const editButtonElements = document.querySelectorAll(".edit");
+  for (const editButtonElement of editButtonElements) {
+    editButtonElement.addEventListener("click", (event) => {
+      event.stopPropagation();
+      comments[editButtonElement.dataset.index].isEdit = false;
+      renderComments();
+    })
+  }
+}
+
+
+
+
+const doneButtonListners = () => {
+  const doneButtonElements = document.querySelectorAll(".done");
+  for (const doneButtonElement of doneButtonElements) {
+    doneButtonElement.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const dune = doneButtonElement.dataset.index;
+      const addFormTextEdit = document.querySelectorAll(".addformedit");
+      comments[done].massage = addFormTextEdit[done].value;
+      comments[done].isEdit = true;
+      renderComments();
+    })
+
+  }
+}
+
+
+const quoteElementsListners = () => {
+  const quoteElements = document.querySelectorAll(".comment-text");
+  for (const quoteElement of quoteElements) {
+    quoteElement.addEventListener("click", () => {
+      const quote = quoteElement.dataset.index;
+      commitInputElement.value = ">" + comments[quote].massage + "\n" + comments[quote].name + "\n";
+      renderComments();
+    })
+  }
+}
+
+
+//HTML разметка комментария
 const renderComments = () => {
-  const commentsHtml = commentsArray.map((item, index) => {
-    let activeLike = ''
-    if (commentsArray[index].paint) {
-      paint = '-active-like'
+  const commentsHtml = comments.map((comment, index) => {
+    let activeLikeClass;
+    if (comments[index].isLiked === true) {
+      activeLikeClass = "active-like"
+    } else {
+      activeLikeClass = ""
     }
+
+    let massageHideClass;
+    let doneHideClass;
+
+
     return `
-    <li class="comment">
+        <li class="comment" data-index="${index}">
           <div class="comment-header">
-            <div>${item.name}</div>
-            <div>${item.date}</div>
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text" data-index="${index}">
-              ${item.comment}
+              <p class ="done ${doneHideClass}" data-index="${index}"></p>
+            <div class="comment-text ${massageHideClass}" data-index="${index}">
+              ${comment.massage}
+              <p class ="edit" data-index="${index}"></p>
             </div>
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${item.like}</span>
-              <button data-index='${index}' class="like-button ${item.paint}"></button>
-            </div>
+              <span class="likes-counter">${comment.likesCounter}</span>
+              <button class="like-button ${activeLikeClass}" data-index="${index}" data-like="${comment.isLiked}"></button>
+              </div>
           </div>
-        </li>
-    `})
-    .join('');
+        </li>`
+  }).join("")
   listElement.innerHTML = commentsHtml;
-  likes();
-  
-  const commentTexts = document.querySelectorAll('.comment-text');
-  commentTexts.forEach(textElement => {
-    textElement.addEventListener('click', (event) => {
-      const index = event.target.getAttribute('data-index');
-      commentInputElement.value = `> ${commentsArray[index].comment}: ${commentsArray[index].name}`;
-      commentInputElement.focus();
-    });
-  });
-};
+
+  likeButtonListners();
+  editButtonListners();
+  doneButtonListners();
+  quoteElementsListners();
+
+}
 renderComments();
 
 
-buttonElement.disabled = true;
-nameInputElement.addEventListener('input', () => {
-  if (nameInputElement.value === '') {
-    buttonElement.disabled = true;
-    return;
-  } else {
-    buttonElement.disabled = false;
+
+
+//функция формата реального времени
+
+function addComment() {
+
+
+  //Обработчик клика и проверка ввода
+  if (nameInputElement.value === "" && commitInputElement.value === "") {
+    nameInputElement.classList.add("errorinput");
+    commitInputElement.classList.add("errorinput");
+    return
+  } else if (nameInputElement.value === "") {
+    nameInputElement.classList.add("errorinput");
+    return
+  } else if (commitInputElement.value === "") {
+    commitInputElement.classList.add("errorinput");
+    return
   }
-})
 
-buttonElement.addEventListener('click', () => {
-  nameInputElement.classList.remove('error');
-  commentInputElement.classList.remove('error');
+  //Вввод нового комментария
+  massageSendButton.disabled = true;
+  massageSendButton.textContent = 'Ждите....';
 
-  if (nameInputElement.value.trim() === '' || commentInputElement.value.trim() === '') {
-    nameInputElement.classList.add('error');
-    commentInputElement.classList.add('error');
-    return; 
- }
-  
-  const date = new Date();
-  const formattedDate =
-    date.getDate().toString().padStart(2, '0') + '.' +
-    (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
-    date.getFullYear().toString().slice(-2) + ' ' +
-    date.getHours().toString().padStart(2, '0') + ':' +
-    date.getMinutes().toString().padStart(2, '0');
+  //Функция добавлений данных на сервер
 
-  commentsArray.push({
-    name: nameInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-    date: formattedDate,
-    comment: commentInputElement.value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;"),
-    like: 0,
-    userLike: false,
-    paint: '',
-  });
+  fetch(
+    'https://wedev-api.sky.pro/api/v1/DidusAnatoliy/comments',
+    {
+      method: "POST",
+      body: JSON.stringify({
+        name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+        text: commitInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("%BEGIN_QUOTE", "<div class='quote'>")
+          .replaceAll("END_QUOTE%", "</div>"),
+      })
+    }
+  ).then(() => {
+    return getComments();
+  }).then(() => {
+    massageSendButton.disabled = false;
+    massageSendButton.textContent = 'Написать';
+  })
+  //Очистка форм input
+  nameInputElement.value = "";
+  commitInputElement.value = "";
+  nameInputElement.classList.remove("errorinput");
+  commitInputElement.classList.remove("errorinput");
+
   renderComments();
 
-  nameInputElement.value = '';
-  commentInputElement.value = '';
-  buttonElement.disabled = true;
-});
+};
 
-deleteButtonElement.addEventListener('click', () => {
-  const lastCommentIndex = listElement.innerHTML.lastIndexOf('<li class="comment">');
-  if (lastCommentIndex !== -1) {
-    listElement.innerHTML = listElement.innerHTML.substring(0, lastCommentIndex);
+massageSendButton.addEventListener("click", addComment);
+
+nameInputElement.addEventListener("input", () => {
+  massageSendButton.disabled = false;
+})
+
+commitInputElement.addEventListener("input", () => {
+  massageSendButton.disabled = false;
+})
+
+lastCommentDeleteButton.addEventListener("click", () => {
+  if (comments.length > 0) {
+    comments.pop();
+    renderComments();
   }
 });
 
 
-document.addEventListener('keyup', (event) => {
-  if (event.key === 'Enter') {
-    buttonElement.click();
-  }
-});
+
