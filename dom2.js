@@ -13,7 +13,7 @@ massageSendButton.disabled = true;
 
 function getComments() {
   const loadingElement = document.getElementById('loading');
- loadingElement.style.display = 'block';
+  loadingElement.style.display = 'block';
   return fetch(
     'https://wedev-api.sky.pro/api/v1/DidusAnatoliy/comments',
     {
@@ -191,6 +191,12 @@ function addComment() {
     return
   }
 
+  const loadingMessageElement = document.getElementById('loading-message');
+  loadingMessageElement.style.display = 'block';
+
+  // Скрываем форму добавления комментария
+  const commentFormElement = document.querySelector('.add-form');
+  commentFormElement.style.display = 'none';
   //Вввод нового комментария
   massageSendButton.disabled = true;
   massageSendButton.textContent = 'Ждите....';
@@ -221,6 +227,8 @@ function addComment() {
   }).then(() => {
     massageSendButton.disabled = false;
     massageSendButton.textContent = 'Написать';
+    loadingMessageElement.style.display = 'none';
+    commentFormElement.style.display = 'block';
   })
   //Очистка форм input
   nameInputElement.value = "";
