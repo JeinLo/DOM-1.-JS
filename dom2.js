@@ -12,6 +12,8 @@ massageSendButton.disabled = true;
 //Функция получения и преобразования данных с сервера
 
 function getComments() {
+  const loadingElement = document.getElementById('loading');
+ loadingElement.style.display = 'block';
   return fetch(
     'https://wedev-api.sky.pro/api/v1/DidusAnatoliy/comments',
     {
@@ -33,6 +35,7 @@ function getComments() {
       });
       comments = appComments;
       renderComments();
+      loadingElement.style.display = 'none';
     });
 };
 getComments();
