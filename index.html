@@ -62,9 +62,33 @@
   const commentsEl = document.getElementById("comments");
   const nameInputEl = document.getElementById("add-form-name");
   const textInputEl = document.getElementById("add-form-text");
+  const likeButtonEls = document.querySelectorAll(".like-button");
+
 
   const currentDate = new Date().toLocaleDateString('default', { day: '2-digit', month: '2-digit', year: '2-digit' })
     + " " + new Date().toLocaleTimeString().slice(0, -3);
+
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
+      isLiker: false,
+      likeCount: 3,
+    },
+
+    {
+      name: 'Варвара Н.',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤',
+      isLiker: true,
+      likeCount: 75,
+    }
+  ];
+
+  function renderComments() {
+    li
+  }
 
   buttonEl.addEventListener('click', () => {
     if (nameInputEl.value === "") {
@@ -78,27 +102,16 @@
       return;
     } else {
       textInputEl.classList.remove("error");
-    }
+    };
 
-    const oldCommentsHtml = commentsEl.innerHTML;
-    commentsEl.innerHTML = oldCommentsHtml +
-      `<li class="comment">
-      <div class="comment-header">
-        <div>${nameInputEl.value}</div>
-        <div>${currentDate}</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          <div>${textInputEl.value}</div>
-        </div>
-      </div>
-      <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    comments.push(
+      {
+        name: nameInputEl.value,
+        date: currentDate,
+        text: textInputEl.value,
+        isLiker: false,
+        likeCount: 0,
+      });
 
     nameInputEl.value = '';
     textInputEl.value = '';
