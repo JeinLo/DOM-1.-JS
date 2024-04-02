@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments" id="list">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" id="likes">3</span>
-              <button class="like-button" id="like"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter" id="likes">75</span>
-              <button class="like-button -active-like" id="like"></button>
-            </div>
-          </div>
-        </li>
+      
       </ul>
       <div class="add-form">
         <input
@@ -108,10 +75,10 @@ function renderComments() {
     ;
     listElement.appendChild(commentElement);
   });
-}
+// }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+// document.addEventListener('DOMContentLoaded', function() {
   const likeButtons = document.querySelectorAll('.like-button');
   const likesCounters = document.querySelectorAll('.likes-counter');
 
@@ -134,7 +101,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-});
+};
+
 document.addEventListener('DOMContentLoaded', function() {
   const inputNameElement = document.getElementById('inputName');
   const inputCommentElement = document.getElementById('inputComment');
@@ -186,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+renderComments();
   
   </script>
 </html>
