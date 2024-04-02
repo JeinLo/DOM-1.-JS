@@ -77,8 +77,9 @@
 
 
 		function commentsFunction () {
-		buttonElement.disabled = true;
-		buttonElement.textContent = 'Комментарий загружается'
+			buttonElement.disabled = true;
+			buttonElement.textContent = 'Комментарий загружается'
+			nameInputElement.disabled = true;
 
 		console.log('Запрос начался');
 
@@ -147,10 +148,10 @@
 	};
 		//коммент по нажатию клавиши
 		document.addEventListener('keydown', function(e) {
-				if (e.key === 'Enter') {
-					buttonElement.click();
-				}
-			})
+			if (e.key === 'Enter') {
+				buttonElement.click();
+			}
+		})
 
 		//функция лайка
 	const addLikeButtonEventListener = () => {
@@ -219,21 +220,25 @@
 		};
 			
 			buttonElement.addEventListener("click", () => {
+			//nameInputElement.disabled = true;
+			//textInputElement.disabled = true;
 
-			nameInputElement.disabled = true;
-			textInputElement.disabled = true;
-
-                const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
+			const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
 						method: "POST",	
 						body:	JSON.stringify ({
 							text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							
 						}),
-				}
-				).then((response) => {
+				    } 
+			    ).then((response) => {
+					if (response.status === 400 && (nameInputElement.length < 3|| textInputElement.length < 3)) {
+						return Promise.reject("Короткий запрос");
+					}
+				})
+				.then((response) => {
 					commentsFunction();
-				});
+			    });
 				
 			// Очистка поля ввода для комментария и имени после отправления комментария
 			const clearCommmentTextArea = document.querySelector('.add-form-text');
