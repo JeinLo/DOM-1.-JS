@@ -9,7 +9,9 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
+        <!-- Комментарии рендерятся из JS -->
+
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,7 +44,7 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
@@ -61,9 +63,9 @@
         <div class="add-form-row">
           <button id="writeButton" class="add-form-button">Написать</button>
         </div>
-        <div>
+        <!-- <div>
           <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </body>
@@ -71,27 +73,134 @@
   <script>
     "use strict";
 
-
     const writeButton = document.getElementById('writeButton');
     const commentsList = document.getElementById('list');
     const userName = document.getElementById('userName');
     const userComment = document.getElementById('userComment');
 
-    writeButton.disabled = 'disabled';
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        comment: 'Это будет первый комментарий на этой странице',
+        time: '12.02.22 12:18',
+        numLikes: 3,
+        isLiked: false
+      },
+      {
+        name: 'Варвара Н.',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        time: '13.02.22 19:22',
+        numLikes: 75,
+        isLiked: true
+      }
+    ];
 
-    userName.addEventListener('input', () => {  //added event for empty input.[79 - 88]
-      userComment.addEventListener('input', () => {
+    const renderComments = () => {
+      const commentsHTML = comments.map((userComment, index) => {
+        let textHTML;
+        
+        if (userComment.isLiked) {
 
-        if (userName.value === '' && userComment.value === '') {
-          writeButton.disabled = 'disabled';
+          textHTML = `<li class="comment">
+            <div class="comment-header">
+              <div>${userComment.name}</div>
+              <div>${userComment.time}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${userComment.comment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${userComment.numLikes}</span>
+                <button class="like-button -active-like" data-index='${index}'></button>
+              </div>
+            </div>
+          </li>`
+
         } else {
-          writeButton.disabled = false;
+
+          textHTML = `<li class="comment" data-index='${index}'>
+            <div class="comment-header">
+              <div>${userComment.name}</div>
+              <div>${userComment.time}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${userComment.comment}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${userComment.numLikes}</span>
+                <button class="like-button" data-index='${index}'></button>
+              </div>
+            </div>
+          </li>`
         }
-      })
+
+      return textHTML;
+      }).join('');
+
+      commentsList.innerHTML = commentsHTML;
+
+      likeEvent();
+    }
+
+    renderComments();
+
+    function likeEvent () {
+      const likes = document.querySelectorAll('.like-button');
+      
+      for (const likeElement of likes) {
+        likeElement.addEventListener('click', () => {
+
+          if (comments[likeElement.dataset.index].isLiked) {
+            comments[likeElement.dataset.index].isLiked = false;
+            // console.log(comments[likeElement.dataset.index].isLiked);
+            comments[likeElement.dataset.index].numLikes --;
+            // console.log(comments[likeElement.dataset.index].numLikes);
+          } else {
+            comments[likeElement.dataset.index].isLiked = true;
+            // console.log(comments[likeElement.dataset.index].isLiked);
+            comments[likeElement.dataset.index].numLikes ++;
+            // console.log(comments[likeElement.dataset.index].numLikes);
+          }
+          renderComments();
+        })
+      } 
+    }
+
+    writeButton.disabled = true;
+
+    userName.addEventListener('input', (e) => {  //added event for empty input.
+
+      if (userName.value.trim() === '' || e.target.value.trim() === '') {
+        writeButton.disabled = true;
+      } else {
+        writeButton.disabled = false;
+      }
     })
 
+    userComment.addEventListener('input', (e) => {
+
+      if (userComment.value.trim() === '' || e.target.value.trim() === '') {
+        writeButton.disabled = true;
+      } else {
+        writeButton.disabled = false;
+      }
+    })
+
+    function like(el) {
+      el.addEventListener('click', (el) => {
+        el.isLiked = true;
+      })
+    }
+    renderComments();
+
     writeButton.addEventListener('click', () => {
-      let oldCommentsList = commentsList.innerHTML;
+
       let date = new Date();
       let currentDate = date.toLocaleDateString() + " " 
       + date.getHours() + ":" + date.getMinutes();
@@ -106,64 +215,30 @@
         userComment.classList.add('error');
 
       } else {
-        commentsList.innerHTML = oldCommentsList + `<li class="comment">
-        <div class="comment-header">
-          <div>${userName.value}</div>
-          <div>${currentDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${userComment.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button" onclick="likes(this)"></button>
-          </div>
-        </div>
-      </li>`
+
+        comments.push({
+          name: userName.value,
+          comment: userComment.value,
+          time: currentDate,
+          numLikes: 0,
+          isLiked: false
+        })
+
+        renderComments();
 
       userName.value = '';
       userComment.value = '';
-      document.getElementById('writeButton').disabled = 'disabled';
+      document.getElementById('writeButton').disabled = true;
+
       }
     })
 
-    document.addEventListener('keyup', (el) => {      // added event for pressing Enter.[130 - 134]
+    document.addEventListener('keyup', (el) => {      // added event for pressing Enter.
       if (el.keyCode === 13) {
         writeButton.click();
       }
     })
 
-
-
-    let likesNum = 0;
-    function likes(elem) {
-
-      if (likesNum % 2 === 0) {
-        elem.classList.add('-active-like');
-        likesNum++;
-      } else {
-        elem.classList.remove('-active-like');
-        likesNum--;
-      }
-
-    }
-
-    // const deleteButton = document.getElementById('delete-button');
-
-    
-
-    // deleteButton.addEventListener('click', () => {
-
-    //   let listElements = document.getElementsByClassName('comment');
-
-    //   listElements.lastIndexOf('<li class="comment">');
-      
-    // })
-
-    // Код писать здесь
     console.log("It works!");
   </script>
 </html>
