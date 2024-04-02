@@ -69,26 +69,16 @@
     });
 
     // TODO: Получать из хранилища данных
-    let tasks = [
-      {
-        text: "Купить чай",
-      },
-      {
-        text: "Заварить чай",
-      },
-      {
-        text: "Выпить чай",
-      },
-    ];
+    let tasks = [];
 
     const renderTasks = () => {
       const tasksHtml = tasks
-        .map((task, index) => {
+        .map((task) => {
           return `
           <li class="task">
             <p class="task-text">
               ${task.text}
-              <button data-index="${index}" class="button delete-button">Удалить</button>
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
             </p>
           </li>`;
         })
@@ -106,12 +96,21 @@
           deleteButton.innerHTML = "Задача удаляется...";
 
           setTimeout(() => {
-            const index = deleteButton.dataset.index;
+            // Удалиение задачи из списка
+            const id = deleteButton.dataset.id;
 
-            // TODO: Удалять из хранилища данных
-            tasks.splice(index, 1);
+            const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos/" + id, {
+              method: "DELETE",
+            });
 
-            renderTasks();
+            fetchPromise.then((response) => {
+              const jsonPromise = response.json();
+
+              jsonPromise.then((responseData) => {
+                tasks = responseData.todos;
+                renderTasks();
+              });
+            });
           }, 1000);
         });
       }
@@ -141,13 +140,21 @@
         return;
       }
 
-      // TODO: Добавлять задачу в хранилище данных
-      tasks.push({
-        text: textInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
+      // Добавить новую задачу в список
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value,
+        }),
+      });
+
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+          tasks = responseData.todos;
+          renderTasks();
+        });
       });
 
       renderTasks();

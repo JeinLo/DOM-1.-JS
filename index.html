@@ -41,22 +41,33 @@
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
 
-    const comments = [
+    const fetchPromise = fetch(
+      "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
       {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        like: false,
-        numLike: 3,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        like: true,
-        numLike: 75,
-      },
-    ];
+        method: "GET",
+      }
+    );
+
+    fetchPromise.then((response) => {
+      const jsonPromise = response.json();
+
+      jsonPromise.then((responseData) => {
+        const addComments = responseData.comments.map((comment) => {
+          return {
+            name: comment.author.name,
+            date: new Date(comment.date),
+            text: comment.text,
+            likes: comment.likes,
+            isLiked: false,
+          };
+        });
+
+        comments = addComments;
+        renderComments();
+      });
+    });
+
+    let comments = [];
 
     const renderComments = () => {
       const commentsHtml = comments
@@ -75,9 +86,9 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.numLike}</span>
+              <span class="likes-counter">${comment.likes}</span>
               <button data-index="${index}" class="${
-            comment.like ? "like-button -active-like" : "like-button"
+            comment.isLiked ? "like-button -active-like" : "like-button"
           }"></button>
             </div>
           </div>
@@ -111,12 +122,12 @@
           const index = likeButton.dataset.index;
           event.stopPropagation();
 
-          if (comments[index].like === false) {
-            comments[index].like = true;
-            comments[index].numLike++; //comments[index].numLike + 1;
+          if (comments[index].isLiked === false) {
+            comments[index].isLiked = true;
+            comments[index].likes++; //comments[index].numLike + 1;
           } else {
-            comments[index].like = false;
-            comments[index].numLike--; //comments[index].numLike - 1;
+            comments[index].isLiked = false;
+            comments[index].likes--; //comments[index].numLike - 1;
           }
           renderComments();
         });
@@ -204,8 +215,8 @@
           //Сделал замену элементов при добавлении нового коммента, чтобы присваивался класс и появлялась белая рамка
           .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
           .replaceAll("QUOTE_END", "</div>"),
-        like: false,
-        numLike: 0,
+        isLiked: false,
+        likes: 0,
       });
 
       //Обнуление импутов
