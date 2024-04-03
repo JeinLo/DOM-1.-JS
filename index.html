@@ -41,31 +41,33 @@
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
 
-    const fetchPromise = fetch(
-      "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
-      {
-        method: "GET",
-      }
-    );
+    const get = () => {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
+        {
+          method: "GET",
+        }
+      );
 
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
 
-      jsonPromise.then((responseData) => {
-        const addComments = responseData.comments.map((comment) => {
-          return {
-            name: comment.author.name,
-            date: correceDateApi(new Date(comment.date)),
-            text: comment.text,
-            likes: comment.likes,
-            isLiked: comment.isLiked,
-          };
+        jsonPromise.then((responseData) => {
+          const addComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: correceDateApi(new Date(comment.date)),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: comment.isLiked,
+            };
+          });
+
+          comments = addComments;
+          renderComments();
         });
-
-        comments = addComments;
-        renderComments();
       });
-    });
+    };
 
     let comments = [];
 
@@ -164,30 +166,6 @@
 
     renderComments();
 
-    // //Расширенная валидация, чтобы кнопка "написать" изначально не была активна и была серой
-    // buttonElement.disabled = true;
-    // buttonElement.classList.add("error-button");
-    // //Расширенная валидация, кнопка "написать" становиться доступной после того как ввести "имя" и "коммент"
-    // nameInputElement.addEventListener("input", () => {
-    //   if (nameInputElement.value === '' || commentInputElement.value === '') {
-    //     buttonElement.disabled = true;
-    //     buttonElement.classList.add("error-button");
-    //   } else {
-    //     buttonElement.disabled = false;
-    //     buttonElement.classList.remove("error-button");
-    //   }
-    // });
-
-    // commentInputElement.addEventListener("input", () => {
-    //   if (nameInputElement.value === '' || commentInputElement.value === '') {
-    //     buttonElement.disabled = true;
-    //     buttonElement.classList.add("error-button");
-    //   } else {
-    //     buttonElement.disabled = false;
-    //     buttonElement.classList.remove("error-button");
-    //   }
-    // });
-
     //Добавил обработчик событий на button
     buttonElement.addEventListener("click", () => {
       //Сброс валидации при кадом нажатии, чтобы импуты не оставались красными, после того как чел ошибся и потом исправил
@@ -230,35 +208,17 @@
         const jsonPromise = response.json();
 
         jsonPromise.then((responseData) => {
-
-          comments = responseData.comments;
-          renderComments();
+          get();
         });
       });
-
-      // comments.push({
-      //   name: nameInputElement.value
-      //     .replaceAll("<", "&lt;")
-      //     .replaceAll(">", "&gt;"),
-      //   date: correceDateApi(new Date()),
-      //   text: commentInputElement.value
-      //     .replaceAll("<", "&lt;")
-      //     .replaceAll(">", "&gt;")
-      //     //Сделал замену элементов при добавлении нового коммента, чтобы присваивался класс и появлялась белая рамка
-      //     .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-      //     .replaceAll("QUOTE_END", "</div>"),
-      //   isLiked: false,
-      //   likes: 0,
-      // });
 
       //Обнуление импутов
       nameInputElement.value = "";
       commentInputElement.value = "";
-      //Расширенная валидация, чтобы после нажатия, кнопка снова была неактивна
-      // buttonElement.disabled = true;
-      // buttonElement.classList.add("error-button");
 
       renderComments();
     });
+
+    get();
   </script>
 </html>
