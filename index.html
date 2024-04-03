@@ -134,19 +134,15 @@
       const likes = document.querySelectorAll('.like-button');
       
       for (const likeElement of likes) {
-        likeElement.addEventListener('click', () => {
+        likeElement.addEventListener('click', (e) => {
+          e.stopPropagation();
 
-          if (comments[likeElement.dataset.index].isLiked) {
-            comments[likeElement.dataset.index].isLiked = false;
-            // console.log(comments[likeElement.dataset.index].isLiked);
-            comments[likeElement.dataset.index].numLikes --;
-            // console.log(comments[likeElement.dataset.index].numLikes);
-          } else {
-            comments[likeElement.dataset.index].isLiked = true;
-            // console.log(comments[likeElement.dataset.index].isLiked);
-            comments[likeElement.dataset.index].numLikes ++;
-            // console.log(comments[likeElement.dataset.index].numLikes);
-          }
+          const index = likeElement.dataset.index;
+          const direction = comments[index].isLiked ? -1 : +1;
+
+          comments[index].numLikes += direction;
+          comments[index].isLiked = !comments[index].isLiked;
+
           renderComments();
         })
       } 
@@ -172,7 +168,12 @@
       }
     })
 
-    writeButton.addEventListener('click', () => {
+    function sanitize(text) {
+      return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+    }
+
+    writeButton.addEventListener('click', (e) => {
+      e.stopPropagation();
 
       let date = new Date();
       let currentDate = date.toLocaleDateString() + " " 
@@ -190,8 +191,8 @@
       } else {
 
         comments.push({
-          name: userName.value,
-          comment: userComment.value,
+          name: sanitize(userName.value),
+          comment: sanitize(userComment.value),
           time: currentDate,
           numLikes: 0,
           isLiked: false
@@ -212,7 +213,8 @@
       }
     })
 
-    deleteButton.addEventListener('click', () => {
+    deleteButton.addEventListener('click', (e) => {
+      e.stopPropagation();
 
     })
 
