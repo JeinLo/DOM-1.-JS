@@ -148,10 +148,10 @@ body {
     background-color: #d1e88d;
     border: none;
     border-radius: 16px;
-    cursor: pointer;
     font-family: Helvetica;
   }
   
   .delete-form-button:hover {
     opacity: 0.9;
+    cursor: pointer;
   }

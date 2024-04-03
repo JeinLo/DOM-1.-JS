@@ -63,9 +63,9 @@
         <div class="add-form-row">
           <button id="writeButton" class="add-form-button">Написать</button>
         </div>
-        <!-- <div>
+        <div>
           <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
-        </div> -->
+        </div>
       </div>
     </div>
   </body>
@@ -74,6 +74,7 @@
     "use strict";
 
     const writeButton = document.getElementById('writeButton');
+    const deleteButton = document.getElementById('delete-button');
     const commentsList = document.getElementById('list');
     const userName = document.getElementById('userName');
     const userComment = document.getElementById('userComment');
@@ -95,12 +96,12 @@
       }
     ];
 
+    let textHTML;
+
     const renderComments = () => {
       const commentsHTML = comments.map((userComment, index) => {
-        let textHTML;
-        
-        if (userComment.isLiked) {
 
+        if (userComment.isLiked) {
           textHTML = `<li class="comment">
             <div class="comment-header">
               <div>${userComment.name}</div>
@@ -192,13 +193,6 @@
       }
     })
 
-    function like(el) {
-      el.addEventListener('click', (el) => {
-        el.isLiked = true;
-      })
-    }
-    renderComments();
-
     writeButton.addEventListener('click', () => {
 
       let date = new Date();
@@ -237,6 +231,10 @@
       if (el.keyCode === 13) {
         writeButton.click();
       }
+    })
+
+    deleteButton.addEventListener('click', () => {
+      
     })
 
     console.log("It works!");
