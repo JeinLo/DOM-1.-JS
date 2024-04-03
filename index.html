@@ -148,7 +148,7 @@
       } 
     }
     
-    function deleteComment() {
+    function deleteComment() { // function for deleting last comment
       deleteButton.addEventListener('click', () => {
         comments.pop();
         renderComments();
@@ -178,14 +178,13 @@
     function sanitize(text) {
       return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
       .replaceAll('QUOTE_BEGIN', '<div class="quote">').replaceAll('QUOTE_END', '</div>');
-      
     }
 
     writeButton.addEventListener('click', (e) => {
       e.stopPropagation();
 
       let date = new Date();
-      let currentDate = date.toLocaleDateString() + " " 
+      let currentDate = date.toLocaleDateString() + " ";
       + date.getHours() + ":" + date.getMinutes();
 
       userName.classList.remove('error');
@@ -209,9 +208,9 @@
 
         renderComments();
 
-      userName.value = '';
-      userComment.value = '';
-      document.getElementById('writeButton').disabled = true;
+        userName.value = '';
+        userComment.value = '';
+        document.getElementById('writeButton').disabled = true;
 
       }
     })
@@ -229,11 +228,6 @@
       if (el.keyCode === 13) {
         writeButton.click();
       }
-    })
-
-    deleteButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-
     })
 
     console.log("It works!");
