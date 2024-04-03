@@ -101,45 +101,24 @@
     const renderComments = () => {
       const commentsHTML = comments.map((userComment, index) => {
 
-        if (userComment.isLiked) {
-          textHTML = `<li class="comment">
-            <div class="comment-header">
-              <div>${userComment.name}</div>
-              <div>${userComment.time}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${userComment.comment}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${userComment.numLikes}</span>
-                <button class="like-button -active-like" data-index='${index}'></button>
-              </div>
-            </div>
-          </li>`
-
-        } else {
-
-          textHTML = `<li class="comment" data-index='${index}'>
-            <div class="comment-header">
-              <div>${userComment.name}</div>
-              <div>${userComment.time}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${userComment.comment}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${userComment.numLikes}</span>
-                <button class="like-button" data-index='${index}'></button>
-              </div>
-            </div>
-          </li>`
-        }
+        
+      textHTML = `<li class="comment">
+        <div class="comment-header">
+          <div>${userComment.name}</div>
+          <div>${userComment.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${userComment.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${userComment.numLikes}</span>
+            <button class="like-button ${userComment.isLiked ? "-active-like" : ""}" data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`
 
       return textHTML;
       }).join('');
@@ -234,7 +213,7 @@
     })
 
     deleteButton.addEventListener('click', () => {
-      
+
     })
 
     console.log("It works!");
