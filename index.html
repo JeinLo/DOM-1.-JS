@@ -96,11 +96,9 @@
       }
     ];
 
-    let textHTML;
-
     const renderComments = () => {
       const commentsHTML = comments.map((userComment, index) => {
-
+      let textHTML;
         
       textHTML = `<li class="comment">
         <div class="comment-header">
@@ -126,9 +124,11 @@
       commentsList.innerHTML = commentsHTML;
 
       likeEvent();
+      answerComment();
     }
 
     renderComments();
+    deleteComment();
 
     function likeEvent () {
       const likes = document.querySelectorAll('.like-button');
@@ -146,6 +146,13 @@
           renderComments();
         })
       } 
+    }
+    
+    function deleteComment() {
+      deleteButton.addEventListener('click', () => {
+        comments.pop();
+        renderComments();
+      })
     }
 
     writeButton.disabled = true;
@@ -169,7 +176,9 @@
     })
 
     function sanitize(text) {
-      return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+      return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      .replaceAll('QUOTE_BEGIN', '<div class="quote">').replaceAll('QUOTE_END', '</div>');
+      
     }
 
     writeButton.addEventListener('click', (e) => {
@@ -206,6 +215,15 @@
 
       }
     })
+
+    function answerComment() {
+      const commentHTML = document.querySelectorAll('.comment');
+      commentHTML.forEach((el, i) => {
+        el.addEventListener('click', () => {
+          userComment.value = `QUOTE_BEGIN>${comments[i].name}\n ${comments[i].comment}QUOTE_END`;
+        })
+      })
+    }
 
     document.addEventListener('keyup', (el) => {      // added event for pressing Enter.
       if (el.keyCode === 13) {
