@@ -8,8 +8,10 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
+      <ul id="list" class="comments">
+        <!-- Комментарии рендерятся из JS -->
+
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,22 +44,27 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
           type="text"
+          id="userName"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="userComment"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="writeButton" class="add-form-button">Написать</button>
+        </div>
+        <div>
+          <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
         </div>
       </div>
     </div>
@@ -65,7 +72,164 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+
+    const writeButton = document.getElementById('writeButton');
+    const deleteButton = document.getElementById('delete-button');
+    const commentsList = document.getElementById('list');
+    const userName = document.getElementById('userName');
+    const userComment = document.getElementById('userComment');
+
+    const comments = [
+      {
+        name: 'Глеб Фокин',
+        comment: 'Это будет первый комментарий на этой странице',
+        time: '12.02.22 12:18',
+        numLikes: 3,
+        isLiked: false
+      },
+      {
+        name: 'Варвара Н.',
+        comment: 'Мне нравится как оформлена эта страница! ❤',
+        time: '13.02.22 19:22',
+        numLikes: 75,
+        isLiked: true
+      }
+    ];
+
+    const renderComments = () => {
+      const commentsHTML = comments.map((userComment, index) => {
+      let textHTML;
+        
+      textHTML = `<li class="comment">
+        <div class="comment-header">
+          <div>${userComment.name}</div>
+          <div>${userComment.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${userComment.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${userComment.numLikes}</span>
+            <button class="like-button ${userComment.isLiked ? "-active-like" : ""}" data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`
+
+      return textHTML;
+      }).join('');
+
+      commentsList.innerHTML = commentsHTML;
+
+      likeEvent();
+      answerComment();
+    }
+
+    renderComments();
+    deleteComment();
+
+    function likeEvent () {
+      const likes = document.querySelectorAll('.like-button');
+      
+      for (const likeElement of likes) {
+        likeElement.addEventListener('click', (e) => {
+          e.stopPropagation();
+
+          const index = likeElement.dataset.index;
+          const direction = comments[index].isLiked ? -1 : +1;
+
+          comments[index].numLikes += direction;
+          comments[index].isLiked = !comments[index].isLiked;
+
+          renderComments();
+        })
+      } 
+    }
+    
+    function deleteComment() { // function for deleting last comment
+      deleteButton.addEventListener('click', () => {
+        comments.pop();
+        renderComments();
+      })
+    }
+
+    writeButton.disabled = true;
+
+    userName.addEventListener('input', (e) => {  //added event for empty input.
+
+      if (userName.value.trim() === '' || e.target.value.trim() === '') {
+        writeButton.disabled = true;
+      } else {
+        writeButton.disabled = false;
+      }
+    })
+
+    userComment.addEventListener('input', (e) => {
+
+      if (userComment.value.trim() === '' || e.target.value.trim() === '') {
+        writeButton.disabled = true;
+      } else {
+        writeButton.disabled = false;
+      }
+    })
+
+    function sanitize(text) {
+      return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      .replaceAll('QUOTE_BEGIN', '<div class="quote">').replaceAll('QUOTE_END', '</div>');
+    }
+
+    writeButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      let date = new Date();
+      let currentDate = date.toLocaleDateString() + " ";
+      + date.getHours() + ":" + date.getMinutes();
+
+      userName.classList.remove('error');
+      userComment.classList.remove('error');
+
+      if (userName.value === '') {
+        userName.classList.add('error');
+
+      } else if (userComment.value === '') {
+        userComment.classList.add('error');
+
+      } else {
+
+        comments.push({
+          name: sanitize(userName.value),
+          comment: sanitize(userComment.value),
+          time: currentDate,
+          numLikes: 0,
+          isLiked: false
+        })
+
+        renderComments();
+
+        userName.value = '';
+        userComment.value = '';
+        document.getElementById('writeButton').disabled = true;
+
+      }
+    })
+
+    function answerComment() {
+      const commentHTML = document.querySelectorAll('.comment');
+      commentHTML.forEach((el, i) => {
+        el.addEventListener('click', () => {
+          userComment.value = `QUOTE_BEGIN>${comments[i].name}\n ${comments[i].comment}QUOTE_END`;
+        })
+      })
+    }
+
+    document.addEventListener('keyup', (el) => {      // added event for pressing Enter.
+      if (el.keyCode === 13) {
+        writeButton.click();
+      }
+    })
+
     console.log("It works!");
   </script>
 </html>
