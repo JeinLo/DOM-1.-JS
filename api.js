@@ -7,7 +7,7 @@ export function getTodos() {
                 throw new Error('Сервер сломался. Попробуйте позже.');
             } else if (response.status === 200) {
                 return response.json();
-            } else {
+            } else if (!window.navigator.onLine) {
                 throw new Error('Кажется, у вас сломался интернет, попробуйте позже');
             }
         });
@@ -29,8 +29,8 @@ export function postComment(text, name) {
             throw new Error('Имя и комментарий должны быть не короче 3 символов');
         } else if (response.status === 201) {
             return response.json();
-        } else {
-            throw new Error('Кажется проблемы с интернетом');
+        } else if (!window.navigator.onLine) {
+            throw new Error('Кажется, у вас сломался интернет, попробуйте позже');
         }
     });
 }
