@@ -222,13 +222,36 @@ function addComment() {
           .replaceAll("END_QUOTE%", "</div>"),
       })
     }
-  ).then(() => {
+  ).then(response => {
+    if (!response.ok) {
+      if (response.status === 400) {
+        alert("Имя и комментарий должны быть не короче 3 символов.");
+      } else if (response.status === 500) {
+        alert("Сервер сломался, попробуй позже.");
+      }
+      throw new Error('Ответ сервера не был успешным');
+    }
+    return response.json();
+ })
+ .then(() => {
     return getComments();
-  }).then(() => {
+ })
+ .then(() => {
+  massageSendButton.disabled = false;
+  massageSendButton.textContent = 'Написать';
+  loadingMessageElement.style.display = 'none';
+  commentFormElement.style.display = 'flex';
+})
+.catch(error => {
+  if (error.message === 'Ответ сервера не был успешным') {
+  } else {
+    console.error('Возникла проблема с операцией fetch:', error);
+    alert("Кажется, у вас сломался интернет, попробуйте позже.");
+  }
     massageSendButton.disabled = false;
     massageSendButton.textContent = 'Написать';
     loadingMessageElement.style.display = 'none';
-    commentFormElement.style.display = 'block';
+    commentFormElement.style.display = 'flex';
   })
   //Очистка форм input
   nameInputElement.value = "";
