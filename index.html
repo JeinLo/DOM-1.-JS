@@ -41,7 +41,9 @@
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
 
-    const get = () => {
+    let comments = [];
+
+    const fetchGet = () => {
       const fetchPromise = fetch(
         "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
         {
@@ -50,9 +52,7 @@
       );
 
       fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
+        response.json().then((responseData) => {
           const addComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
@@ -68,8 +68,6 @@
         });
       });
     };
-
-    let comments = [];
 
     const renderComments = () => {
       const commentsHtml = comments
@@ -154,10 +152,10 @@
 
           if (comments[index].isLiked === false) {
             comments[index].isLiked = true;
-            comments[index].likes++; //comments[index].numLike + 1;
+            comments[index].likes++;
           } else {
             comments[index].isLiked = false;
-            comments[index].likes--; //comments[index].numLike - 1;
+            comments[index].likes--;
           }
           renderComments();
         });
@@ -205,20 +203,16 @@
       );
 
       fetchPromise.then((response) => {
-        const jsonPromise = response.json();
-
-        jsonPromise.then((responseData) => {
-          get();
+        response.json().then(() => {
+          fetchGet();
         });
       });
 
       //Обнуление импутов
       nameInputElement.value = "";
       commentInputElement.value = "";
-
-      renderComments();
     });
 
-    get();
+    fetchGet();
   </script>
 </html>
