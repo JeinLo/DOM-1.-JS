@@ -11,13 +11,11 @@
       <ul class="comments">
         <li class="comment">
           <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
+            <div class="comment-header-name">Глеб Фокин</div>
+            <div class="comment-header-time">12.02.22 12:18</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
+            <div class="comment-text">Это будет первый комментарий на этой странице</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -28,13 +26,11 @@
         </li>
         <li class="comment">
           <div class="comment-header">
-            <div>Варвара Н.</div>
+            <div class="comment-header-name">Варвара Н.</div>
             <div>13.02.22 19:22</div>
           </div>
           <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
+            <div class="comment-text">Мне нравится как оформлена эта страница! ❤</div>
           </div>
           <div class="comment-footer">
             <div class="likes">
@@ -45,11 +41,7 @@
         </li>
       </ul>
       <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
+        <input type="text" class="add-form-name" placeholder="Введите ваше имя" />
         <textarea
           type="textarea"
           class="add-form-text"
@@ -62,10 +54,65 @@
       </div>
     </div>
   </body>
+  <style>
+    .color-back-input {
+      background-color: #ec5353;
+    }
+  </style>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const LikesCounter = document.getElementsByClassName('likes-counter')[0];
+    const AddFormTextEl = document.getElementsByClassName('add-form-text')[0];
+    const AddFormNameEl = document.getElementsByClassName('add-form-name')[0];
+    const ButtonEl = document.getElementsByClassName('add-form-button')[0];
+    const commentsEl = document.getElementsByClassName('comments')[0];
+    const commentEl = document.getElementsByClassName('comment')[0];
+    const commentHeaderNameEl = document.getElementsByClassName('comment-header-name')[0];
+    const commentHeaderTimeEl = document.getElementsByClassName('comment-header-time')[0];
+    const commentTextEl = document.getElementsByClassName('comment-text')[0];
+    console.log(LikesCounter.innerHTML);
+
+    ButtonEl.addEventListener('click', function (e) {
+      AddFormNameEl.classList.remove('color-back-input');
+      if (AddFormNameEl.value === '') {
+        AddFormNameEl.classList.add('color-back-input');
+        return;
+      }
+
+      AddFormTextEl.classList.remove('color-back-input');
+      if (AddFormTextEl.value === '') {
+        AddFormTextEl.classList.add('color-back-input');
+        return;
+      }
+
+      const newCommentEl = commentEl.cloneNode(true); // клонируем элемент "comment" с содержимым
+
+      const commentHeaderNameEl = newCommentEl.querySelector('.comment-header-name');
+      const commentHeaderTimeEl = newCommentEl.querySelector('.comment-header-time');
+      const commentTextEl = newCommentEl.querySelector('.comment-text');
+      const LikesCounter = newCommentEl.querySelector('.likes-counter');
+      commentHeaderNameEl.textContent = AddFormNameEl.value;
+
+      const now = new Date(); // создаем объект Date для текущей даты и времени
+
+      const options = {
+        year: 'numeric', // включаем год в формате "2022"
+        month: 'numeric', // включаем месяц в формате "2"
+        day: 'numeric', // включаем день в формате "12"
+        hour: 'numeric', // включаем часы в формате "12"
+        minute: 'numeric', // включаем минуты в формате "18"
+      };
+
+      const localDateString = now.toLocaleString('ru-RU', options);
+      commentHeaderTimeEl.textContent = localDateString;
+
+      commentTextEl.textContent = AddFormTextEl.value;
+
+      commentsEl.appendChild(newCommentEl); // добавляем новый элемент в конец списка комментариев
+
+      LikesCounter.textContent = '0';
+      AddFormNameEl.value = '';
+      AddFormTextEl.value = '';
+    });
   </script>
 </html>
