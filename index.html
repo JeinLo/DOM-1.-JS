@@ -9,40 +9,6 @@
   <body>
     <div class="container">
       <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div >Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span id="likeChet" class="likes-counter">75</span>
-              <button id="likeButton" class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
       </ul>
       <div id="form" class="add-form">
         <input
@@ -62,25 +28,123 @@
           <button disabled id="writeButton"  class="add-form-button">Написать</button>
         </div>
       </div>
-      <button id="delBut" class="deleteButton">Удалить последний комментарий</button>
     </div>
 
     
   </body>
 
   <script>
-    "use strict";
+"use strict";
+function MinSec() {
+    let currentDate = new Date();
+    let options = {hour: '2-digit', minute:'2-digit'};
+    return (currentDate.toLocaleTimeString('ru-RU', options)); 
+}
+
+function Year() {
+    const months = [1, 2, 3, 4, 5, 6,
+        7, 8, 9, 10, 11, 12];
+        let myDate = new Date();
+        
+        let fullDate =  myDate.getDate() +
+        "." + months[myDate.getMonth()] +
+        "." + myDate.getFullYear() ;
+        
+        return (fullDate);
+        MinSec()
+
+}
     const nameInputEl = document.getElementById('nameInput');
     const listEL = document.getElementById('list');
     const commentInputEl = document.getElementById('commentInput');
     const writeButtonEl = document.getElementById('writeButton');
-    const likeButtonEl = document.querySelector('likeButton');
-    const likeChetEl = document.querySelector('likeChet');
-    const delButEl = document.getElementById('delBut');
-    const formEl = document.getElementById('form');
-    const comEl = document.getElementById('com');
+      
+    const peoples = [{
+      name: 'Глеб Фокин',
+      comment:'Это будет первый комментарий на этой странице',
+      time:'12.02.22 12:18',
+      like: 3,
+      isLike: false
+    },{
+      name: 'Варвара Н.',
+      comment:'Мне нравится как оформлена эта страница! ❤',
+      time:'13.02.22 19:22',
+      like: 75,
+      isLike: true
+    }]
 
-  
+const initEventlist = () => {     
+const commentEl = document.querySelectorAll('.comment');
+for (const commentEls of commentEl) {
+    commentEls.addEventListener('click', () => {
+    })
+}
+}
+
+const initDeleteButton = () => {
+  const deleteButtonEls = document.querySelectorAll('.deleteButton');
+  for (const deleteButtonEl of deleteButtonEls) {
+    deleteButtonEl.addEventListener('click', () => {
+     const index = deleteButtonEl.dataset.index;
+     peoples.splice(index, 1);
+    render();
+    });
+  }
+}
+
+const initlikeButton = () => {
+ 
+
+  const likeButtonEls = document.querySelectorAll('.like-button');
+  for (const likeButtonEl of likeButtonEls) {
+    likeButtonEl.addEventListener('click', () => {
+     const index = likeButtonEl.dataset.index;
+     likeButtonEl.classList.add("-active-like");
+     
+     if (peoples[index].isLike === false || peoples[index].like === 0) {  
+     peoples[index].like = parseInt(peoples[index].like) + 1; 
+     peoples[index].isLike = true;
+     } else {
+      peoples[index].like = parseInt(peoples[index].like) - 1;
+    peoples[index].isLike = false;
+     }
+
+    render();
+    });
+  }
+}
+const render = () => {
+ const peopleHtml = peoples.map((people, index) => {
+    return `<li data-name="${people.name}" id="com" class="comment">
+          <div class="comment-header">
+            <div >${people.name}</div>
+            <div> ${people.time}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+             ${people.comment}
+            </div>
+          </div>   
+          <div class="comment-footer">
+            <button class="deleteButton" data-index="${index}"">Удалить</button>
+            <div class="likes">
+              <span class="likes-counter" data-index="${index}" >${people.like}</span>
+              <button class="like-button ${peoples[index].isLike === true ? "-active-like" : "" }"
+               data-index="${index}"></button>
+            </div>
+          </div>
+        </li>`
+  }).join('');
+  listEL.innerHTML = peopleHtml;
+  initEventlist();
+  initDeleteButton();
+  initlikeButton();
+
+}
+
+render();
+
+
     nameInputEl.addEventListener('input', function(event) {
   writeButtonEl.disabled = (nameInputEl.value === '');
 });
@@ -105,26 +169,16 @@
            
             if (nameInputEl.value != '') {
                 
-      const addCom = listEL.innerHTML;
-      listEL.innerHTML = addCom +
-      `<li id="com" class="comment">
-          <div class="comment-header">
-            <div>${nameInputEl.value}</div>
-            <div> ${Year()}  ${MinSec()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-             ${commentInputEl.value}
-            </div>
-          </div>
+        peoples.push({
+              name:nameInputEl.value,
+              time:Year(),
+              comment:commentInputEl.value,
+              like:0
+             });
 
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
+        render();
+ 
+
         this.disabled = true
         nameInputEl.value = (''); 
         commentInputEl.value = ('');
@@ -133,5 +187,4 @@
 
     console.log("It works!");
   </script>
-  <script src="script.js"></script>
 </html>
