@@ -59,23 +59,18 @@ function Year() {
     const listEL = document.getElementById('list');
     const commentInputEl = document.getElementById('commentInput');
     const writeButtonEl = document.getElementById('writeButton');
-    const likeButtonEl = document.querySelector('likeButton');
-    const likeChetEl = document.querySelector('likeChet');
-    const delButEl = document.getElementById('delBut');
-    const formEl = document.getElementById('form');
-    const comEl = document.getElementById('com');
-
+      
     const peoples = [{
       name: 'Глеб Фокин',
       comment:'Это будет первый комментарий на этой странице',
       time:'12.02.22 12:18',
-      like:3,
+      like: 3,
       isLike: false
     },{
       name: 'Варвара Н.',
       comment:'Мне нравится как оформлена эта страница! ❤',
       time:'13.02.22 19:22',
-      like:75,
+      like: 75,
       isLike: true
     }]
 
@@ -83,7 +78,6 @@ const initEventlist = () => {
 const commentEl = document.querySelectorAll('.comment');
 for (const commentEls of commentEl) {
     commentEls.addEventListener('click', () => {
-      console.log(commentEls.dataset.name);
     })
 }
 }
@@ -99,6 +93,29 @@ const initDeleteButton = () => {
   }
 }
 
+const initlikeButton = () => {
+ 
+
+  const likeButtonEls = document.querySelectorAll('.like-button');
+  for (const likeButtonEl of likeButtonEls) {
+    likeButtonEl.addEventListener('click', () => {
+     const index = likeButtonEl.dataset.index;
+     likeButtonEl.classList.add("-active-like");
+     
+     if (peoples[index].isLike === false || peoples[index].like === 0) {  
+     likeButtonEl.classList.add("-active-like");
+     peoples[index].like = parseInt(peoples[index].like) + 1; 
+     peoples[index].isLike = true;
+     } else {
+      peoples[index].like = parseInt(peoples[index].like) - 1; 
+     likeButtonEl.classList.remove("-active-like");
+    peoples[index].isLike = false;
+     }
+
+    render();
+    });
+  }
+}
 const render = () => {
  const peopleHtml = peoples.map((people, index) => {
     return `<li data-name="${people.name}" id="com" class="comment">
@@ -114,8 +131,8 @@ const render = () => {
           <div class="comment-footer">
             <button class="deleteButton" data-index="${index}"">Удалить</button>
             <div class="likes">
-              <span class="likes-counter">${people.like}</span>
-              <button class="like-button"></button>
+              <span class="likes-counter" data-index="${index}" >${people.like}</span>
+              <button class="like-button" data-index="${index}"></button>
             </div>
           </div>
         </li>`
@@ -123,6 +140,8 @@ const render = () => {
   listEL.innerHTML = peopleHtml;
   initEventlist();
   initDeleteButton();
+  initlikeButton();
+
 }
 
 render();
