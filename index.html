@@ -171,7 +171,7 @@
     fetchGetCommentsData();
     renderComments(commentsData);
 
-    addButton.addEventListener("click", function () {
+    addButton.addEventListener("click", () => {
       const nameValue = nameInput.value.trim();
       const commentValue = commentInput.value.trim();
 
@@ -203,28 +203,7 @@
         })
       })
         .then((response) => {
-          if (response.status === 500) {
-            throw new Error('Сервер сломался, попробуй позже');
-            addButton.disabled = true;
-          }
           return response.json();
-        })
-        .catch((error) => {
-          addButton.disabled = false;
-          addButton.textContent = "Написать";
-          alert('Сервер сломался, попробуй позже');
-        })
-        .then((response) => {
-          if (response.status === 400) {
-            throw new Error('Имя и комментарий должны быть не короче 3 символов');
-            addButton.disabled = true;
-          }
-          return response.json();
-        })
-        .catch((error) => {
-          addButton.disabled = false;
-          addButton.textContent = "Написать";
-          alert('Имя и комментарий должны быть не короче 3 символов');
         })
         .then((response) => {
           fetchGetCommentsData();
@@ -234,14 +213,7 @@
           addButton.textContent = "Написать";
           nameInput.value = "";
           commentInput.value = "";
-        })
-        .catch((error) => {
-          addButton.disabled = true;
-          addButton.textContent = "Написать";
-          alert('Кажется что-то пошло не так, попробуйте позже.');
         });
-
-
 
 
       commentsData.push(newComment);
