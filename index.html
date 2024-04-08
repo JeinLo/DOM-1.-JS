@@ -66,8 +66,8 @@
     </div>
   </body>
   <script>
-
     "use strict";
+
 		const buttonElement = document.getElementById('add-button');
 		const listElement = document.getElementById('comment-script');
 		const nameInputElement = document.getElementById('input-accept-name');
@@ -77,10 +77,8 @@
 
 
 		function commentsFunction () {
-			buttonElement.disabled = true;
-			buttonElement.textContent = 'Комментарий загружается'
-			nameInputElement.disabled = true;
-
+		buttonElement.disabled = true;
+		buttonElement.textContent = 'Комментарий загружается'
 		console.log('Запрос начался');
 
         //данные из API 
@@ -90,7 +88,7 @@
 			return response.json();
 		}).then((responseData) => {
 			//массив из API
-				comments = responseData.comments.map((comment) => {
+      comments = responseData.comments.map((comment) => {
 					// дата и время
 					const currentDate = new Date(comment.date).toLocaleDateString('ru-Ru');
 					const currentTime = new Date(comment.date).toLocaleTimeString('ru-RU');
@@ -112,7 +110,7 @@
 			textInputElement.disabled = false;
 		});
 	}
-	commentsFunction();
+  commentsFunction();
 
     let comments = [];
 
@@ -135,8 +133,8 @@
 		renderCommentators();
 		checkInputs();
 	});
-	
-	// Функция, которая делает кнопку "удалить" неактивной когда в массиве нет элементов
+
+  // Функция, которая делает кнопку "удалить" неактивной когда в массиве нет элементов
 	function inactiveDeleteButton() {
 		if (comments.length === 0) {
 			buttonDelete.disabled = true;
@@ -146,12 +144,13 @@
 			buttonDelete.classList.remove("gray-delete");
 		}
 	};
+
 		//коммент по нажатию клавиши
 		document.addEventListener('keydown', function(e) {
-			if (e.key === 'Enter') {
-				buttonElement.click();
-			}
-		})
+				if (e.key === 'Enter') {
+					buttonElement.click();
+				}
+			})
 
 		//функция лайка
 	const addLikeButtonEventListener = () => {
@@ -174,8 +173,8 @@
 			});
 		};
 	};
-	
-	let text; 
+
+  let text; 
 	let variableUserName;
 	// 2.11 
 	const replyToCommentFunction = () => {
@@ -216,31 +215,32 @@
 			listElement.innerHTML = commentatorHTML;
 			addLikeButtonEventListener();
 			replyToCommentFunction();
-			inactiveDeleteButton();
+      inactiveDeleteButton();
 		};
 			
 			buttonElement.addEventListener("click", () => {
 			//nameInputElement.disabled = true;
 			//textInputElement.disabled = true;
-
-			const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
+      nameInputElement.classList.remove("error");
+      textInputElement.classList.remove("error");
+      if (!textInputElement.value.trim() || !nameInputElement.value.trim()) {
+        textInputElement.classList.add("error") || nameInputElement.classList.add("error");
+        return;        
+      }
+                const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
 						method: "POST",	
 						body:	JSON.stringify ({
 							text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							
 						}),
-				    } 
-			    ).then((response) => {
-					if (response.status === 400 && (nameInputElement.length < 3|| textInputElement.length < 3)) {
-						return Promise.reject("Короткий запрос");
-					}
-				})
-				.then((response) => {
+				}
+				).then((response) => {
 					commentsFunction();
-			    });
-				
-			// Очистка поля ввода для комментария и имени после отправления комментария
+				});
+
+
+        // Очистка поля ввода для комментария и имени после отправления комментария
 			const clearCommmentTextArea = document.querySelector('.add-form-text');
 			const clearName = document.querySelector('.add-form-name');
 			clearCommmentTextArea.value = '';
@@ -248,10 +248,9 @@
 			renderCommentators();
 			checkInputs();
 		});
+
 		//renderCommentators();
 		//checkInputs();
-
-
    // console.log("It works!");
   </script>
 </html>
