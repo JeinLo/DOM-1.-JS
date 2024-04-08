@@ -42,6 +42,7 @@
     const buttonDeleteElement = document.querySelector(".delete-form-button");
     const textDisabled = document.querySelector(".text");
     // const addCommentElement = document.querySelector("add-comment");
+    // const addFormDisable = document.querySelector(".add-form");
 
     const fetchGetCommentsData = () => {
       let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments")
@@ -57,13 +58,14 @@
             dateTime: comment.date,
             text: comment.text,
             likes: comment.likes,
-            liked: comment.isLiked
+            liked: comment.isLiked,
           }));
           textDisabled.textContent = "";
           renderComments();
         })
-        .catch(error => {
-          console.error('Ошибка при загрузке комментариев:', error);
+        .catch((error) => {
+          alert("Кажется что-то пошло не так, попробуйте похже.");
+          console.warn(error);
         });
     };
 
@@ -188,7 +190,7 @@
 
       addButton.disabled = true;
       addButton.textContent = "Комментарий добавляется";
-      // addComment();
+
       fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/ilya-krikunenko/comments", {
         method: "POST",
         body: JSON.stringify({
@@ -197,10 +199,32 @@
           date: getCurrentDateTime(new Date),
           isLiked: false,
           likes: 0,
+          forceError: false,
         })
       })
         .then((response) => {
+          if (response.status === 500) {
+            throw new Error('Сервер сломался, попробуй позже');
+            addButton.disabled = true;
+          }
           return response.json();
+        })
+        .catch((error) => {
+          addButton.disabled = false;
+          addButton.textContent = "Написать";
+          alert('Сервер сломался, попробуй позже');
+        })
+        .then((response) => {
+          if (response.status === 400) {
+            throw new Error('Имя и комментарий должны быть не короче 3 символов');
+            addButton.disabled = true;
+          }
+          return response.json();
+        })
+        .catch((error) => {
+          addButton.disabled = false;
+          addButton.textContent = "Написать";
+          alert('Имя и комментарий должны быть не короче 3 символов');
         })
         .then((response) => {
           fetchGetCommentsData();
@@ -208,19 +232,22 @@
         .then(() => {
           addButton.disabled = false;
           addButton.textContent = "Написать";
-          // addCommentElement.innerHTML = oldAddFormElement.innerHTML;
+          nameInput.value = "";
+          commentInput.value = "";
         })
-        .catch(error => {
-          console.error('Ошибка при загрузке комментариев:', error);
+        .catch((error) => {
+          addButton.disabled = true;
+          addButton.textContent = "Написать";
+          alert('Кажется что-то пошло не так, попробуйте позже.');
         });
+
 
 
 
       commentsData.push(newComment);
       renderComments(commentsData);
 
-      nameInput.value = "";
-      commentInput.value = "";
+
     });
 
 
