@@ -10,40 +10,7 @@
 <body>
   <div class="container">
     <ul id="list" class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
+      <!-- переносим данные в массив JS -->
     </ul>
     <div class="add-form">
       <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
@@ -63,10 +30,73 @@
   const inputCommentEl = document.getElementById('input-comment');
   const writeEl = document.getElementById('write');
 
+  // Создаём массив данных для новых и шаблонных комментов
 
+  const comments = [
+    {
+      name: 'Глеб Фокин',
+      comment: 'Это будет первый комментарий на этой странице',
+      time: '12.02.22 12:18',
+      numLikes: 3,
+      isLiked: false
+    },
+    {
+      name: 'Варвара Н.',
+      comment: 'Мне нравится как оформлена эта страница! ❤',
+      time: '13.02.22 19:22',
+      numLikes: 75,
+      isLiked: true
+    }
+  ];
 
+  // Функция для отображения комментариев
+  const renderComments = () => {
+    const commentsHTML = comments.map((comment, index) => {
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${comment.comment}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.numLikes}</span>
+            <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`;
+    }).join('');
 
-  // Прописываем дальнейшие действия при нажатии кнопки
+    listEl.innerHTML = commentsHTML;
+
+    // Назначаем событие на кнопки лайков
+    likeEvent();
+  }
+
+  // Функция для обработки лайков
+  function likeEvent() {
+    const likes = document.querySelectorAll('.like-button');
+
+    for (const likeElement of likes) {
+      likeElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        const index = likeElement.dataset.index;
+        const direction = comments[index].isLiked ? -1 : 1;
+
+        comments[index].numLikes += direction;
+        comments[index].isLiked = !comments[index].isLiked;
+
+        renderComments();
+      })
+    }
+  }
+
+  // Прописываем дальнейшие действия при нажатии кнопки "Написать"
   writeEl.addEventListener('click', function (e) {
     // Не даём отправить пустую форму
     if (inputNameEl.value === '' || inputCommentEl.value === '') {
@@ -79,6 +109,7 @@
       // Возвращаем
       return;
     };
+
     // Определяем формат времени и даты как на образце
     const currentDate = new Date();
     const day = currentDate.getDate();
@@ -90,67 +121,57 @@
     const minutes = currentDate.getMinutes();
     const formattedTime = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
 
-    // Добавляем элемент списка с данными полученными через value
-    const oldList = listEl.innerHTML;
-    listEl.innerHTML = oldList +
+    // Создаем новый комментарий
+    const newComment = {
+      name: inputNameEl.value.trim(),
+      comment: inputCommentEl.value.trim(),
+      time: `${formattedDate} ${formattedTime}`,
+      numLikes: 0, // Изначально у нового комментария нет лайков
+      isLiked: false // Изначально новый комментарий не лайкнут
+    };
 
-      `<li class="comment">
-        <div class="comment-header">
-          <div>${inputNameEl.value}</div>
-          <div>${formattedDate} ${formattedTime}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${inputCommentEl.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`;
+    // Добавляем новый комментарий в массив комментариев
+    comments.push(newComment);
 
-    // Возвращаем всё назад
+    // Перерисовываем список комментариев
+    renderComments();
+
+    // Очищаем поля ввода после добавления комментария
     inputNameEl.value = '';
     inputCommentEl.value = '';
     inputNameEl.style.backgroundColor = '';
     inputCommentEl.style.backgroundColor = '';
-
-
   });
 
+  // Первичный вывод комментариев
+  renderComments();
 
   // **************************************** ДОПОЛНИТЕЛЬНО ********************************
 
-  // Функция для проверки заполнения полей
   function updateWriteButton() {
-
     const isNameFilled = inputNameEl.value.trim() !== '';
     const isCommentFilled = inputCommentEl.value.trim() !== '';
 
     // Если оба поля заполнены, делаем кнопку активной
     if (isNameFilled && isCommentFilled) {
       writeEl.disabled = false;
-      writeEl.classList.remove('disabled'); // Убираем класс disabled
+      writeEl.classList.remove('disabled'); // Убираем класс disabled (и прописываем его в css! изменяя курсор)
     } else {
       // Если хотя бы одно из полей не заполнено, делаем кнопку неактивной и серой
       writeEl.disabled = true;
-      writeEl.classList.add('disabled'); // Добавляем класс disabled (ПРОПИСЫВАЕМ ЕГО В CSS И B HTML)
+      writeEl.classList.add('disabled'); // Добавляем класс disabled
     }
   }
+
+  // Назначаем обработчики событий для полей ввода
   inputNameEl.addEventListener('input', updateWriteButton);
   inputNameEl.addEventListener('change', updateWriteButton);
   inputCommentEl.addEventListener('input', updateWriteButton);
   inputCommentEl.addEventListener('change', updateWriteButton);
   inputCommentEl.addEventListener('keydown', updateWriteButton);
 
-
-// для остальных задач нужно всё переписать под одну функцию выполнения
-
-
   // **************************************** ДОПОЛНИТЕЛЬНО ********************************
+
 </script>
 
 </html>
