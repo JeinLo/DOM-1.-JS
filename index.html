@@ -123,8 +123,16 @@
 
     // Создаем новый комментарий
     const newComment = {
-      name: inputNameEl.value.trim(),
-      comment: inputCommentEl.value.trim(),
+      name: inputNameEl.value.trim()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      comment: inputCommentEl.value.trim()
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
       time: `${formattedDate} ${formattedTime}`,
       numLikes: 0, // Изначально у нового комментария нет лайков
       isLiked: false // Изначально новый комментарий не лайкнут
