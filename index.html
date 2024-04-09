@@ -65,7 +65,39 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+    const button = document.querySelector('.add-form-button')
+    const nameElement = document.querySelector('.add-form-name')
+    const textElement = document.querySelector('.add-form-text')
+    const commentsElement = document.querySelector('.comments')
+
+    button.addEventListener('click' , (event) => {
+      event.preventDefault()
+      if (nameElement.value.trim() === '' || textElement.value.trim() === ''){
+        alert('Заполните поле')
+        return
+      }
+      const newDate = new Date()
+      const newComment = ` <li class="comment">
+          <div class="comment-header">
+            <div>${nameElement.value}</div>
+            <div>${newDate.toLocaleString()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${textElement.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
+      commentsElement.innerHTML += newComment
+      nameElement.value = ''
+      textElement.value = ''
+    })
     console.log("It works!");
   </script>
 </html>
