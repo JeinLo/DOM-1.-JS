@@ -93,13 +93,10 @@ const initDeleteButton = () => {
 }
 
 const initlikeButton = () => {
- 
-
   const likeButtonEls = document.querySelectorAll('.like-button');
   for (const likeButtonEl of likeButtonEls) {
     likeButtonEl.addEventListener('click', () => {
      const index = likeButtonEl.dataset.index;
-     likeButtonEl.classList.add("-active-like");
      
      if (peoples[index].isLike === false || peoples[index].like === 0) {  
      peoples[index].like = parseInt(peoples[index].like) + 1; 
@@ -113,6 +110,18 @@ const initlikeButton = () => {
     });
   }
 }
+
+const commetForm = () => {
+  const commentBodyElements = document.querySelectorAll('.comment-body');
+  for (const commentBodyElement of commentBodyElements) {
+    commentBodyElement.addEventListener('click', () => {
+      const index = commentBodyElement.dataset.index;
+      commentInputEl.value = `${peoples[index].comment} ${peoples[index].name}`;
+      render();
+    });
+  }
+}
+commetForm();
 const render = () => {
  const peopleHtml = peoples.map((people, index) => {
     return `<li data-name="${people.name}" id="com" class="comment">
@@ -120,7 +129,7 @@ const render = () => {
             <div >${people.name}</div>
             <div> ${people.time}</div>
           </div>
-          <div class="comment-body">
+          <div class="comment-body" data-index="${index}">
             <div class="comment-text">
              ${people.comment}
             </div>
@@ -129,7 +138,7 @@ const render = () => {
             <button class="deleteButton" data-index="${index}"">Удалить</button>
             <div class="likes">
               <span class="likes-counter" data-index="${index}" >${people.like}</span>
-              <button class="like-button ${peoples[index].isLike === true ? "-active-like" : "" }"
+              <button class="like-button ${people.isLike === true ? "-active-like" : "" }"
                data-index="${index}"></button>
             </div>
           </div>
@@ -139,6 +148,7 @@ const render = () => {
   initEventlist();
   initDeleteButton();
   initlikeButton();
+  commetForm();
 
 }
 
@@ -149,30 +159,29 @@ render();
   writeButtonEl.disabled = (nameInputEl.value === '');
 });
 
-
       writeButtonEl.addEventListener('click', () => {
-        nameInputEl.classList.remove("err");
-        commentInputEl.classList.remove('err');
-
-       
+        setTimeout(() => { nameInputEl.classList.remove('err');}, 1000 * 1);
+        setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 1);
 
             if (nameInputEl.value === '') {
               nameInputEl.classList.add("err");
-                    
               return;
             }
             if (commentInputEl.value === '') {
               commentInputEl.classList.add('err');
               return;
             }
-           
-           
+             
             if (nameInputEl.value != '') {
                 
         peoples.push({
-              name:nameInputEl.value,
+              name:nameInputEl.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;"),
               time:Year(),
-              comment:commentInputEl.value,
+              comment:commentInputEl.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;"),
               like:0
              });
 
