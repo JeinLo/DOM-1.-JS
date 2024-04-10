@@ -138,7 +138,7 @@ const render = () => {
             <button class="deleteButton" data-index="${index}"">Удалить</button>
             <div class="likes">
               <span class="likes-counter" data-index="${index}" >${people.like}</span>
-              <button class="like-button ${people.isLike === true ? "-active-like" : "" }"
+              <button class="like-button ${people.isLike ? "-active-like" : "" }"
                data-index="${index}"></button>
             </div>
           </div>
