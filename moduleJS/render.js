@@ -1,54 +1,7 @@
 import { users } from "./main.js";
 import { delay } from "./utils.js";
+import { addEventListeners } from "./eventHandlers.js";
 
-export function addEventListeners() {
-  document.querySelectorAll('.like-button').forEach(button => {
-    button.addEventListener('click', function () {
-      const index = parseInt(this.dataset.index, 10);
-      const comment = users[index];
-
-      if (comment.isLikeLoading) return;
-
-      comment.isLikeLoading = true;
-      this.classList.add('-loading-like'); // Добавляем анимацию
-
-      delay(2000).then(() => {
-        // Имитация изменения состояния лайка
-        comment.likes = comment.isLiked ? comment.likes - 1 : comment.likes + 1;
-        comment.isLiked = !comment.isLiked;
-        comment.isLikeLoading = false;
-        this.classList.remove('-loading-like');
-
-        renderUsers(users);
-      });
-    });
-  });
-
-  document.querySelectorAll('.comment-text').forEach(div => {
-    div.addEventListener('click', function () {
-      const index = this.dataset.index;
-      textInputElement.value = "QUOTE_BEGIN " + users[index].name + "\n" + users[index].comment + " QUOTE_END";
-    });
-  });
-
-  document.querySelectorAll('.edit-button').forEach(button => {
-    button.addEventListener('click', function () {
-      alert("Сервер пока что не поддерживает редактирование комментариев. Приходите позже");
-    });
-  });
-
-  document.querySelectorAll('.save-button').forEach(button => {
-    button.addEventListener('click', function () {
-      const index = parseInt(this.dataset.index, 10);
-      const newText = document.querySelector(`.edit-textarea[data-index="${index}"]`).value;
-      users[index].comment = safeHTML(newText);
-      users[index].isEdit = false;
-      renderUsers(users);
-    });
-  });
-
-  updateButtonState();
-}
 
 export function renderUsers(users) {
   const listCommentElement = document.getElementById('list-comment');
@@ -89,7 +42,7 @@ export function renderUsers(users) {
         </li>`;
   });
   listCommentElement.innerHTML = usersHtml.join('');
-  // addEventListeners();
+  addEventListeners();
 }
 
 export function updateButtonState() {
