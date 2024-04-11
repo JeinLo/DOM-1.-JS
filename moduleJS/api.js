@@ -7,16 +7,27 @@ import { delay } from './utils.js';
 import { users } from './main.js';
 import { getCommentsAndUpdate } from './main.js';
 
+const host = 'https://wedev-api.sky.pro/api/v2/dv-hz/comments';
+let password = prompt('Введите ваш пароль?');
+
 export function getComments() {
-  return fetch("https://wedev-api.sky.pro/api/v1/dz-hv/comments", {
-    method: "GET"
+  return fetch(host, {
+    method: "GET",
+    headers: {
+      "Authorization": password
+    }
   })
     .then((response) => {
-      if (response.status !== 200) {
-        throw new Error('Ошибка загрузки комментариев: ' + response.statusText);
-
+      if (response.status === 200) {
+        return response.json();
+      } else if (response.status === 401) {
+        password = prompt('Неверный пароль. Повторите попытку');
+        renderUsers();
+        throw new Error('Неверный пароль, нет авторизации');
       }
-      return response.json();
+      else {
+        throw new Error('Ошибка загрузки комментариев: ' + response.statusText);
+      }
     })
 }
 
@@ -35,12 +46,14 @@ export function addComment(event, retryCount = 0) {
 
   getCommentsAndUpdate();
 
-  fetch("https://wedev-api.sky.pro/api/v1/dz-hv/comments", {
+  fetch(host, {
     method: "POST",
     body: JSON.stringify({
       name: safeHTML(nameInputElement.value),
       text: safeHTML(textInputElement.value),
-      // forceError: true,
+      headers: {
+        "Authorization": password
+      }
     })
   })
     .then(response => {
@@ -53,18 +66,18 @@ export function addComment(event, retryCount = 0) {
         throw new Error("Неверные данные в запросе");
       } else if (response.status === 500) {
         if (retryCount < maxRetries) {
-          console.log(`Ошибка сервера. Повторная попытка ${retryCount + 1} из ${maxRetries}`);
+          console.log(`Ошибка сервера.Повторная попытка ${retryCount + 1} из ${maxRetries} `);
           return delay(1000).then(() => addComment(event, retryCount + 1));
         } else {
           throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже (500)');
         }
       } else {
-        throw new Error(`Ошибка при добавлении комментария: ${response.statusText}`);
+        throw new Error(`Ошибка при добавлении комментария: ${response.statusText} `);
       }
     })
     .then(() => {
       renderUsers(users);
-      getComments();
+      getCommentsAndUpdate();
     })
     .catch(error => {
       console.error("Произошла ошибка при добавлении комментария:", error);
