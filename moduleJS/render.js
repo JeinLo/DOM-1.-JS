@@ -1,5 +1,3 @@
-import { users } from "./main.js";
-import { delay } from "./utils.js";
 import { addEventListeners } from "./eventHandlers.js";
 
 
