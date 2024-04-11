@@ -6,7 +6,7 @@ export const textInputElement = document.getElementById('text-input');
 export let users = [];
 
 setupEventListeners();
-addEventListeners();
+// addEventListeners();
 
 const deleteButtonElement = document.getElementById('delete-button');
 

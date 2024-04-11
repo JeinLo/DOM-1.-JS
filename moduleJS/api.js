@@ -64,7 +64,7 @@ export function addComment(event, retryCount = 0) {
     })
     .then(() => {
       renderUsers(users);
-      getComments();
+      getCommentsAndUpdate();
     })
     .catch(error => {
       console.error("Произошла ошибка при добавлении комментария:", error);

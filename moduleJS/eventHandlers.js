@@ -1,14 +1,9 @@
 import { addComment } from './api.js';
-import { updateButtonState } from "./render.js";
+import { updateButtonState, renderUsers } from "./render.js";
 import { users, nameInputElement, textInputElement } from './main.js';
+import { delay } from './utils.js';
 
 
-// export function handleEnterKeyPress(event) {
-//      if (event.key === "Enter") {
-//           event.preventDefault();
-//           addComment(nameInputElement, textInputElement);
-//      }
-// }
 export function handleEnterKeyPress(event) {
      if (event.key === "Enter") {
           event.preventDefault();
@@ -22,7 +17,6 @@ export function handleEnterKeyPress(event) {
 }
 export function setupEventListeners() {
      const buttonAddComment = document.getElementById('add-button');
-
      buttonAddComment.addEventListener('click', addComment);
      nameInputElement.addEventListener('input', updateButtonState);
      textInputElement.addEventListener('input', updateButtonState);
