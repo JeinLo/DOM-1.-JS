@@ -8,7 +8,7 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul  id="list" class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -22,7 +22,7 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">3</span>
-              <button class="like-button"></button>
+              <button id="like-counter" data-like="3" data-index="1" class="like-button"></button>
             </div>
           </div>
         </li>
@@ -39,33 +39,204 @@
           <div class="comment-footer">
             <div class="likes">
               <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
+              <button id="like-counter" data-like="75" data-index="1" class="like-button -active-like"></button>
             </div>
           </div>
         </li>
       </ul>
       <div class="add-form">
-        <input
+        <input id="name-input"
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
-        <textarea
+        <textarea id="comment-input"
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="add-button" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
+    <style>
+      .error {
+        background-color: #bcec30;
+      }
+    </style>
   </body>
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const buttonElement = document.getElementById("add-button");
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const commentInputElement = document.getElementById("comment-input");
+
+  const commentElements = document.querySelectorAll('.comment');
+
+  const commentators = [
+    {
+      name: "Глеб Фокин",
+      time: "12.02.22 12:18",
+      comment: "Это будет первый комментарий на этой странице",
+      likes: 3,
+      isLiked: false,
+    },
+    {
+      name: "Варвара Н.",
+      time: "13.02.22 19:22",
+      comment: "Мне нравится как оформлена эта страница! ❤️",
+      likes: 75,
+      isLiked: true,
+    },
+  ];
+
+  const renderCommentators = () => {
+    const commentatorsHtml = commentators
+      .map((commentator, index) => {
+        return `<li class="comment" data-name="${commentator.name}">
+        <div class="comment-header">
+          <div>${commentator.name}</div>
+          <div>${commentator.time}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${commentator.comment}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${commentator.likes}</span>
+            <button data-like="${index}" data-index="${index}" class="like-button '-active-like"></button>
+          </div>
+        </div>
+      </li>`;
+      })
+      .join("");
+
+      listElement.innerHTML = commentatorsHtml;
+      initEventListeners();  
+    };
+
+      for (const likeButton of document.querySelectorAll('.like-button')) {
+      likeButton.addEventListener("click", (event) => {
+        event.stopPropagetion();
+        const index = likeButton.dataset.like;
+        const commentator = commentators[index];
+        commentator.likes = commentator.isLiked
+        ? commentators.likes - 1
+        : commentators.likes + 1;
+        commentator.isLiked = !commentator.isLiked;
+        
+        renderCommentators();
+      });
+    }
+
+  // добавляет обработчики кликов ко всем классам comment
+  const initEventListeners = () => {
+    // находит все элементы с классом comment в разметке
+    const commentElements = document.querySelectorAll('.comment');
+
+    //цикл проходит по каждому элементу в списке
+    for (const commentElement of commentElements) {
+      //добавляет обработчик клика на конкретный элемент в списке
+      commentElement.addEventListener('click', () => {
+      });
+    }
+  };
+
+
+
+  buttonElement.addEventListener("click", () => {
+    nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
+    if (nameInputElement.value === "") {
+      nameInputElement.classList.add("error");
+      return;
+    } if (commentInputElement.value === "") {
+      commentInputElement.classList.add("error");
+      return;
+    }
+    commentators.push({
+      name: nameInputElement.value,
+      comment: commentInputElement.value,
+      likes: 0,
+      isLiked: false,
+    });
+
+    renderCommentators();
+
+
+    const oldListHtml = listElement.innerHTML;
+    listElement.innerHTML = oldListHtml + `<li class="comment" data-name="${nameInputElement.value}">
+        <div class="comment-header">
+          <div>${nameInputElement.value}</div>
+          <div>${new Date().toLocaleString()}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${commentInputElement.value}</div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">'0'</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>`;
+
+//добавление комментария энтером
+
+    document.addEventListener('keydown', function(enter) {
+				if (enter.key === 'Enter') {
+					buttonElement.click();
+				};
+			});
+
+//----------------------------------------------//
+
+    renderCommentators();
+    initEventListeners();
+
+  });
+
+
+ // --------- КНОПКА ЛАЙКОВ только первые комменты (не работает)---------//
+/*
+  const likeButton = document.querySelector('.like-button');
+  const likesCounter = document.querySelector('.likes-counter');
+
+  likeButton.addEventListener('click', () => {
+    // Получаем текущее значение счетчика лайков и увеличиваем на 1
+    const currentCount = parseInt(likesCounter.textContent, 10);
+    likesCounter.textContent = currentCount + 1;
+
+  });
+*/
+ 
+// --------- КНОПКА ЛАЙКОВ dont work ---------//
+/*
+          const addLikeButtonEventListener = () => {
+			const likeButtonElement = document.querySelectorAll('.like-button');
+      const likeCounter = document.querySelector('.like-counter');
+    for (const likeButtonElement of likeButtonsElements) {
+			let isLike = false;
+			likeButton.addEventListener("click", () => {
+	
+				const index = likeButton.dataset.index;
+				if (commentators[index].isLike === false) {
+					commentators[index].isLike = true;
+					commentators[index].like ++;
+				} else {
+					commentators[index].isLike = false;
+					commentators[index].like --;
+				}
+
+				renderCommentators();
+			});
+		};
+	};
+
+  */
   </script>
 </html>
