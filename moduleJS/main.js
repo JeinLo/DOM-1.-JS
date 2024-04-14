@@ -1,14 +1,15 @@
 import { getComments } from './api.js';
-import { renderUsers } from './render.js';
-import { setupEventListeners, addEventListeners } from './eventHandlers.js';
-export const nameInputElement = document.getElementById('name-input');
-export const textInputElement = document.getElementById('text-input');
+import { renderUsers, renderHome, renderLoginPage } from './render.js';
+
 export let users = [];
+// renderLoginPage();
+// .then((status) => {
+//      if (status === 201) {
+//           renderHome();
+//      }
+// });
 
-setupEventListeners();
-// addEventListeners();
-
-const deleteButtonElement = document.getElementById('delete-button');
+renderHome();
 
 const options = {
      year: '2-digit',
@@ -44,8 +45,4 @@ export function getCommentsAndUpdate() {
           });
 }
 
-deleteButtonElement.addEventListener("click", () => {
-     alert("Сервер пока что не поддерживает удаление комментариев. Приходите позже");
-});
-
-getCommentsAndUpdate();
+// getCommentsAndUpdate();

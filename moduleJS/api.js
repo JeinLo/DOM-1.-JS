@@ -1,34 +1,31 @@
 
 import { updateButtonState } from "./render.js";
-import { nameInputElement, textInputElement } from './main.js';
+import { nameInputElement, textInputElement } from './eventHandlers.js';
 import { safeHTML } from "./utils.js";
 import { renderUsers } from './render.js';
 import { delay } from './utils.js';
 import { users } from './main.js';
 import { getCommentsAndUpdate } from './main.js';
+import { token } from './loginPage.js';
+
 
 const host = 'https://wedev-api.sky.pro/api/v2/dv-hz/comments';
-let password = prompt('Введите ваш пароль?');
+// let password = prompt('Введите ваш пароль?');
 
-export function getComments() {
-  return fetch(host, {
+export async function getComments() {
+  const response = await fetch(host, {
     method: "GET",
-    headers: {
-      "Authorization": password
-    }
-  })
-    .then((response) => {
-      if (response.status === 200) {
-        return response.json();
-      } else if (response.status === 401) {
-        password = prompt('Неверный пароль. Повторите попытку');
-        renderUsers();
-        throw new Error('Неверный пароль, нет авторизации');
-      }
-      else {
-        throw new Error('Ошибка загрузки комментариев: ' + response.statusText);
-      }
-    })
+  });
+  if (response.status === 200) {
+    return response.json();
+  } else if (response.status === 401) {
+    password = prompt('Неверный пароль. Повторите попытку');
+    renderUsers();
+    throw new Error('Неверный пароль, нет авторизации');
+  }
+  else {
+    throw new Error('Ошибка загрузки комментариев: ' + response.statusText);
+  }
 }
 
 export function addComment(event, retryCount = 0) {
@@ -48,18 +45,18 @@ export function addComment(event, retryCount = 0) {
 
   fetch(host, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({
       name: safeHTML(nameInputElement.value),
       text: safeHTML(textInputElement.value),
-      headers: {
-        "Authorization": password
-      }
+
     })
   })
     .then(response => {
       if (response.status === 201) {
         alert("Комментарий успешно добавлен");
-        nameInputElement.value = "";
         textInputElement.value = "";
         renderUsers(users);
       } else if (response.status === 400) {
@@ -71,6 +68,10 @@ export function addComment(event, retryCount = 0) {
         } else {
           throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже (500)');
         }
+      } else if (response.status === 401) {
+        password = prompt('Неверный пароль. Повторите попытку');
+        renderUsers();
+        throw new Error('Неверный пароль, нет авторизации');
       } else {
         throw new Error(`Ошибка при добавлении комментария: ${response.statusText} `);
       }
