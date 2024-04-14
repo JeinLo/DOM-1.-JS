@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+	<div id='preloader'>
+		<p class="preloader-text">Пожалуйста подождите, загружаю комментарии...</p>
+	</div>
     <div class="container">
       <ul id="comment-script" class="comments">
         <!-- <li class="comment">
@@ -43,10 +46,7 @@
           </div>
         </li> -->
       </ul>
-	  <div id="wait_for_loading">
-		<p class="comment_start_time">Пожалуйста подождите, комментарии загружаются.</p>
-	  </div>
-      <div class="add-form">
+      <div class="add-form" id="addForm">
         <input id="input-accept-name"
           type="text"
           class="add-form-name"
@@ -67,13 +67,17 @@
   </body>
   <script>
     "use strict";
+	window.onload = function() {
+    let preloader = document.getElementById('preloader');
+    }
+
 
 		const buttonElement = document.getElementById('add-button');
 		const listElement = document.getElementById('comment-script');
 		const nameInputElement = document.getElementById('input-accept-name');
 		const textInputElement = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
-		const waitForLoading = document.getElementById('wait_for_loading');
+		const addForm = document.getElementById("addForm");
 
 
 		function commentsFunction () {
@@ -101,13 +105,15 @@
 					};
 				});
 				renderCommentators();
-				waitForLoading.classList.add('hide'); 
+				//waitForLoading.classList.add('hide'); 
 			}).then((response) => {
 			buttonElement.classList.remove('gray')
 			buttonElement.disabled = false;
 			buttonElement.textContent = 'Написать';
 			nameInputElement.disabled = false;
 			textInputElement.disabled = false;
+			addForm.classList.remove("hidden");
+			preloader.classList.add('preloader-hidden');
 		});
 	}
   commentsFunction();
@@ -219,14 +225,20 @@
 		};
 			
 			buttonElement.addEventListener("click", () => {
-			//nameInputElement.disabled = true;
-			//textInputElement.disabled = true;
+			nameInputElement.disabled = true;
+			textInputElement.disabled = true;
       nameInputElement.classList.remove("error");
       textInputElement.classList.remove("error");
       if (!textInputElement.value.trim() || !nameInputElement.value.trim()) {
         textInputElement.classList.add("error") || nameInputElement.classList.add("error");
         return;        
       }
+
+	    // nameInputElement.value = "";
+        // textInputElement.value = "";
+        //  buttonElement.disabled = true;
+        //  buttonElement.textContent = 'Комментарий добавляется...';
+
                 const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
 						method: "POST",	
 						body:	JSON.stringify ({
@@ -239,6 +251,8 @@
 					commentsFunction();
 				});
 
+		 
+            
 
         // Очистка поля ввода для комментария и имени после отправления комментария
 			const clearCommmentTextArea = document.querySelector('.add-form-text');
