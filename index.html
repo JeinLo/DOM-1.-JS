@@ -79,6 +79,10 @@
     const userName = document.getElementById('userName');
     const userComment = document.getElementById('userComment');
 
+    const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
+      method: "GET",
+    });
+
     const comments = [
       {
         name: 'Глеб Фокин',
