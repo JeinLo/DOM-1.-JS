@@ -60,8 +60,7 @@ body {
     margin-bottom: 32px;
 
   }
-
-  .comment-text {
+    .comment-text {
     font-size: 32px;
   }
 
@@ -142,7 +141,9 @@ body {
   .deleteButton{
     background: none;
   }
-  
+  .editButton{
+    background: none;
+  }
   .passivButton{
     cursor: default;
   }

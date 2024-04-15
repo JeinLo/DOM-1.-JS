@@ -59,18 +59,36 @@ function Year() {
     const commentInputEl = document.getElementById('commentInput');
     const writeButtonEl = document.getElementById('writeButton');
       
-    const peoples = [{
+    const fetchCom = fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "GET"});
+    fetchCom.then((res) =>{
+      res.json()
+      .then((resData) =>{
+        const appComments = resData.comments.map((comment) => {
+        return{
+          name: comment.author.name,
+          text: comment.text,
+          time: new Date(comment.time),
+          like: comment.likes,
+          isLike: false,};
+        });
+        peoples = appComments;
+        render();
+      });
+    });
+
+
+    let peoples = [{
       name: 'Глеб Фокин',
-      comment:'Это будет первый комментарий на этой странице',
+      text:'Это будет первый комментарий на этой странице',
       time:'12.02.22 12:18',
       like: 3,
-      isLike: false
+      isLike: false,
     },{
       name: 'Варвара Н.',
-      comment:'Мне нравится как оформлена эта страница! ❤',
+      text:'Мне нравится как оформлена эта страница! ❤',
       time:'13.02.22 19:22',
       like: 75,
-      isLike: true
+      isLike: true,
     }]
 
 const initEventlist = () => {     
@@ -84,10 +102,28 @@ for (const commentEls of commentEl) {
 const initDeleteButton = () => {
   const deleteButtonEls = document.querySelectorAll('.deleteButton');
   for (const deleteButtonEl of deleteButtonEls) {
-    deleteButtonEl.addEventListener('click', () => {
+    deleteButtonEl.addEventListener('click', (e) => {
      const index = deleteButtonEl.dataset.index;
      peoples.splice(index, 1);
     render();
+    e.stopPropagation();
+    });
+  }
+}
+
+const initEditButton = () => {
+  const editButtonEls = document.querySelectorAll('.editButton');
+  
+  for (const editButtonEl of editButtonEls) {
+     const index = editButtonEl.dataset.index;
+    editButtonEl.addEventListener('click', (event) => {
+    // peoples[index].comment = `<textarea>${peoples[index].comment}</textarea>`
+    //  render();
+alert('не нажимай, все равно не работаю')
+   
+    //  document.querySelectorAll('.editButton').textContent = 'Сохранить';
+
+     event.stopPropagation();
     });
   }
 }
@@ -115,13 +151,16 @@ const commetForm = () => {
   const commentBodyElements = document.querySelectorAll('.comment-body');
   for (const commentBodyElement of commentBodyElements) {
     commentBodyElement.addEventListener('click', () => {
+      document.querySelector('.add-form-text').scrollIntoView({behavior: 'smooth' })
       const index = commentBodyElement.dataset.index;
-      commentInputEl.value = `${peoples[index].comment} ${peoples[index].name}`;
+      const commetandname = `${peoples[index].comment} \n${peoples[index].name}`
+      commentInputEl.value = commetandname ;
       render();
     });
   }
 }
 commetForm();
+
 const render = () => {
  const peopleHtml = peoples.map((people, index) => {
     return `<li data-name="${people.name}" id="com" class="comment">
@@ -130,12 +169,13 @@ const render = () => {
             <div> ${people.time}</div>
           </div>
           <div class="comment-body" data-index="${index}">
-            <div class="comment-text">
-             ${people.comment}
+            <div id="text" class="comment-text">
+             ${people.text}
             </div>
           </div>   
           <div class="comment-footer">
             <button class="deleteButton" data-index="${index}"">Удалить</button>
+            <button class="editButton" data-index="${index}"">Редактировать</button>
             <div class="likes">
               <span class="likes-counter" data-index="${index}" >${people.like}</span>
               <button class="like-button ${people.isLike ? "-active-like" : "" }"
@@ -149,7 +189,7 @@ const render = () => {
   initDeleteButton();
   initlikeButton();
   commetForm();
-
+  initEditButton();
 }
 
 render();
@@ -160,8 +200,8 @@ render();
 });
 
       writeButtonEl.addEventListener('click', () => {
-        setTimeout(() => { nameInputEl.classList.remove('err');}, 1000 * 1);
-        setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 1);
+        setTimeout(() => { nameInputEl.classList.remove('err');}, 1000 * 0.5);
+        setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 0.5);
 
             if (nameInputEl.value === '') {
               nameInputEl.classList.add("err");
@@ -174,12 +214,30 @@ render();
              
             if (nameInputEl.value != '') {
                 
+
+    const fetchCom = fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "POST"});
+    fetchCom.then((res) =>{
+      res.json()
+      .then((resData) =>{
+        const appComments = resData.comments.map((comment) => {
+        return{
+          name: comment.author.name,
+          text: comment.text,
+          time: new Date(comment.time),
+          like: comment.likes,
+          isLike: false,};
+        });
+        peoples = appComments;
+        render();
+      });
+    });
+  
         peoples.push({
               name:nameInputEl.value
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;"),
               time:Year(),
-              comment:commentInputEl.value
+              text:commentInputEl.value
               .replaceAll("<", "&lt;")
               .replaceAll(">", "&gt;"),
               like:0
