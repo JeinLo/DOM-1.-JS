@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-	<div id='preloader'>
-		<p class="preloader-text">Пожалуйста подождите, загружаю комментарии...</p>
-	</div>
     <div class="container">
+		<div id="container-preloader"></div>
+      <ul class="comments" id="comments-container"></ul>
+      <div id="container-preloader-post"></div>
       <ul id="comment-script" class="comments">
         <!-- <li class="comment">
           <div class="comment-header">
@@ -44,8 +44,13 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li> -->
+        </li>
+		 <div id="wait_for_loading">
+		<p class="comment_start_time">Пожалуйста подождите, комментарии загружаются.</p>
+	</div>
+	-->
       </ul>
+	  
       <div class="add-form" id="addForm">
         <input id="input-accept-name"
           type="text"
@@ -67,10 +72,6 @@
   </body>
   <script>
     "use strict";
-	window.onload = function() {
-    let preloader = document.getElementById('preloader');
-    }
-
 
 		const buttonElement = document.getElementById('add-button');
 		const listElement = document.getElementById('comment-script');
@@ -78,7 +79,13 @@
 		const textInputElement = document.getElementById('textarea-accept-comment');
 		const buttonDelete =  document.getElementById('delete-button');
 		const addForm = document.getElementById("addForm");
+		const containerPreloader = document.getElementById('container-preloader');
+        const containerPreloaderPost = document.getElementById('container-preloader-post'); 
+		//const waitForLoading = document.getElementById('wait_for_loading');
 
+
+		containerPreloader.textContent = 'Пожалуйста подождите, идет загрузка комментариев...';
+        containerPreloaderPost.style.display = 'none';
 
 		function commentsFunction () {
 		buttonElement.disabled = true;
@@ -105,6 +112,8 @@
 					};
 				});
 				renderCommentators();
+				containerPreloader.textContent = '';
+                containerPreloaderPost.style.display = 'block';
 				//waitForLoading.classList.add('hide'); 
 			}).then((response) => {
 			buttonElement.classList.remove('gray')
@@ -112,8 +121,8 @@
 			buttonElement.textContent = 'Написать';
 			nameInputElement.disabled = false;
 			textInputElement.disabled = false;
-			addForm.classList.remove("hidden");
-			preloader.classList.add('preloader-hidden');
+			//addForm.classList.remove("hidden");
+			//preloader.classList.add('preloader-hidden');
 		});
 	}
   commentsFunction();
