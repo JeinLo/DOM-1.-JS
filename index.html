@@ -81,15 +81,14 @@
 		const addForm = document.getElementById("addForm");
 		const containerPreloader = document.getElementById('container-preloader');
         const containerPreloaderPost = document.getElementById('container-preloader-post'); 
-		//const waitForLoading = document.getElementById('wait_for_loading');
 
 
 		containerPreloader.textContent = 'Пожалуйста подождите, идет загрузка комментариев...';
         containerPreloaderPost.style.display = 'none';
 
 		function commentsFunction () {
-		buttonElement.disabled = true;
-		buttonElement.textContent = 'Комментарий загружается'
+		//buttonElement.disabled = true;
+		//buttonElement.textContent = 'Комментарий загружается'
 		console.log('Запрос начался');
 
         //данные из API 
@@ -114,15 +113,12 @@
 				renderCommentators();
 				containerPreloader.textContent = '';
                 containerPreloaderPost.style.display = 'block';
-				//waitForLoading.classList.add('hide'); 
-			}).then((response) => {
-			buttonElement.classList.remove('gray')
-			buttonElement.disabled = false;
-			buttonElement.textContent = 'Написать';
-			nameInputElement.disabled = false;
-			textInputElement.disabled = false;
-			//addForm.classList.remove("hidden");
-			//preloader.classList.add('preloader-hidden');
+			//}).then((response) => {
+			//buttonElement.classList.remove('gray')
+			//buttonElement.disabled = false;
+			//buttonElement.textContent = 'Написать';
+			//nameInputElement.disabled = false;
+			//textInputElement.disabled = false;
 		});
 	}
   commentsFunction();
@@ -233,44 +229,75 @@
       inactiveDeleteButton();
 		};
 			
-			buttonElement.addEventListener("click", () => {
-			nameInputElement.disabled = true;
-			textInputElement.disabled = true;
-      nameInputElement.classList.remove("error");
-      textInputElement.classList.remove("error");
-      if (!textInputElement.value.trim() || !nameInputElement.value.trim()) {
-        textInputElement.classList.add("error") || nameInputElement.classList.add("error");
-        return;        
-      }
 
-	    // nameInputElement.value = "";
-        // textInputElement.value = "";
-        //  buttonElement.disabled = true;
-        //  buttonElement.textContent = 'Комментарий добавляется...';
+		function addNewComment() { 
+          postPromiseFetch();
+        };
 
-                const featchPushComment = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
+            function postPromiseFetch() {
+	
+                const fetchPromisePost = fetch(" https://wedev-api.sky.pro/api/v1/Angellina/comments",{
 						method: "POST",	
 						body:	JSON.stringify ({
 							text: textInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
 							name: nameInputElement.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-							
+							forceError: true
 						}),
-				}
-				).then((response) => {
+				}).then((response) => {
+                 console.log(response);
+                if (response.status === 201) {
+                return response.json();
+                }else if (response.status === 500) {
+                throw new Error("Сервер сломался")
+                } else if (response.status === 400) {
+                throw new Error("Недопустимое количество символов")
+                }
+                }).then((response) => {
 					commentsFunction();
-				});
+				}).then(() => {
+                buttonElement.disabled = false;
+                buttonElement.textContent = 'Написать';
+                nameInputElement.value = "";
+                textInputElement.value = "";
+                })
+                .catch((error) => {
+                buttonElement.disabled = false;
+                buttonElement.textContent = 'Написать';
 
-		 
+                if (error.message === "Сервер сломался") {
+                  alert("Сервер сломался, попробуйте позже")
+                }
+                if (error.message === "Недопустимое количество символов") {
+                  alert("Имя и комментарий должны быть не короче 3-х символов")
+                }
+                if (error.message === 'Failed to fetch') {
+                  alert('Интернет не работает, попробуйте позже');
+                }
+                console.warn(error);
+                });
+            };
+
+		buttonElement.addEventListener("click", () => {
+			  nameInputElement.classList.remove("error");
+              textInputElement.classList.remove("error");
+             if (!textInputElement.value.trim() || !nameInputElement.value.trim()) {
+             textInputElement.classList.add("error") || nameInputElement.classList.add("error");
+            return;         
+           }
+          addNewComment();
+          buttonElement.disabled = true;
+          buttonElement.textContent = 'Комментарий добавляется...';
+    
+        //});
             
-
         // Очистка поля ввода для комментария и имени после отправления комментария
-			const clearCommmentTextArea = document.querySelector('.add-form-text');
-			const clearName = document.querySelector('.add-form-name');
-			clearCommmentTextArea.value = '';
-			clearName.value = '';
-			renderCommentators();
-			checkInputs();
-		});
+		//const clearCommmentTextArea = document.querySelector('.add-form-text');
+		//const clearName = document.querySelector('.add-form-name');
+		//clearCommmentTextArea.value = '';
+		//clearName.value = '';
+		//renderCommentators();
+		//checkInputs();
+	   })
 
 		//renderCommentators();
 		//checkInputs();
