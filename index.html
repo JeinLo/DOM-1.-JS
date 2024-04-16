@@ -30,40 +30,37 @@
   const inputCommentEl = document.getElementById('input-comment');
   const writeEl = document.getElementById('write');
 
+
+  let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
+    method: "GET"
+  });
+
+  fetchPromise.then((response) => {
+    return jsonPromise = response.json();
+  }).then((responseData) => {
+    comments = [...responseData.comments];
+    renderComments();
+  });
+
   // Создаём массив данных для новых и шаблонных комментов
-  const comments = [
-    {
-      name: 'Глеб Фокин',
-      comment: 'Это будет первый комментарий на этой странице',
-      time: '12.02.22 12:18',
-      numLikes: 3,
-      isLiked: false
-    },
-    {
-      name: 'Варвара Н.',
-      comment: 'Мне нравится как оформлена эта страница! ❤',
-      time: '13.02.22 19:22',
-      numLikes: 75,
-      isLiked: true
-    }
-  ];
+  let comments = [];
 
   // Функция для отображения комментариев
   const renderComments = () => {
     const commentsHTML = comments.map((comment, index) => {
       return `<li class="comment">
         <div class="comment-header">
-          <div>${comment.name}</div>
-          <div>${comment.time}</div>
+          <div>${comment.author.name}</div>
+          <div>${comment.date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.comment}
+            ${comment.text}
           </div>
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${comment.numLikes}</span>
+            <span class="likes-counter">${comment.likes}</span>
             <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index='${index}'></button>
           </div>
         </div>
@@ -109,6 +106,19 @@
       // Возвращаем
       return;
     };
+
+    let fetchPromise2 = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
+      method: "POST",
+      body: JSON.stringify({
+        text: inputCommentEl.value,
+        name: inputNameEl.value
+      })
+    }).then((response) => {
+      return response.json();
+    }).then((responseData) => {
+      comments = responseData.comments;
+      renderComments();
+    });
 
     // Определяем формат времени и даты как на образце
     const currentDate = new Date();
