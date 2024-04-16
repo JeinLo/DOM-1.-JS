@@ -100,7 +100,7 @@
     //       method: "POST",
     //       body: JSON.stringify({
     //         id: 1,
-    //         name: "Глеб Фокин",
+    //         author: {name: "Глеб Фокин"},
     //         text: "Это будет первый комментарий на этой странице",
     //         date: "12.02.22 12:18",
     //         likes: 3,
@@ -109,7 +109,7 @@
     //     }).then((response) => {
     //       const jsonPromis = response.json().then((jsonResponse) => {
     //         console.log(jsonResponse);
-    //         comments = jsonResponse.comments;
+    //         listComments = jsonResponse.comments;
     //         renderComments();
     //       })
     //     })
@@ -118,7 +118,7 @@
         //   method: "POST",
         //   body: JSON.stringify({
         //     id: 2,
-        //     name: "Варвара Н.",
+        //     author: {name: "Варвара Н."},
         //     text: "Мне нравится как оформлена эта страница! ❤",
         //     date: "13.02.22 19:22",
         //     likes: 75,
@@ -127,7 +127,7 @@
         // }).then((response) => {
         //   const jsonPromis = response.json().then((jsonResponse) => {
         //     console.log(jsonResponse);
-        //     comments = jsonResponse.comments;
+        //     listComments = jsonResponse.comments;
         //     renderComments();
         //   })
         // })
@@ -167,6 +167,7 @@
     renderComments();
   // deleteComment();
 
+  function get() {
     let resultFetch = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
     method: "GET",
   });
@@ -180,6 +181,8 @@
       renderComments();
     })
   });
+  }
+    get();
   
   // renderComments();
   // deleteComment();
@@ -288,11 +291,11 @@
         }).then((response) => {
           const jsonPromis = response.json().then((jsonResponse) => {
             console.log(jsonResponse);
-            listComments += jsonResponse.comments;
+            listComments = jsonResponse.comments;
             renderComments();
           })
         })
-
+        get();
         renderComments();
 
         userName.value = '';
