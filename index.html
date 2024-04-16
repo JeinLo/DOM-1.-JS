@@ -110,15 +110,9 @@
 						isLike: comment.isLiked
 					};
 				});
-				renderCommentators();
-				containerPreloader.textContent = '';
-                containerPreloaderPost.style.display = 'block';
-			//}).then((response) => {
-			//buttonElement.classList.remove('gray')
-			//buttonElement.disabled = false;
-			//buttonElement.textContent = 'Написать';
-			//nameInputElement.disabled = false;
-			//textInputElement.disabled = false;
+			renderCommentators();
+			containerPreloader.textContent = '';
+            containerPreloaderPost.style.display = 'block';
 		});
 	}
   commentsFunction();
