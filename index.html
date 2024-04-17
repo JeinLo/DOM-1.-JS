@@ -10,44 +10,9 @@
     <div class="container">
       <ul id="list" class="comments">
         <!-- Комментарии рендерятся из JS -->
-
-        <!-- <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li> -->
       </ul>
-      <div class="add-form">
-        <input
+      <div id="form" class="add-form">
+          <input
           type="text"
           id="userName"
           class="add-form-name"
@@ -78,59 +43,14 @@
     const commentsList = document.getElementById('list');
     const userName = document.getElementById('userName');
     const userComment = document.getElementById('userComment');
+    const form = document.getElementById('form');
 
-    let listComments = [
-      // {
-      //   author: {name: "Глеб Фокин"},
-      //   text: "Это будет первый комментарий на этой странице",
-      //   date: "12.02.22 12:18",
-      //   numLikes: 3,
-      //   isLiked: false
-      // },
-      // {
-      //   author: {name: "Варвара Н."},
-      //   text: "Мне нравится как оформлена эта страница! ❤",
-      //   date: "13.02.22 19:22",
-      //   numLikes: 75,
-      //   isLiked: true
-      // }
-    ];
+    commentsList.innerHTML = `<li class="comment">Loading...</li>`;
 
-    // const result1 = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
-    //       method: "POST",
-    //       body: JSON.stringify({
-    //         id: 1,
-    //         author: {name: "Глеб Фокин"},
-    //         text: "Это будет первый комментарий на этой странице",
-    //         date: "12.02.22 12:18",
-    //         likes: 3,
-    //         isLiked: false,
-    //       }),
-    //     }).then((response) => {
-    //       const jsonPromis = response.json().then((jsonResponse) => {
-    //         console.log(jsonResponse);
-    //         renderComments();
-    //       })
-    //     })
-
-        // const result2 = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
-        //   method: "POST",
-        //   body: JSON.stringify({
-        //     id: 2,
-        //     author: {name: "Варвара Н."},
-        //     text: "Мне нравится как оформлена эта страница! ❤",
-        //     date: "13.02.22 19:22",
-        //     likes: 75,
-        //     isLiked: true
-        //   }),
-        // }).then((response) => {
-        //   const jsonPromis = response.json().then((jsonResponse) => {
-        //     console.log(jsonResponse);
-        //     renderComments();
-        //   })
-        // })
+    let listComments = [];
 
     const renderComments = () => {
+
       const commentsHTML = listComments.map((userComment, index) => {
       let textHTML;
         
@@ -164,18 +84,17 @@
 
     get();
     renderComments();
-  // deleteComment();
 
   function get() {
-    let resultFetch = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
+    return fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
       method: "GET",
-    });
-    resultFetch.then((promis) => {
-      const jsonPromis = promis.json();
-      jsonPromis.then((resultDATA) => {
-        listComments = resultDATA.comments;
-        renderComments();
-      })
+    })
+    .then((promis) => {
+      return promis.json();
+    })
+    .then((resultDATA) => {
+      listComments = resultDATA.comments;
+      renderComments();
     });
   }
 
@@ -197,28 +116,6 @@
         })
       } 
     }
-    
-    // function deleteComment() { // function for deleting last comment
-      
-    //   deleteButton.addEventListener('click', () => {
-    //   // listComments.pop();
-      
-    //     const id = delButton.dataset.id;
-    //     const resultDelete = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments" + id, {
-    //       method: "DELETE",
-    //     }).then((response) => {
-    //       const jsonPromis = response.json().then((jsonResponse) => {
-    //         // console.log(jsonResponse);
-    //         listComments = jsonResponse.comments;
-    //         renderComments();
-    //       })
-    //     })
-    //   })
-      
-    //   renderComments();
-    
-    // }
-    
 
     writeButton.disabled = true;
 
@@ -263,13 +160,11 @@
 
       } else {
 
-        // listComments.push({
-        //   name: sanitize(userName.value),
-        //   text: sanitize(userComment.value),
-        //   date: currentDate,
-        //   likes: 0,
-        //   isLiked: false
-        // })
+        const startTime = Date.now();
+
+        // writeButton.disabled = true;
+        // writeButton.textContent = 'loading...';
+        form.textContent = 'Loading...';
 
         const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
           method: "POST",
@@ -279,15 +174,50 @@
             date: currentDate,
             likes: 0,
             isLiked: false 
-          })
-        }).then((response) => {
-          const jsonPromis = response.json().then((jsonResponse) => {
-            get();
-            renderComments();
-          })
+          }),
         })
-        // get();
-        // renderComments();
+        .then((response) => {
+          console.log('Прошло времени: ' + (Date.now() - startTime));
+          return response
+        })
+        .then((response) => {
+          return response.json();
+        })
+        .then((response) => {
+          console.log('Прошло времени: ' + (Date.now() - startTime));
+          return response
+        })
+        .then((jsonResponse) => {
+          return get();
+        })
+        .then((response) => {
+          console.log('Прошло времени: ' + (Date.now() - startTime));
+          return response
+        })
+        .then((final) => {
+          // writeButton.disabled = false;
+          // writeButton.textContent = 'Написать';
+          form.innerHTML = `<input
+          type="text"
+          id="userName"
+          class="add-form-name"
+          placeholder="Введите ваше имя"
+        />
+        <textarea
+          type="textarea"
+          id="userComment"
+          class="add-form-text"
+          placeholder="Введите ваш коментарий"
+          rows="4"
+        ></textarea>
+        <div class="add-form-row">
+          <button id="writeButton" class="add-form-button">Написать</button>
+        </div>
+        <div>
+          <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
+        </div>`;
+        });
+        renderComments();
 
         userName.value = '';
         userComment.value = '';
