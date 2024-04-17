@@ -245,7 +245,27 @@ render();
         //       like:0
         //      });
 
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments",
+      // fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments",
+    //   {
+    //     method: "POST",
+    //     body: JSON.stringify({
+    //       name:nameInputEl.value
+    //       .replaceAll("<", "&lt;")
+    //       .replaceAll(">", "&gt;"),
+    //       text: commentInputEl.value
+    //       .replaceAll("<", "&lt;")
+    //       .replaceAll(">", "&gt;"),
+    //       // time: new Date(comment.time),
+    //     })
+    // })
+    // .then((res) => {
+    //  res.json()
+    //   .then((resData) => {
+    //     render();
+    //   });
+    // });
+
+    fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments",
       {
         method: "POST",
         body: JSON.stringify({
@@ -256,17 +276,8 @@ render();
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;"),
           // time: new Date(comment.time),
-        }),
-    });
-    fetchPromise.then((response) => {
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        tasks = responseData.todos;
-        renderTasks();
-      });
-    });
-
-    fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "GET"})
+        })
+    })
     .then((res) =>{
       res.json()
       .then((resData) =>{
