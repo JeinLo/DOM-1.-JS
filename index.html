@@ -160,9 +160,9 @@
 
       likeEvent();
       answerComment();
-      get();
     }
 
+    get();
     renderComments();
   // deleteComment();
 
@@ -282,13 +282,12 @@
           })
         }).then((response) => {
           const jsonPromis = response.json().then((jsonResponse) => {
-            // console.log(jsonResponse);
-            // listComments = jsonResponse.comments;
+            get();
             renderComments();
           })
         })
-        get();
-        renderComments();
+        // get();
+        // renderComments();
 
         userName.value = '';
         userComment.value = '';
@@ -300,7 +299,7 @@
       const commentHTML = document.querySelectorAll('.comment');
       commentHTML.forEach((el, i) => {
         el.addEventListener('click', () => {
-          userComment.value = `QUOTE_BEGIN>${listComments[i].name}\n ${listComments[i].comment}QUOTE_END`;
+          userComment.value = `QUOTE_BEGIN>${listComments[i].author.name}\n ${listComments[i].text}QUOTE_END`;
         })
       })
     }
