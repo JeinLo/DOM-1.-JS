@@ -131,7 +131,7 @@
         // })
 
     const renderComments = () => {
-      const commentsHTML = listComments.map((userComment) => {
+      const commentsHTML = listComments.map((userComment, index) => {
       let textHTML;
         
       textHTML = `<li class="comment">
@@ -148,7 +148,7 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${userComment.likes}</span>
-            <button class="like-button ${userComment.isLiked ? "-active-like" : ""}" data-id='${userComment.id}'></button>
+            <button class="like-button ${userComment.isLiked ? "-active-like" : ""}" data-index='${index}'></button>
           </div>
         </div>
       </li>`
@@ -186,7 +186,7 @@
         likeElement.addEventListener('click', (e) => {
           e.stopPropagation();
 
-          // const index = likeElement.dataset.index;
+          const index = likeElement.dataset.index;
 
           const direction = listComments[index].isLiked ? -1 : +1;
 
