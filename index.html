@@ -30,17 +30,23 @@
   const inputCommentEl = document.getElementById('input-comment');
   const writeEl = document.getElementById('write');
 
+  // Вывод комментариев с сервера
+  const getFetchPromise = () => {
 
-  let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
-    method: "GET"
-  });
+    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
+      method: "GET"
+    });
 
-  fetchPromise.then((response) => {
-    return jsonPromise = response.json();
-  }).then((responseData) => {
-    comments = [...responseData.comments];
-    renderComments();
-  });
+    fetchPromise.then((response) => {
+      return jsonPromise = response.json();
+    }).then((responseData) => {
+      comments = [...responseData.comments];
+      renderComments();
+    });
+
+  };
+  getFetchPromise();
+
 
   // Создаём массив данных для новых и шаблонных комментов
   let comments = [];
@@ -107,7 +113,8 @@
       return;
     };
 
-    let fetchPromise2 = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
+    // Сохранение комментариев на сервер
+    let fetchBroadcast = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
       method: "POST",
       body: JSON.stringify({
         text: inputCommentEl.value,
@@ -117,8 +124,15 @@
       return response.json();
     }).then((responseData) => {
       comments = responseData.comments;
-      renderComments();
+      // renderComments();
     });
+    getFetchPromise();
+
+    // Очищаем поля ввода после добавления комментария
+    inputNameEl.value = '';
+    inputCommentEl.value = '';
+    inputNameEl.style.backgroundColor = '';
+    inputCommentEl.style.backgroundColor = '';
 
     // Определяем формат времени и даты как на образце
     const currentDate = new Date();
@@ -142,11 +156,7 @@
     // Перерисовываем список комментариев
     renderComments();
 
-    // Очищаем поля ввода после добавления комментария
-    inputNameEl.value = '';
-    inputCommentEl.value = '';
-    inputNameEl.style.backgroundColor = '';
-    inputCommentEl.style.backgroundColor = '';
+
   });
 
   // Функция обработчика клика на комментах
