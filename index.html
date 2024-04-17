@@ -179,7 +179,7 @@
     commentEl.forEach((el, index) => {
       el.addEventListener('click', function (e) {
         // Дублирование комментария для ответа
-        inputCommentEl.value = `QUOTE_BEGIN>${comments[index].name}\n${comments[index].comment}QUOTE_END\n`;
+        inputCommentEl.value = `QUOTE_BEGIN>${comments[index].author.name}\n${comments[index].text}QUOTE_END\n`;
       });
     });
   };
