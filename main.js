@@ -1,12 +1,6 @@
-import { getTodos } from "./api.js";
-import {
-  renderComments,
-  likesActive,
-  disableForm,
-  deleteComment,
-  addCommentOnClick,
-  addOnEnter,
-} from "./helpers.js";
+import {getTodos} from "./api.js";
+import {authnPage} from "./renderAuthorization.js";
+import {currentDateForComment, likesActive, renderComments,} from "./helpers.js";
 
 export let commentsList = [];
 export const currentInputName = document.querySelector(".add-form-name");
@@ -18,12 +12,40 @@ export const deleteButton = document.querySelector(".delete-form-button");
 
 likesActive();
 
-const start = () => {
+export const fetchAndRenderTasks = () => {
+  getTodos()
+    .then((responseData) => {
+      commentsList = responseData.comments.map((comment) => {
+        console.log("111");
+        console.log(responseData)
+        return {
+          id: comment.id,
+          name: comment.author.name,
+          date: currentDateForComment(comment),
+          text: comment.text,
+          likesCounter: comment.likes,
+          likeButton: false,
+        };
+      });
+      renderComments(commentList, commentsList);
+    })
+    .catch((error) => {
+      if (error.message === "Сервер сломался. Попробуйте позже.") {
+        alert("Сервер сломался. Попробуйте позже.");
+      } else if (!window.navigator.onLine) {
+        throw new Error("Кажется, у вас сломался интернет, попробуйте позже");
+      }
+      return true;
+    });
+};
+
+export const start = () => {
   let newDiv = document.createElement("div");
   newDiv.classList.add("newComment");
   commentList.insertAdjacentElement("afterend", newDiv);
   document.querySelector(".newComment").innerHTML =
     "Список комментариев загружается...";
+
   getTodos()
     .then((responseData) => {
       commentsList = responseData.comments;
@@ -39,28 +61,16 @@ const start = () => {
         alert("Кажется, у вас сломался интернет, попробуйте позже");
       }
     });
-}
+  let divRegistration = document.createElement("div");
+  divRegistration.classList.add("registration");
+  commentList.insertAdjacentElement("afterend", divRegistration);
+  document.querySelector(".registration").innerHTML =
+    "<p>Чтобы добавить комментарий, <a class='auth' href='#'>авторизируйтесь<a/></p>";
+  const authElem = document.querySelector(".auth");
+
+  authElem.addEventListener("click", () => {
+    authnPage({fetchAndRenderTasks});
+  });
+};
+
 start();
-
-export const fetchAndRenderTasks = () => {
-  return getTodos()
-    .then((responseData) => {
-      commentsList = responseData.comments;
-      renderComments();
-    })
-    .catch((error) => {
-      if (error.message === "Сервер сломался. Попробуйте позже.") {
-        alert("Сервер сломался. Попробуйте позже.");
-      } else if (!window.navigator.onLine) {
-        throw new Error("Кажется, у вас сломался интернет, попробуйте позже");
-      }
-
-      return;
-    });
-}
-
-disableForm(checkStatus);
-addCommentOnClick();
-addOnEnter();
-deleteComment();
-renderComments(commentList, commentsList);

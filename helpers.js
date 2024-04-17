@@ -86,10 +86,23 @@ ${nameComment}, `;
 };
 
 export function render(elemen) {
+  console.log(elemen);
+ let authorName; 
+ let likesCount;
+ let isLike;
+ if(typeof elemen.name != "undefined") {
+  authorName = elemen.name;
+  likesCount = elemen.likesCounter;
+  isLike = elemen.likeButton; 
+ } else {
+  authorName = elemen.author.name;
+  likesCount = elemen.likes;
+  isLike = elemen.isLiked;
+ }
   return `
     <li class="comment">
       <div class="comment-header">
-        <div>${sanitize(elemen.author.name)}</div>
+        <div>${sanitize(authorName)}</div>
         <div>${currentDateForComment(elemen)}</div>
       </div>
       <div class="comment-body">
@@ -99,9 +112,9 @@ export function render(elemen) {
       </div>
       <div class="comment-footer">
         <div class="likes">
-          <span class="likes-counter">${elemen.likes}</span>
+          <span class="likes-counter">${likesCount}</span>
           <button data-index="${elemen.id}" class="like-button ${
-    elemen.isLiked ? "-active-like" : ""
+      isLike ? "-active-like" : ""
   }"></button>
         </div>
       </div>
@@ -211,27 +224,4 @@ export const deleteComment = () => {
       commentsList.pop();
     }
   });
-};
-
-export const start = () => {
-  let newDiv = document.createElement("div");
-  newDiv.classList.add("newComment");
-  commentList.insertAdjacentElement("afterend", newDiv);
-  document.querySelector(".newComment").innerHTML =
-    "Список комментариев загружается...";
-  getTodos()
-    .then((responseData) => {
-      commentsList = responseData.comments;
-      renderComments(commentList, commentsList);
-    })
-    .then(() => {
-      document.querySelector(".newComment").remove();
-    })
-    .catch((error) => {
-      if (error.message === "Сервер сломался. Попробуйте позже.") {
-        alert("Сервер сломался. Попробуйте позже.");
-      } else if (!window.navigator.onLine) {
-        throw new Error("Кажется, у вас сломался интернет, попробуйте позже");
-      }
-    });
 };
