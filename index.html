@@ -1,81 +1,75 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  <body>
-    <div class="container">
-      <ul  id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button id="like-counter" data-like="3" data-index="1" class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button id="like-counter" data-like="75" data-index="1" class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input id="name-input"
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="comment-input"
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <!-- <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button id="like-counter" data-like="3" data-index="1" class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button id="like-counter" data-like="75" data-index="1" class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li> -->
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
     </div>
-    <style>
-      .error {
-        background-color: #bcec30;
-      }
-    </style>
-  </body>
+  </div>
+  <style>
+    .error {
+      background-color: #bcec30;
+    }
+  </style>
+</body>
 
-  <script>
-    "use strict";
-    const buttonElement = document.getElementById("add-button");
+<script>
+  "use strict";
+  const buttonElement = document.getElementById("add-button");
   const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
 
   const commentElements = document.querySelectorAll('.comment');
+
 
   const commentators = [
     {
@@ -108,30 +102,16 @@
         <div class="comment-footer">
           <div class="likes">
             <span class="likes-counter">${commentator.likes}</span>
-            <button data-like="${index}" data-index="${index}" class="like-button '-active-like"></button>
+            <button data-like="${index}" data-index="${index}" class="like-button ${commentator.isLiked ? '-active-like' : ''}"></button>
           </div>
         </div>
       </li>`;
       })
       .join("");
 
-      listElement.innerHTML = commentatorsHtml;
-      initEventListeners();  
-    };
-
-      for (const likeButton of document.querySelectorAll('.like-button')) {
-      likeButton.addEventListener("click", (event) => {
-        event.stopPropagetion();
-        const index = likeButton.dataset.like;
-        const commentator = commentators[index];
-        commentator.likes = commentator.isLiked
-        ? commentators.likes - 1
-        : commentators.likes + 1;
-        commentator.isLiked = !commentator.isLiked;
-        
-        renderCommentators();
-      });
-    }
+    listElement.innerHTML = commentatorsHtml;
+    initEventListeners();
+  };
 
   // добавляет обработчики кликов ко всем классам comment
   const initEventListeners = () => {
@@ -144,8 +124,21 @@
       commentElement.addEventListener('click', () => {
       });
     }
-  };
 
+    for (const likeButton of document.querySelectorAll('.like-button')) {
+      likeButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const index = likeButton.dataset.index;
+        const commentator = commentators[index];
+        commentator.likes = commentator.isLiked
+          ? commentator.likes - 1
+          : commentator.likes + 1;
+        commentator.isLiked = !commentator.isLiked;
+
+        renderCommentators();
+      });
+    }
+  };
 
 
   buttonElement.addEventListener("click", () => {
@@ -166,77 +159,42 @@
     });
 
     renderCommentators();
-
-
-    const oldListHtml = listElement.innerHTML;
-    listElement.innerHTML = oldListHtml + `<li class="comment" data-name="${nameInputElement.value}">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${new Date().toLocaleString()}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">${commentInputElement.value}</div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">'0'</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>`;
-
-//добавление комментария энтером
-
-    document.addEventListener('keydown', function(enter) {
-				if (enter.key === 'Enter') {
-					buttonElement.click();
-				};
-			});
-
-//----------------------------------------------//
-
-    renderCommentators();
     initEventListeners();
 
+    nameInputElement.value = "";
+    commentInputElement.value = "";
+
+
+    // const oldListHtml = listElement.innerHTML;
+    // listElement.innerHTML = oldListHtml + `<li class="comment" data-name="${nameInputElement.value}">
+    //     <div class="comment-header">
+    //       <div>${nameInputElement.value}</div>
+    //       <div>${new Date().toLocaleString()}</div>
+    //     </div>
+    //     <div class="comment-body">
+    //       <div class="comment-text">${commentInputElement.value}</div>
+    //     </div>
+    //     <div class="comment-footer">
+    //       <div class="likes">
+    //         <span class="likes-counter">'0'</span>
+    //         <button class="like-button -active-like"></button>
+    //       </div>
+    //     </div>
+    //   </li>`;
+
+    //добавление комментария энтером
+
+    document.addEventListener('keydown', function (enter) {
+      if (enter.key === 'Enter') {
+        buttonElement.click();
+      };
+    });
+
+    renderCommentators();
+    // initEventListeners();
   });
+  renderCommentators();
 
+</script>
 
- // --------- КНОПКА ЛАЙКОВ только первые комменты (не работает)---------//
-/*
-  const likeButton = document.querySelector('.like-button');
-  const likesCounter = document.querySelector('.likes-counter');
-
-  likeButton.addEventListener('click', () => {
-    // Получаем текущее значение счетчика лайков и увеличиваем на 1
-    const currentCount = parseInt(likesCounter.textContent, 10);
-    likesCounter.textContent = currentCount + 1;
-
-  });
-*/
- 
-// --------- КНОПКА ЛАЙКОВ dont work ---------//
-/*
-          const addLikeButtonEventListener = () => {
-			const likeButtonElement = document.querySelectorAll('.like-button');
-      const likeCounter = document.querySelector('.like-counter');
-    for (const likeButtonElement of likeButtonsElements) {
-			let isLike = false;
-			likeButton.addEventListener("click", () => {
-	
-				const index = likeButton.dataset.index;
-				if (commentators[index].isLike === false) {
-					commentators[index].isLike = true;
-					commentators[index].like ++;
-				} else {
-					commentators[index].isLike = false;
-					commentators[index].like --;
-				}
-
-				renderCommentators();
-			});
-		};
-	};
-
-  */
-  </script>
 </html>
