@@ -41,22 +41,33 @@
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
 
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        date: "12.02.22 12:18",
-        text: "Это будет первый комментарий на этой странице",
-        like: false,
-        numLike: 3,
-      },
-      {
-        name: "Варвара Н.",
-        date: "13.02.22 19:22",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        like: true,
-        numLike: 75,
-      },
-    ];
+    let comments = [];
+
+    const fetchGet = () => {
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
+        {
+          method: "GET",
+        }
+      );
+
+      fetchPromise.then((response) => {
+        response.json().then((responseData) => {
+          const addComments = responseData.comments.map((comment) => {
+            return {
+              name: comment.author.name,
+              date: correceDateApi(new Date(comment.date)),
+              text: comment.text,
+              likes: comment.likes,
+              isLiked: comment.isLiked,
+            };
+          });
+
+          comments = addComments;
+          renderComments();
+        });
+      });
+    };
 
     const renderComments = () => {
       const commentsHtml = comments
@@ -75,9 +86,9 @@
           </div>
           <div class="comment-footer">
             <div class="likes">
-              <span class="likes-counter">${comment.numLike}</span>
+              <span class="likes-counter">${comment.likes}</span>
               <button data-index="${index}" class="${
-            comment.like ? "like-button -active-like" : "like-button"
+            comment.isLiked ? "like-button -active-like" : "like-button"
           }"></button>
             </div>
           </div>
@@ -89,6 +100,34 @@
 
       initLikeButtons();
       initReplyComments();
+    };
+
+    const correceDateApi = (myDate) => {
+      //Создаю объекты для работы с датой
+      let date = myDate.getDate();
+      let month = myDate.getMonth();
+      let year = myDate.getFullYear();
+      let hours = myDate.getHours();
+      let minutes = myDate.getMinutes();
+
+      //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
+      date = date < 10 ? "0" + date : date;
+      month = month < 10 ? "0" + (month + 1) : month + 1;
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+
+      //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
+      return (
+        date +
+        "." +
+        month +
+        "." +
+        year.toString().slice(2) +
+        " " +
+        hours +
+        ":" +
+        minutes
+      );
     };
 
     //При нажатии на любой коммент, копирует его в commentInputElement
@@ -111,12 +150,12 @@
           const index = likeButton.dataset.index;
           event.stopPropagation();
 
-          if (comments[index].like === false) {
-            comments[index].like = true;
-            comments[index].numLike++; //comments[index].numLike + 1;
+          if (comments[index].isLiked === false) {
+            comments[index].isLiked = true;
+            comments[index].likes++;
           } else {
-            comments[index].like = false;
-            comments[index].numLike--; //comments[index].numLike - 1;
+            comments[index].isLiked = false;
+            comments[index].likes--;
           }
           renderComments();
         });
@@ -124,30 +163,6 @@
     };
 
     renderComments();
-
-    // //Расширенная валидация, чтобы кнопка "написать" изначально не была активна и была серой
-    // buttonElement.disabled = true;
-    // buttonElement.classList.add("error-button");
-    // //Расширенная валидация, кнопка "написать" становиться доступной после того как ввести "имя" и "коммент"
-    // nameInputElement.addEventListener("input", () => {
-    //   if (nameInputElement.value === '' || commentInputElement.value === '') {
-    //     buttonElement.disabled = true;
-    //     buttonElement.classList.add("error-button");
-    //   } else {
-    //     buttonElement.disabled = false;
-    //     buttonElement.classList.remove("error-button");
-    //   }
-    // });
-
-    // commentInputElement.addEventListener("input", () => {
-    //   if (nameInputElement.value === '' || commentInputElement.value === '') {
-    //     buttonElement.disabled = true;
-    //     buttonElement.classList.add("error-button");
-    //   } else {
-    //     buttonElement.disabled = false;
-    //     buttonElement.classList.remove("error-button");
-    //   }
-    // });
 
     //Добавил обработчик событий на button
     buttonElement.addEventListener("click", () => {
@@ -167,55 +182,37 @@
         return;
       }
 
-      //Создаю объекты для работы с датой
-      let myDate = new Date();
-      let date = myDate.getDate();
-      let month = myDate.getMonth();
-      let year = myDate.getFullYear();
-      let hours = myDate.getHours();
-      let minutes = myDate.getMinutes();
+      const fetchPromise = fetch(
+        "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            name: nameInputElement.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;"),
+            date: correceDateApi(new Date()),
+            text: commentInputElement.value
+              .replaceAll("<", "&lt;")
+              .replaceAll(">", "&gt;")
+              .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
+              .replaceAll("QUOTE_END", "</div>"),
+            likes: 0,
+            isLiked: false,
+          }),
+        }
+      );
 
-      //Если в дате, месяце, часах и минутах будут числа меньше 10, добавлять к ним 0 в начале
-      date = date < 10 ? "0" + date : date;
-      month = month < 10 ? "0" + month : month;
-      hours = hours < 10 ? "0" + hours : hours;
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-
-      //Создаю объект, который включает в себя формат "день.месяц.год(последние две цифры) часы:минуты"
-      const dateElement =
-        date +
-        "." +
-        month +
-        "." +
-        year.toString().slice(2) +
-        " " +
-        hours +
-        ":" +
-        minutes;
-
-      comments.push({
-        name: nameInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-        date: dateElement,
-        text: commentInputElement.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          //Сделал замену элементов при добавлении нового коммента, чтобы присваивался класс и появлялась белая рамка
-          .replaceAll("QUOTE_BEGIN", "<div class='quote'>")
-          .replaceAll("QUOTE_END", "</div>"),
-        like: false,
-        numLike: 0,
+      fetchPromise.then((response) => {
+        response.json().then(() => {
+          fetchGet();
+        });
       });
 
       //Обнуление импутов
       nameInputElement.value = "";
       commentInputElement.value = "";
-      //Расширенная валидация, чтобы после нажатия, кнопка снова была неактивна
-      // buttonElement.disabled = true;
-      // buttonElement.classList.add("error-button");
-
-      renderComments();
     });
+
+    fetchGet();
   </script>
 </html>

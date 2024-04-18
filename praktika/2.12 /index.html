@@ -6,7 +6,7 @@
   </head>
 
   <body>
-    <h1>Список задач</h1>
+    <h1 id="timer-title">Список задач</h1>
     <ul class="tasks" id="list">
       <!-- Список рендерится из JS -->
     </ul>
@@ -32,30 +32,53 @@
     const listElement = document.getElementById("list");
     const textInputElement = document.getElementById("text-input");
 
-    let tasks = [
+    // Запросы в API - асинхронные, мы не знаем как долго будет выполняться запрос
+    // Запрос может выполняться секунды и даже минуты
+    // fetch - запускает выполнение запроса к api
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos", {
+      method: "GET",
+    });
+
+    // подписываемся на успешное завершение запроса с помощью then
+    fetchPromise.then((response) => {
+      // Запускаем преобразовываем "сырые" данные от API в json формат
+      const jsonPromise = response.json();
+
+      // Подписываемся на результат преобразования
+      jsonPromise.then((responseData) => {
+        // получили данные и рендерим их в приложении
+        tasks = responseData.todos;
+        renderTasks();
+      });
+    });
+
+    // Практика 4. Получите цвет из API и покрасьте им фон приложения.
+    const fetchPromiseColor = fetch(
+      "https://wedev-api.sky.pro/api/tasks/random-red",
       {
-        text: "Купить чай"
-      },
-      {
-        text: "Заварить чай"
-      },
-      {
-        text: "Выпить чай"
+        method: "GET",
       }
-    ];
+    );
+    fetchPromiseColor.then((response) => {
+      const jsonPromiseColor = response.json();
+
+      jsonPromiseColor.then((responseData) => {
+        document.body.style.backgroundColor = responseData.color;
+        renderTasks();
+      });
+    });
+
+    // TODO: Получать из хранилища данных
+    let tasks = [];
 
     const renderTasks = () => {
       const tasksHtml = tasks
-        .map((task, index) => {
+        .map((task) => {
           return `
           <li class="task">
             <p class="task-text">
-              ${task.text
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")}
-              <button data-index="${index}" class="button delete-button">Удалить</button>
+              ${task.text}
+              <button data-id="${task.id}" class="button delete-button">Удалить</button>
             </p>
           </li>`;
         })
@@ -68,24 +91,70 @@
         deleteButton.addEventListener("click", (event) => {
           event.stopPropagation();
 
-          const index = deleteButton.dataset.index;
+          // Практика 2(1) «Разминка»
+          // Используя setTimeout, сделайте так, чтобы после клика на кнопку «Удалить» элемент удалялся не сразу, а через 1 секунду. На эту секунду надпись на кликнутой кнопке должна поменяться на «Задача удаляется…».
+          deleteButton.innerHTML = "Задача удаляется...";
 
-          tasks.splice(index, 1);
+          setTimeout(() => {
+            // Удалиение задачи из списка
+            const id = deleteButton.dataset.id;
 
-          renderTasks();
+            const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos/" + id, {
+              method: "DELETE",
+            });
+
+            fetchPromise.then((response) => {
+              const jsonPromise = response.json();
+
+              jsonPromise.then((responseData) => {
+                tasks = responseData.todos;
+                renderTasks();
+              });
+            });
+          }, 1000);
         });
       }
     };
 
     renderTasks();
 
+    // Практика 2(2) «Разминка»
+    // Используя setTimeout, сделайте так, чтобы после клика на заголовок «Список задач» в заголовке начинался обратный отсчет от 3 до 1 с интервалом в 1 секунду, а затем снова менялся на список задач
+    const timerTitleElement = document.getElementById("timer-title");
+
+    timerTitleElement.addEventListener("click", () => {
+      timerTitleElement.innerHTML = "3";
+      setTimeout(() => {
+        timerTitleElement.innerHTML = "2";
+        setTimeout(() => {
+          timerTitleElement.innerHTML = "1";
+          setTimeout(() => {
+            timerTitleElement.innerHTML = "Список задач";
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    });
+
     buttonElement.addEventListener("click", () => {
       if (textInputElement.value === "") {
         return;
       }
 
-      tasks.push({
-        text: textInputElement.value
+      // Добавить новую задачу в список
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/todos", {
+        method: "POST",
+        body: JSON.stringify({
+          text: textInputElement.value,
+        }),
+      });
+
+      fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+
+        jsonPromise.then((responseData) => {
+          tasks = responseData.todos;
+          renderTasks();
+        });
       });
 
       renderTasks();
