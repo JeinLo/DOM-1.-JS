@@ -9,40 +9,6 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
       </ul>
       <div class="add-form">
         <input
@@ -69,6 +35,54 @@
     const textElement = document.querySelector('.add-form-text')
     const commentsElement = document.querySelector('.comments')
 
+    const comments = [{
+      name: 'Ina',
+      text: 'Hello, World!',
+      date: '01.01.2024',
+      likes: 3,
+      yourLike: true,
+    }]
+
+    function render() {
+      const text = comments.map((item, index) => {
+        const style = item.yourLike ? '-active-like' : ''
+        return ` <li class="comment">
+          <div class="comment-header">
+            <div>${item.name}</div>
+            <div>${item.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${item.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${item.likes}</span>
+              <button class="like-button ${style}" data-index="${index}"></button>
+            </div>
+          </div>
+        </li>`
+      }).join("")
+      commentsElement.innerHTML = text
+
+      document.querySelectorAll(".like-button").forEach((button) => {
+        button.addEventListener('click', () => {
+          const index = button.dataset.index
+          const item = comments[index]
+          if (item.yourLike) {
+            item.yourLike = false
+            item.likes--
+          }
+          else {
+            item.yourLike = true
+            item.likes++
+          }
+          render()
+        })
+      })
+    }
+
     button.addEventListener('click' , (event) => {
       event.preventDefault()
       if (nameElement.value.trim() === '' || textElement.value.trim() === ''){
@@ -76,28 +90,20 @@
         return
       }
       const newDate = new Date()
-      const newComment = ` <li class="comment">
-          <div class="comment-header">
-            <div>${nameElement.value}</div>
-            <div>${newDate.toLocaleString()}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${textElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-      commentsElement.innerHTML += newComment
+      comments.push({
+        name: nameElement.value,
+        text: textElement.value,
+        date: newDate.toLocaleString(),
+        likes: 0,
+        yourLike: false,
+      })
+
+      render()
 
       nameElement.value = ''
       textElement.value = ''
     })
     console.log("It works!");
+    render()
   </script>
 </html>
