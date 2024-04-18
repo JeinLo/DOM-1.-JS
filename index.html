@@ -58,6 +58,8 @@ function Year() {
     const listEL = document.getElementById('list');
     const commentInputEl = document.getElementById('commentInput');
     const writeButtonEl = document.getElementById('writeButton');
+    const timeEl = document.getElementById('time');
+    
       
     function getfunction() {
     const fetchCom = fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "GET"});
@@ -68,7 +70,7 @@ function Year() {
         return{
           name: comment.author.name,
           text: comment.text,
-          date: new Date(comment.time),
+          time: Year(comment.date),
           like: comment.likes,
           isLike: false,};
         });
@@ -109,7 +111,7 @@ const initDeleteButton = () => {
   const deleteButtonEls = document.querySelectorAll('.deleteButton');
   for (const deleteButtonEl of deleteButtonEls) {
     deleteButtonEl.addEventListener('click', (e) => {
-     const id = deleteButtonEl.dataset.id;
+     const index = deleteButtonEl.dataset.index;
      peoples.splice(index, 1);
 
     render();
@@ -173,7 +175,7 @@ const render = () => {
     return `<li data-name="${people.name}" id="com" class="comment">
           <div class="comment-header">
             <div >${people.name}</div>
-            <div> ${people.time}</div>
+            <div id="time"> ${people.time}</div>
           </div>
           <div class="comment-body" data-index="${index}">
             <div id="text" class="comment-text">
@@ -242,7 +244,8 @@ render();
           text: commentInputEl.value
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;"),
-          date: new Date(comment.time)  })
+          date: new Date(peoples.time),
+            })
     });
     fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "GET"})
     .then((res) =>{
@@ -252,7 +255,7 @@ render();
         return{
           name: comment.author.name,
           text: comment.text,
-          date: new Date(comment.time),
+          time: Year(comment.date),
           like: comment.likes,
           isLike: false,};
         });
@@ -274,3 +277,4 @@ render();
     console.log("It works!");
   </script>
 </html>
+
