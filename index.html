@@ -43,7 +43,7 @@
 
     let comments = [];
 
-    const fetchGet = () => {
+    const fetchAndRenderComments = () => {
       const fetchPromise = fetch(
         "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
         {
@@ -202,17 +202,19 @@
         }
       );
 
-      fetchPromise.then((response) => {
-        response.json().then(() => {
-          fetchGet();
+      fetchPromise
+        .then((response) => {
+          return response.json();
+        })
+        .then(() => {
+          fetchAndRenderComments();
         });
-      });
 
       //Обнуление импутов
       nameInputElement.value = "";
       commentInputElement.value = "";
     });
 
-    fetchGet();
+    fetchAndRenderComments();
   </script>
 </html>
