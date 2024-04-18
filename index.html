@@ -51,7 +51,7 @@ function Year() {
         "." + myDate.getFullYear() ;
         
         return (fullDate);
-        MinSec()
+        MinSec();
 
 }
     const nameInputEl = document.getElementById('nameInput');
@@ -59,6 +59,7 @@ function Year() {
     const commentInputEl = document.getElementById('commentInput');
     const writeButtonEl = document.getElementById('writeButton');
       
+    function getfunction() {
     const fetchCom = fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "GET"});
     fetchCom.then((res) =>{
       res.json()
@@ -67,19 +68,22 @@ function Year() {
         return{
           name: comment.author.name,
           text: comment.text,
-          time: new Date(comment.time),
+          date: new Date(comment.time),
           like: comment.likes,
           isLike: false,};
         });
         peoples = appComments;
+
+
         render();
       });
     });
+  };
 
+  getfunction();
 
-    let peoples = [
-    //   {
-    //   name: 'Глеб Фокин',
+     let peoples = [
+    //  { name: 'Глеб Фокин',
     //   text:'Это будет первый комментарий на этой странице',
     //   time:'12.02.22 12:18',
     //   like: 3,
@@ -89,14 +93,14 @@ function Year() {
     //   text:'Мне нравится как оформлена эта страница! ❤',
     //   time:'13.02.22 19:22',
     //   like: 75,
-    //   isLike: true,
-    // }
+    //   isLike: true,}
     ];
 
 const initEventlist = () => {     
 const commentEl = document.querySelectorAll('.comment');
 for (const commentEls of commentEl) {
     commentEls.addEventListener('click', () => {
+      
     })
 }
 }
@@ -105,8 +109,9 @@ const initDeleteButton = () => {
   const deleteButtonEls = document.querySelectorAll('.deleteButton');
   for (const deleteButtonEl of deleteButtonEls) {
     deleteButtonEl.addEventListener('click', (e) => {
-     const index = deleteButtonEl.dataset.index;
+     const id = deleteButtonEl.dataset.id;
      peoples.splice(index, 1);
+
     render();
     e.stopPropagation();
     });
@@ -121,7 +126,7 @@ const initEditButton = () => {
     editButtonEl.addEventListener('click', (event) => {
     // peoples[index].comment = `<textarea>${peoples[index].comment}</textarea>`
     //  render();
-alert('не нажимай, все равно не работаю')
+alert('не нажимай')
    
     //  document.querySelectorAll('.editButton').textContent = 'Сохранить';
 
@@ -216,24 +221,6 @@ render();
              
             if (nameInputEl.value != '') {
                 
-
-    const fetchCom = fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "POST"});
-    fetchCom.then((res) =>{
-      res.json()
-      .then((resData) =>{
-        const appComments = resData.comments.map((comment) => {
-        return{
-          name: comment.author.name,
-          text: comment.text,
-          time: new Date(comment.time),
-          like: comment.likes,
-          isLike: false,};
-        });
-        peoples = appComments;
-        render();
-      });
-    });
-  
         // peoples.push({
         //       name:nameInputEl.value
         //       .replaceAll("<", "&lt;")
@@ -245,26 +232,6 @@ render();
         //       like:0
         //      });
 
-      // fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments",
-    //   {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       name:nameInputEl.value
-    //       .replaceAll("<", "&lt;")
-    //       .replaceAll(">", "&gt;"),
-    //       text: commentInputEl.value
-    //       .replaceAll("<", "&lt;")
-    //       .replaceAll(">", "&gt;"),
-    //       // time: new Date(comment.time),
-    //     })
-    // })
-    // .then((res) => {
-    //  res.json()
-    //   .then((resData) => {
-    //     render();
-    //   });
-    // });
-
     fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments",
       {
         method: "POST",
@@ -275,17 +242,17 @@ render();
           text: commentInputEl.value
           .replaceAll("<", "&lt;")
           .replaceAll(">", "&gt;"),
-          // time: new Date(comment.time),
-        })
-    })
+          date: new Date(comment.time)  })
+    });
+    fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments", { method: "GET"})
     .then((res) =>{
       res.json()
       .then((resData) =>{
-        const appComments = resData.comments.map((comment) => {
+        let appComments = resData.comments.map((comment) => {
         return{
           name: comment.author.name,
           text: comment.text,
-          time: new Date(comment.time),
+          date: new Date(comment.time),
           like: comment.likes,
           isLike: false,};
         });
@@ -295,7 +262,6 @@ render();
     });
 
 
-              
         render();
  
 
