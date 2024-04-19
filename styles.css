@@ -159,3 +159,7 @@ body {
   .quote {
     background: #698d96;
   }
+
+  .load {
+    display: none;
+  }

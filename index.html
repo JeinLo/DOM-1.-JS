@@ -11,6 +11,7 @@
       <ul id="list" class="comments">
         <!-- Комментарии рендерятся из JS -->
       </ul>
+      <div id="loading" class="add-form load">Loading</div>
       <div id="form" class="add-form">
           <input
           type="text"
@@ -164,7 +165,9 @@
 
         // writeButton.disabled = true;
         // writeButton.textContent = 'loading...';
-        form.innerHTML  = `<div class="add-form-row">Loading...</div>`;
+
+        document.getElementById('loading').classList.remove('load');
+        document.getElementById('form').classList.add('load');
 
         const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
           method: "POST",
@@ -197,33 +200,35 @@
         .then((final) => {
           // writeButton.disabled = false;
           // writeButton.textContent = 'Написать';
-          form.innerHTML = `<input
-          type="text"
-          id="userName"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          type="textarea"
-          id="userComment"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="writeButton" class="add-form-button" onclick="afterClickWriteButton();" >Написать</button>
-        </div>
-        <div>
-          <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
-        </div>`;
+
+          document.getElementById('loading').classList.add('load');
+          document.getElementById('form').classList.remove('load');
+          
+        //   form.innerHTML = `<input
+        //   type="text"
+        //   id="userName"
+        //   class="add-form-name"
+        //   placeholder="Введите ваше имя"
+        // />
+        // <textarea
+        //   type="textarea"
+        //   id="userComment"
+        //   class="add-form-text"
+        //   placeholder="Введите ваш коментарий"
+        //   rows="4"
+        // ></textarea>
+        // <div class="add-form-row">
+        //   <button id="writeButton" class="add-form-button" onclick="afterClickWriteButton();" >Написать</button>
+        // </div>
+        // <div>
+        //   <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
+        // </div>`;
         });
         renderComments();
 
         userName.value = '';
         userComment.value = '';
         document.getElementById('writeButton').disabled = true;
-        let xx = document.getElementById('writeButton').innerHTML;
-        console.log(xx);
       }
     }
 
