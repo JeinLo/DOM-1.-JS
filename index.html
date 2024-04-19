@@ -45,7 +45,7 @@
     const userComment = document.getElementById('userComment');
     const form = document.getElementById('form');
 
-    commentsList.innerHTML = `<li class="comment">Loading...</li>`;
+    commentsList.innerHTML = `<li class="comment">Loading in progress. Plese wait...</li>`;
 
     let listComments = [];
 
@@ -83,7 +83,7 @@
     }
 
     get();
-    renderComments();
+    // renderComments();
 
   function get() {
     return fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
@@ -142,7 +142,7 @@
       .replaceAll('QUOTE_BEGIN', '<div class="quote">').replaceAll('QUOTE_END', '</div>');
     }
 
-    writeButton.addEventListener('click', (e) => {
+    function afterClickWriteButton(e) {
       e.stopPropagation();
 
       let date = new Date();
@@ -164,7 +164,7 @@
 
         // writeButton.disabled = true;
         // writeButton.textContent = 'loading...';
-        form.textContent = 'Loading...';
+        form.innerHTML  = `<div class="add-form-row">Loading...</div>`;
 
         const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
           method: "POST",
@@ -211,7 +211,7 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button id="writeButton" class="add-form-button">Написать</button>
+          <button id="writeButton" class="add-form-button" onclick="afterClickWriteButton();" >Написать</button>
         </div>
         <div>
           <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
@@ -222,8 +222,13 @@
         userName.value = '';
         userComment.value = '';
         document.getElementById('writeButton').disabled = true;
+        let xx = document.getElementById('writeButton').innerHTML;
+        console.log(xx);
       }
-    })
+    }
+
+    // writeButton.addEventListener('click', afterClickWrightButton);
+    writeButton.onclick = afterClickWriteButton;
 
     function answerComment() {
       const commentHTML = document.querySelectorAll('.comment');
