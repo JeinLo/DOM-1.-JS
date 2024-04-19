@@ -246,20 +246,6 @@ render();
         //       .replaceAll(">", "&gt;"),
         //       like:0
         //      });
-
-    fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name:nameInputEl.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-          text: commentInputEl.value
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;"),
-          date: new Date(peoples.time),
-            })
-    });
      postFuncion();
        render();
  
