@@ -40,7 +40,9 @@
     fetchPromise.then((response) => {
       return jsonPromise = response.json();
     }).then((responseData) => {
-      comments = [...responseData.comments];
+
+      comments = responseData.comments;
+
       renderComments();
     });
 
@@ -152,14 +154,14 @@
         text: inputCommentEl.value,
         name: inputNameEl.value
       })
-    }).then((response) => {
-      return response.json();
-    }).then((responseData) => {
-      comments = responseData.comments;
+    }).then(() => {
+
+      // Выводим новый комментарий из сервера на страницу
+      getFetchPromise();
+
     });
-  
-    // Выводим новый комментарий из сервера на страницу
-    getFetchPromise();
+
+
 
     // Очищаем поля ввода после добавления комментария
     inputNameEl.value = '';
@@ -179,7 +181,7 @@
     commentEl.forEach((el, index) => {
       el.addEventListener('click', function (e) {
         // Дублирование комментария для ответа
-        inputCommentEl.value = `QUOTE_BEGIN>${comments[index].author.name}\n${comments[index].text}QUOTE_END\n`;
+        inputCommentEl.value = filter(`QUOTE_BEGIN>${comments[index].author.name}\n${comments[index].text}QUOTE_END\n`);
       });
     });
   };
