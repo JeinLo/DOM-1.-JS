@@ -1,6 +1,11 @@
-import {getTodos} from "./api.js";
-import {authnPage} from "./renderAuthorization.js";
-import {currentDateForComment, likesActive, renderComments,} from "./helpers.js";
+import { getTodos } from "./api.js";
+import { authnPage } from "./renderAuthorization.js";
+import {
+  addCommentOnClick, addOnEnter,
+  currentDateForComment, disableForm,
+  likesActive,
+  renderComments,
+} from "./helpers.js";
 
 export let commentsList = [];
 export const currentInputName = document.querySelector(".add-form-name");
@@ -16,8 +21,6 @@ export const fetchAndRenderTasks = () => {
   getTodos()
     .then((responseData) => {
       commentsList = responseData.comments.map((comment) => {
-        console.log("111");
-        console.log(responseData)
         return {
           id: comment.id,
           name: comment.author.name,
@@ -69,8 +72,12 @@ export const start = () => {
   const authElem = document.querySelector(".auth");
 
   authElem.addEventListener("click", () => {
-    authnPage({fetchAndRenderTasks});
+    authnPage({ fetchAndRenderTasks });
   });
 };
 
+
 start();
+// disableForm();
+// addCommentOnClick();
+// addOnEnter();

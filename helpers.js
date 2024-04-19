@@ -5,10 +5,11 @@ import {
   fetchAndRenderTasks,
   commentsList,
   commentList,
-  commentButton,
   deleteButton,
 } from "./main.js";
 import { getTodos, postComment } from "./api.js";
+
+ export let nameAuthor;
 
 export const sanitize = (element) => {
   return `${element
@@ -70,6 +71,7 @@ export const likesActive = () => {
 
 export const reComment = () => {
   const commentElement = document.querySelectorAll(".comment");
+  let currentInputText = document.querySelector(".add-form-text");
 
   for (const textElement of commentElement) {
     textElement.addEventListener("click", () => {
@@ -85,36 +87,36 @@ ${nameComment}, `;
   }
 };
 
-export function render(elemen) {
-  console.log(elemen);
- let authorName; 
- let likesCount;
- let isLike;
- if(typeof elemen.name != "undefined") {
-  authorName = elemen.name;
-  likesCount = elemen.likesCounter;
-  isLike = elemen.likeButton; 
- } else {
-  authorName = elemen.author.name;
-  likesCount = elemen.likes;
-  isLike = elemen.isLiked;
- }
+export function render(element) {
+  let authorName;
+  let likesCount;
+  let isLike;
+  if (typeof element.name != "undefined") {
+    authorName = element.name;
+    likesCount = element.likesCounter;
+    isLike = element.likeButton;
+  } else {
+    authorName = element.author.name;
+    likesCount = element.likes;
+    isLike = element.isLiked;
+  }
+  nameAuthor = authorName;
   return `
     <li class="comment">
       <div class="comment-header">
         <div>${sanitize(authorName)}</div>
-        <div>${currentDateForComment(elemen)}</div>
+        <div>${currentDateForComment(element)}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">
-          ${sanitize(elemen.text)}
+          ${sanitize(element.text)}
         </div>
       </div>
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${likesCount}</span>
-          <button data-index="${elemen.id}" class="like-button ${
-      isLike ? "-active-like" : ""
+          <button data-index="${element.id}" class="like-button ${
+    isLike ? "-active-like" : ""
   }"></button>
         </div>
       </div>
@@ -132,12 +134,14 @@ export const renderComments = (commentList, commentsList) => {
 };
 
 export function addNewComment(retry = 3) {
+  const currentInputName = document.querySelector(".add-form-name");
+  const currentInputText = document.querySelector(".add-form-text");
   if (
     currentInputName.value.trim().length !== 0 &&
     currentInputText.value.trim().length !== 0
   ) {
-    let thisText = currentInputText.value;
-    let thisName = currentInputName.value;
+    let thisText = currentInputText;
+    let thisName = currentInputName;
     checkStatus.style.display = "none";
     let newDiv = document.createElement("div");
     newDiv.classList.add("newComment");
@@ -184,6 +188,7 @@ export function addNewComment(retry = 3) {
 }
 
 export const disableForm = (check) => {
+  const commentButton = document.querySelector(".add-form-button");
   check = document.querySelector(".add-form");
   check.addEventListener("input", () => {
     if (
@@ -201,6 +206,7 @@ export const disableForm = (check) => {
 
 export const addOnEnter = () => {
   document.addEventListener("keyup", (e) => {
+    const commentButton = document.querySelector(".add-form-button");
     if (e.key === "Enter" && !commentButton.hasAttribute("disabled")) {
       addNewComment();
     }
@@ -208,7 +214,8 @@ export const addOnEnter = () => {
 };
 
 export const addCommentOnClick = () => {
-  commentButton.addEventListener("click", () => {
+  let clickAddCommentButton = document.querySelector(".add-form-button");
+  clickAddCommentButton.addEventListener("click", () => {
     addNewComment();
   });
 };

@@ -16,7 +16,7 @@ export function getTodos() {
   }).then((response) => {
     if (response.status === 500) {
       throw new Error("Сервер сломался. Попробуйте позже.");
-    } else if (response.status === 200) { 
+    } else if (response.status === 200) {
       return response.json();
     } else if (!window.navigator.onLine) {
       throw new Error("Кажется, у вас сломался интернет, попробуйте позже");

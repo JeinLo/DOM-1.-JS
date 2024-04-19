@@ -1,6 +1,12 @@
-import {getTodos, login, setToken, token} from "./api.js";
-import { renderComments } from "./helpers.js";
-import {commentList, commentsList, start} from "./main.js";
+import { getTodos, login, setToken } from "./api.js";
+import {
+  likesActive,
+  nameAuthor,
+  renderComments,
+} from "./helpers.js";
+import {
+  commentsList,
+} from "./main.js";
 
 export const authnPage = () => {
   document.querySelector(".container").innerHTML = `
@@ -30,6 +36,7 @@ export const authnPage = () => {
   const authElem = document.querySelector(".auth-agree");
   const loginInputValue = document.querySelector(".auth-name");
   const passwordInputValue = document.querySelector(".auth-password");
+  const likeButton = document.querySelector(".like-button");
 
   authElem.addEventListener("click", () => {
     login({
@@ -37,31 +44,33 @@ export const authnPage = () => {
       password: passwordInputValue.value,
     })
       .then((responseData) => {
-        console.log(token);
-        console.log(loginInputValue.value, passwordInputValue.value);
         setToken(responseData.user.token);
-        console.log(token);
       })
       .then(() => {
         renderPage();
         // renderComments(commentList, commentsList);
+        const comments = document.querySelector(".comments");
         const renderCom = () => {
           getTodos()
-              .then((responseData) => {
-                console.log(commentsList);
-                renderComments(commentList, commentsList);
-              })
-              .catch((error) => {
-                if (error.message === "Сервер сломался. Попробуйте позже.") {
-                  alert("Сервер сломался. Попробуйте позже.");
-                } else {
-                  alert("Кажется, у вас сломался интернет, попробуйте позже");
-                }
-              });
-        }
+            .then((responseData) => {
+              renderComments(comments, commentsList);
+            })
+            .catch((error) => {
+              if (error.message === "Сервер сломался. Попробуйте позже.") {
+                alert("Сервер сломался. Попробуйте позже.");
+              } else {
+                alert("Кажется, у вас сломался интернет, попробуйте позже");
+              }
+            });
+        };
         renderCom();
       });
   });
+
+  // likeButton.addEventListener("click", () => {
+  //   likesActive();
+  // });
+
 };
 
 export const regPage = () => {
@@ -105,7 +114,8 @@ const renderPage = () => {
   <input
     type="text"
     class="add-form-name"
-    placeholder="Введите ваше имя"
+    placeholder="${nameAuthor}"
+    disabled="true"
   />
   <textarea
     type="textarea"
