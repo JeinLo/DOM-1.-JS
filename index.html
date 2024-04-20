@@ -11,7 +11,7 @@
       <ul id="list" class="comments">
         <!-- Комментарии рендерятся из JS -->
       </ul>
-      <div id="loading" class="add-form load">Loading</div>
+      <div id="loading" class="add-form hidden">Loading</div>
       <div id="form" class="add-form">
           <input
           type="text"
@@ -84,20 +84,26 @@
     }
 
     get();
-    // renderComments();
 
-  function get() {
-    return fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
-      method: "GET",
-    })
-    .then((promis) => {
-      return promis.json();
-    })
-    .then((resultDATA) => {
-      listComments = resultDATA.comments;
-      renderComments();
-    });
-  }
+    function get() {
+      return fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
+        method: "GET",
+      })
+      .then((promis) => {
+        if (promis.status === 200) {
+          return promis.json();
+        } else {
+          throw new Error("Сервер упал");
+        }
+      })
+      .then((resultDATA) => {
+        listComments = resultDATA.comments;
+        renderComments();
+      })
+      .catch(() => {
+        alert('Что-то пошло не так с get()...')
+      })
+    }
 
     function likeEvent () {
       const likes = document.querySelectorAll('.like-button');
@@ -146,10 +152,6 @@
     function afterClickWriteButton(e) {
       e.stopPropagation();
 
-      let date = new Date();
-      let currentDate = date.toLocaleDateString() + " "
-      + date.getHours() + ":" + date.getMinutes();
-
       userName.classList.remove('error');
       userComment.classList.remove('error');
 
@@ -163,20 +165,16 @@
 
         const startTime = Date.now();
 
-        // writeButton.disabled = true;
-        // writeButton.textContent = 'loading...';
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('form').classList.add('hidden');
 
-        document.getElementById('loading').classList.remove('load');
-        document.getElementById('form').classList.add('load');
-
+        
         const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
           method: "POST",
           body: JSON.stringify({
             name: sanitize(userName.value),
             text: sanitize(userComment.value),
-            date: currentDate,
-            likes: 0,
-            isLiked: false 
+            forceError: true,
           }),
         })
         .then((response) => {
@@ -184,7 +182,17 @@
           return response
         })
         .then((response) => {
-          return response.json();
+          console.log(response);
+          if (response.status === 201) {
+            return response.json();
+          } else if (response.status === 400) {
+            alert('Введите не менее 3-х символов');
+          } else if (response.status === 500) {
+            alert('Something wrong with Internet or server error :-((');
+            // repeat();
+          } else {
+            throw new Error("Сервер упал");
+          } 
         })
         .then((response) => {
           console.log('Прошло времени: ' + (Date.now() - startTime));
@@ -198,43 +206,21 @@
           return response
         })
         .then((final) => {
-          // writeButton.disabled = false;
-          // writeButton.textContent = 'Написать';
-
-          document.getElementById('loading').classList.add('load');
-          document.getElementById('form').classList.remove('load');
-          
           userName.value = '';
           userComment.value = '';
-          //   form.innerHTML = `<input
-          //   type="text"
-          //   id="userName"
-          //   class="add-form-name"
-          //   placeholder="Введите ваше имя"
-          // />
-          // <textarea
-          //   type="textarea"
-          //   id="userComment"
-          //   class="add-form-text"
-          //   placeholder="Введите ваш коментарий"
-          //   rows="4"
-          // ></textarea>
-          // <div class="add-form-row">
-          //   <button id="writeButton" class="add-form-button" onclick="afterClickWriteButton();" >Написать</button>
-          // </div>
-          // <div>
-          //   <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
-          // </div>`;
+        })
+        
+        .finally(() => {
+          document.getElementById('loading').classList.add('hidden');
+          document.getElementById('form').classList.remove('hidden');
+          document.getElementById('writeButton').disabled = true;
+          // userName.value = '';
+          // userComment.value = '';
         })
         .catch((error) => {
-          document.getElementById('loading').classList.add('load');
-          document.getElementById('form').classList.remove('load');
           document.getElementById('writeButton').disabled = false;
-
-          alert('Something wrong with Internet :-((');
-        })
-        renderComments();
-        
+          // alert('Something wrong');
+        });
       }
     }
 
