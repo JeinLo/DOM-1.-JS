@@ -31,24 +31,16 @@
   const writeEl = document.getElementById('write');
 
   // Вывод комментариев с сервера
-  const getFetchPromise = () => {
-
-    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
-      method: "GET"
-    });
-
-    fetchPromise.then((response) => {
-      return jsonPromise = response.json();
-    }).then((responseData) => {
-
-      comments = responseData.comments;
-
-      renderComments();
-    });
-
+  const getCommentsFromServer = () => {
+    fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
+        method: "GET"
+      })
+      .then((response) => response.json())
+      .then((responseData) => {
+        comments = responseData.comments;
+        renderComments();
+      });
   };
-  getFetchPromise();
-
 
   // Создаём массив данных для новых и шаблонных комментов
   let comments = [];
@@ -59,6 +51,7 @@
 
       // Преобразуем строку времени в объект Date
       const commentDate = new Date(comment.date);
+
       // Извлекаем необходимые компоненты времени (день, месяц, год, часы, минуты, секунды)
       const day = commentDate.getDate();
       const month = commentDate.getMonth() + 1;
@@ -66,6 +59,7 @@
       const hours = commentDate.getHours();
       const minutes = commentDate.getMinutes();
       const seconds = commentDate.getSeconds();
+      
       // Формируем отформатированную строку времени
       const formattedDate = `${day < 10 ? '0' : ''}${day}.${month < 10 ? '0' : ''}${month}.${year}`;
       const formattedTime = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -119,6 +113,7 @@
 
   // Прописываем дальнейшие действия при нажатии кнопки "Написать"
   writeEl.addEventListener('click', function (e) {
+
     // Не даём отправить пустую форму
     if (inputNameEl.value === '' || inputCommentEl.value === '') {
       if (inputNameEl.value === '') {
@@ -127,7 +122,6 @@
       if (inputCommentEl.value === '') {
         inputCommentEl.style.backgroundColor = 'lightcoral';
       }
-      // Возвращаем
       return;
     };
 
@@ -148,31 +142,23 @@
     }
 
     // Сохранение комментариев на сервер
-    let fetchBroadcast = fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
-      method: "POST",
-      body: JSON.stringify({
-        text: inputCommentEl.value,
-        name: inputNameEl.value
+    fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
+        method: "POST",
+        body: JSON.stringify({
+          text: inputCommentEl.value,
+          name: inputNameEl.value
+        })
       })
-    }).then(() => {
-
       // Выводим новый комментарий из сервера на страницу
-      getFetchPromise();
+      .then(() => getCommentsFromServer())
+      .then(() => {
 
-    });
-
-
-
-    // Очищаем поля ввода после добавления комментария
-    inputNameEl.value = '';
-    inputCommentEl.value = '';
-    inputNameEl.style.backgroundColor = '';
-    inputCommentEl.style.backgroundColor = '';
-
-    // Перерисовываем список комментариев
-    renderComments();
-
-
+        // Очищаем поля ввода после добавления комментария
+        inputNameEl.value = '';
+        inputCommentEl.value = '';
+        inputNameEl.style.backgroundColor = '';
+        inputCommentEl.style.backgroundColor = '';
+      });
   });
 
   // Функция обработчика клика на комментах
@@ -180,6 +166,7 @@
     const commentEl = document.querySelectorAll('.comment');
     commentEl.forEach((el, index) => {
       el.addEventListener('click', function (e) {
+        
         // Дублирование комментария для ответа
         inputCommentEl.value = filter(`QUOTE_BEGIN>${comments[index].author.name}\n${comments[index].text}QUOTE_END\n`);
       });
@@ -191,13 +178,14 @@
     return text
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
+      
       // Выделение репоста коммента 
       .replaceAll('QUOTE_BEGIN', '<div class="quote">')
       .replaceAll('QUOTE_END', '</div>');
   }
 
   // Первичный вывод комментариев
-  renderComments();
+  getCommentsFromServer();
 
   // **************************************** ДОПОЛНИТЕЛЬНО ********************************
 
@@ -208,11 +196,12 @@
     // Если оба поля заполнены, делаем кнопку активной
     if (isNameFilled && isCommentFilled) {
       writeEl.disabled = false;
-      writeEl.classList.remove('disabled'); // Убираем класс disabled (и прописываем его в css! изменяя курсор)
+      writeEl.classList.remove('disabled');
     } else {
+      
       // Если хотя бы одно из полей не заполнено, делаем кнопку неактивной и серой
       writeEl.disabled = true;
-      writeEl.classList.add('disabled'); // Добавляем класс disabled
+      writeEl.classList.add('disabled');
     }
   }
 
