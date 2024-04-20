@@ -204,33 +204,41 @@
           document.getElementById('loading').classList.add('load');
           document.getElementById('form').classList.remove('load');
           
-        //   form.innerHTML = `<input
-        //   type="text"
-        //   id="userName"
-        //   class="add-form-name"
-        //   placeholder="Введите ваше имя"
-        // />
-        // <textarea
-        //   type="textarea"
-        //   id="userComment"
-        //   class="add-form-text"
-        //   placeholder="Введите ваш коментарий"
-        //   rows="4"
-        // ></textarea>
-        // <div class="add-form-row">
-        //   <button id="writeButton" class="add-form-button" onclick="afterClickWriteButton();" >Написать</button>
-        // </div>
-        // <div>
-        //   <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
-        // </div>`;
-        });
-        renderComments();
+          userName.value = '';
+          userComment.value = '';
+          //   form.innerHTML = `<input
+          //   type="text"
+          //   id="userName"
+          //   class="add-form-name"
+          //   placeholder="Введите ваше имя"
+          // />
+          // <textarea
+          //   type="textarea"
+          //   id="userComment"
+          //   class="add-form-text"
+          //   placeholder="Введите ваш коментарий"
+          //   rows="4"
+          // ></textarea>
+          // <div class="add-form-row">
+          //   <button id="writeButton" class="add-form-button" onclick="afterClickWriteButton();" >Написать</button>
+          // </div>
+          // <div>
+          //   <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
+          // </div>`;
+        })
+        .catch((error) => {
+          document.getElementById('loading').classList.add('load');
+          document.getElementById('form').classList.remove('load');
+          document.getElementById('writeButton').disabled = false;
 
-        userName.value = '';
-        userComment.value = '';
-        document.getElementById('writeButton').disabled = true;
+          alert('Something wrong with Internet :-((');
+        })
+        renderComments();
+        
       }
     }
+
+    document.getElementById('writeButton').disabled = true;
 
     // writeButton.addEventListener('click', afterClickWrightButton);
     writeButton.onclick = afterClickWriteButton;
