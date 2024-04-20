@@ -9,9 +9,14 @@
 
 <body>
   <div class="container">
+    <!-- Добавляем блок для отображения сообщения о загрузке -->
+    <div id="loading-message" class="loading-message" style="display: none;">Загрузка комментариев...</div>
+
     <ul id="list" class="comments">
       <!-- переносим данные в массив JS -->
     </ul>
+    <!-- Добавляем блок для отображения сообщения о добавлении комментария -->
+    <div id="adding-message" class="adding-message" style="display: none;">Комментарий добавляется...</div>
     <div class="add-form">
       <input id="input-name" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="input-comment" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -29,16 +34,27 @@
   const inputNameEl = document.getElementById('input-name');
   const inputCommentEl = document.getElementById('input-comment');
   const writeEl = document.getElementById('write');
+  const loadingMessageEl = document.getElementById('loading-message');
+  const addingMessageEl = document.getElementById('adding-message');
+
+  // Первоначально скрываем сообщение о загрузке
+  loadingMessageEl.style.display = 'none';
 
   // Вывод комментариев с сервера
   const getCommentsFromServer = () => {
+
+    // Показываем сообщение о загрузке
+    loadingMessageEl.style.display = 'block';
     fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
-        method: "GET"
-      })
+      method: "GET"
+    })
       .then((response) => response.json())
       .then((responseData) => {
         comments = responseData.comments;
         renderComments();
+
+        // Скрываем сообщение о загрузке после получения комментариев
+        loadingMessageEl.style.display = 'none';
       });
   };
 
@@ -59,7 +75,7 @@
       const hours = commentDate.getHours();
       const minutes = commentDate.getMinutes();
       const seconds = commentDate.getSeconds();
-      
+
       // Формируем отформатированную строку времени
       const formattedDate = `${day < 10 ? '0' : ''}${day}.${month < 10 ? '0' : ''}${month}.${year}`;
       const formattedTime = `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -141,14 +157,18 @@
       return;
     }
 
+    // Скрываем форму и показываем сообщение о добавлении комментария
+    document.querySelector('.add-form').style.display = 'none';
+    addingMessageEl.style.display = 'block';
+
     // Сохранение комментариев на сервер
     fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
-        method: "POST",
-        body: JSON.stringify({
-          text: inputCommentEl.value,
-          name: inputNameEl.value
-        })
+      method: "POST",
+      body: JSON.stringify({
+        text: inputCommentEl.value,
+        name: inputNameEl.value
       })
+    })
       // Выводим новый комментарий из сервера на страницу
       .then(() => getCommentsFromServer())
       .then(() => {
@@ -158,6 +178,10 @@
         inputCommentEl.value = '';
         inputNameEl.style.backgroundColor = '';
         inputCommentEl.style.backgroundColor = '';
+
+        // Показываем форму и скрываем сообщение о добавлении комментария
+        document.querySelector('.add-form').style.display = 'block';
+        addingMessageEl.style.display = 'none';
       });
   });
 
@@ -166,7 +190,7 @@
     const commentEl = document.querySelectorAll('.comment');
     commentEl.forEach((el, index) => {
       el.addEventListener('click', function (e) {
-        
+
         // Дублирование комментария для ответа
         inputCommentEl.value = filter(`QUOTE_BEGIN>${comments[index].author.name}\n${comments[index].text}QUOTE_END\n`);
       });
@@ -178,7 +202,7 @@
     return text
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
-      
+
       // Выделение репоста коммента 
       .replaceAll('QUOTE_BEGIN', '<div class="quote">')
       .replaceAll('QUOTE_END', '</div>');
@@ -198,7 +222,7 @@
       writeEl.disabled = false;
       writeEl.classList.remove('disabled');
     } else {
-      
+
       // Если хотя бы одно из полей не заполнено, делаем кнопку неактивной и серой
       writeEl.disabled = true;
       writeEl.classList.add('disabled');
