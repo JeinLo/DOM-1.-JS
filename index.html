@@ -186,15 +186,16 @@
             if (response.status === 201) {
               return response.json();
             } else if (response.status === 400) {
-              alert('Введите не менее 3-х символов');
-              throw new Error("Сервер упал");
+              alert(`Server error ${response.status}\n\nВведите не менее 3-х символов.`);
+              throw new Error("Сервер упал 400");
             } else if (response.status === 500) {
-              // alert('Something wrong with Internet or server error :-((');
+              alert(`Server error ${response.status}`);
               post();
-              // throw new Error("Сервер упал");
+              throw new Error("Сервер упал 500");
             } else {
-              throw new Error("Сервер упал");
-            } 
+              alert('Проверьте интернет');
+              throw new Error("Сервер упал инет");
+            }
           })
           .then((response) => {
             console.log('Прошло времени: ' + (Date.now() - startTime));
@@ -207,6 +208,8 @@
             console.log('Прошло времени: ' + (Date.now() - startTime));
             userName.value = '';
             userComment.value = '';
+            
+            document.getElementById('writeButton').disabled = true;
             return response
           })
           .catch((error) => {
@@ -216,7 +219,6 @@
           .finally(() => {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('form').classList.remove('hidden');
-            document.getElementById('writeButton').disabled = true;
           });
         }
         post();
