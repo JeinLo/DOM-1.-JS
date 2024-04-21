@@ -206,21 +206,15 @@
             console.log('Прошло времени: ' + (Date.now() - startTime));
             return response
           })
-          .then((final) => {
-            userName.value = '';
-            userComment.value = '';
+          .catch((error) => {
+            document.getElementById('writeButton').disabled = false;
           })
-          
           .finally(() => {
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('form').classList.remove('hidden');
             document.getElementById('writeButton').disabled = true;
-            // userName.value = '';
-            // userComment.value = '';
-          })
-          .catch((error) => {
-            document.getElementById('writeButton').disabled = false;
-            // alert('Something wrong');
+            userName.value = '';
+            userComment.value = '';
           });
         }
         post();
