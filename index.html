@@ -192,9 +192,6 @@
               alert(`Server error ${response.status}`);
               post();
               throw new Error("Сервер упал 500");
-            } else {
-              alert('Проверьте интернет');
-              throw new Error("Сервер упал инет");
             }
           })
           .then((response) => {
@@ -215,6 +212,7 @@
           .catch((error) => {
             document.getElementById('writeButton').disabled = false;
             console.warn(error);
+            return error
           })
           .finally(() => {
             document.getElementById('loading').classList.add('hidden');
