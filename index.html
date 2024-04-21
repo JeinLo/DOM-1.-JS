@@ -168,59 +168,62 @@
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('form').classList.add('hidden');
 
-        
-        const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
-          method: "POST",
-          body: JSON.stringify({
-            name: sanitize(userName.value),
-            text: sanitize(userComment.value),
-            forceError: true,
-          }),
-        })
-        .then((response) => {
-          console.log('Прошло времени: ' + (Date.now() - startTime));
-          return response
-        })
-        .then((response) => {
-          console.log(response);
-          if (response.status === 201) {
-            return response.json();
-          } else if (response.status === 400) {
-            alert('Введите не менее 3-х символов');
-          } else if (response.status === 500) {
-            alert('Something wrong with Internet or server error :-((');
-            // repeat();
-          } else {
-            throw new Error("Сервер упал");
-          } 
-        })
-        .then((response) => {
-          console.log('Прошло времени: ' + (Date.now() - startTime));
-          return response
-        })
-        .then((jsonResponse) => {
-          return get();
-        })
-        .then((response) => {
-          console.log('Прошло времени: ' + (Date.now() - startTime));
-          return response
-        })
-        .then((final) => {
-          userName.value = '';
-          userComment.value = '';
-        })
-        
-        .finally(() => {
-          document.getElementById('loading').classList.add('hidden');
-          document.getElementById('form').classList.remove('hidden');
-          document.getElementById('writeButton').disabled = true;
-          // userName.value = '';
-          // userComment.value = '';
-        })
-        .catch((error) => {
-          document.getElementById('writeButton').disabled = false;
-          // alert('Something wrong');
-        });
+        function post() {
+          
+          const result = fetch("https://wedev-api.sky.pro/api/v1/dmitrii-bondar/comments", {
+            method: "POST",
+            body: JSON.stringify({
+              name: sanitize(userName.value),
+              text: sanitize(userComment.value),
+              forceError: true,
+            }),
+          })
+          .then((response) => {
+            console.log('Прошло времени: ' + (Date.now() - startTime));
+            return response
+          })
+          .then((response) => {
+            console.log(response);
+            if (response.status === 201) {
+              return response.json();
+            } else if (response.status === 400) {
+              alert('Введите не менее 3-х символов');
+            } else if (response.status === 500) {
+              // alert('Something wrong with Internet or server error :-((');
+              post();
+            } else {
+              throw new Error("Сервер упал");
+            } 
+          })
+          .then((response) => {
+            console.log('Прошло времени: ' + (Date.now() - startTime));
+            return response
+          })
+          .then((jsonResponse) => {
+            return get();
+          })
+          .then((response) => {
+            console.log('Прошло времени: ' + (Date.now() - startTime));
+            return response
+          })
+          .then((final) => {
+            userName.value = '';
+            userComment.value = '';
+          })
+          
+          .finally(() => {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('form').classList.remove('hidden');
+            document.getElementById('writeButton').disabled = true;
+            // userName.value = '';
+            // userComment.value = '';
+          })
+          .catch((error) => {
+            document.getElementById('writeButton').disabled = false;
+            // alert('Something wrong');
+          });
+        }
+        post();
       }
     }
 
