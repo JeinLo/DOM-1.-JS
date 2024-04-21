@@ -190,8 +190,8 @@
               throw new Error("Сервер упал");
             } else if (response.status === 500) {
               // alert('Something wrong with Internet or server error :-((');
-              throw new Error("Сервер упал");
               post();
+              // throw new Error("Сервер упал");
             } else {
               throw new Error("Сервер упал");
             } 
@@ -209,6 +209,7 @@
           })
           .catch((error) => {
             document.getElementById('writeButton').disabled = false;
+            console.warn(error);
           })
           .finally(() => {
             document.getElementById('loading').classList.add('hidden');
