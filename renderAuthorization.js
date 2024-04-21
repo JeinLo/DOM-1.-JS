@@ -36,7 +36,7 @@ export const authnPage = () => {
   const authElem = document.querySelector(".auth-agree");
   const loginInputValue = document.querySelector(".auth-name");
   const passwordInputValue = document.querySelector(".auth-password");
-  const likeButton = document.querySelector(".like-button");
+
 
   authElem.addEventListener("click", () => {
     login({
@@ -54,6 +54,7 @@ export const authnPage = () => {
           getTodos()
             .then((responseData) => {
               renderComments(comments, commentsList);
+              likesActive();
             })
             .catch((error) => {
               if (error.message === "Сервер сломался. Попробуйте позже.") {
@@ -64,13 +65,10 @@ export const authnPage = () => {
             });
         };
         renderCom();
+
       });
+
   });
-
-  // likeButton.addEventListener("click", () => {
-  //   likesActive();
-  // });
-
 };
 
 export const regPage = () => {

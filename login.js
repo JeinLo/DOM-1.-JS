@@ -17,9 +17,7 @@ export const loginFunc = () => {
         }).then((responseData) => {
             setToken(responseData.user.token);
         }).then(() => {
-            return renderComplete(commentList, commentsList, renderComments);
-            renderComments();
-            renderCommentForm();
+            //return renderComplete(commentList, commentsList, renderComments);
         })
     })
 }
