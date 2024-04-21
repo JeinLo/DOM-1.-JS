@@ -220,6 +220,11 @@
           });
         }
         post();
+        let isConnected = window.navigator.onLine;
+        console.log('isConnected' + ' ' + isConnected);
+        if (!isConnected) {
+          alert('Проверьте интернет');
+        }
       }
     }
 
