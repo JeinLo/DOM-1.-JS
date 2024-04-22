@@ -1,12 +1,11 @@
 import { getTodos, login, setToken } from "./api.js";
 import {
+  addCommentOnClick,
   likesActive,
   nameAuthor,
   renderComments,
 } from "./helpers.js";
-import {
-  commentsList,
-} from "./main.js";
+import { commentsList } from "./main.js";
 
 export const authnPage = () => {
   document.querySelector(".container").innerHTML = `
@@ -37,7 +36,6 @@ export const authnPage = () => {
   const loginInputValue = document.querySelector(".auth-name");
   const passwordInputValue = document.querySelector(".auth-password");
 
-
   authElem.addEventListener("click", () => {
     login({
       login: loginInputValue.value,
@@ -55,6 +53,8 @@ export const authnPage = () => {
             .then((responseData) => {
               renderComments(comments, commentsList);
               likesActive();
+              const addCommentButtonOnClick = document.querySelector(".add-form-button");
+              addCommentButtonOnClick.addEventListener("click", addCommentOnClick);
             })
             .catch((error) => {
               if (error.message === "Сервер сломался. Попробуйте позже.") {
@@ -65,9 +65,7 @@ export const authnPage = () => {
             });
         };
         renderCom();
-
       });
-
   });
 };
 

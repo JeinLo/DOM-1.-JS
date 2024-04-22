@@ -7,9 +7,9 @@ import {
   commentList,
   deleteButton,
 } from "./main.js";
-import { getTodos, postComment } from "./api.js";
+import { getTodos, postComment, token } from "./api.js";
 
- export let nameAuthor;
+export let nameAuthor;
 
 export const sanitize = (element) => {
   return `${element
@@ -134,8 +134,8 @@ export const renderComments = (commentList, commentsList) => {
 };
 
 export function addNewComment(retry = 3) {
-  const currentInputName = document.querySelector(".add-form-name");
-  const currentInputText = document.querySelector(".add-form-text");
+  let currentInputName = document.querySelector(".add-form-name");
+  let currentInputText = document.querySelector(".add-form-text");
   if (
     currentInputName.value.trim().length !== 0 &&
     currentInputText.value.trim().length !== 0
@@ -148,16 +148,16 @@ export function addNewComment(retry = 3) {
     commentList.insertAdjacentElement("afterend", newDiv);
     document.querySelector(".newComment").innerHTML = "Комментарий добавляется";
 
-    postComment(currentInputText, currentInputName)
+    postComment(token, currentInputText, currentInputName)
       .then(() => {
         return fetchAndRenderTasks();
       })
       .then(() => {
-        currentInputText.value = "";
-        currentInputName.value = "";
         document.querySelector(".newComment").remove();
         checkStatus.style.display = "flex";
         renderComments(commentList, commentsList);
+        currentInputText.value = "";
+        currentInputName.value = "";
       })
       .catch((error) => {
         if (

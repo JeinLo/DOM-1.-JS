@@ -24,7 +24,7 @@ export function getTodos() {
   });
 }
 
-export function postComment(text, name) {
+export function postComment(token, text, name) {
   return fetch(apiURL, {
     method: "POST",
     headers: {
