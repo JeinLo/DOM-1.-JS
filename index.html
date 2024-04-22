@@ -8,64 +8,115 @@
 
   <body>
     <div class="container">
-      <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+      <ul class="comments" id="comments-list">
+        <!-- список рендерится из JS -->
       </ul>
       <div class="add-form">
         <input
           type="text"
+          id="input-name"
           class="add-form-name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
+          id="input-comment"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button id="to-write" class="add-form-button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    // переменные
+    const inputName = document.getElementById("input-name");
+    const inputComment = document.getElementById("input-comment");
+    const buttonToWrite = document.getElementById("to-write");
+    const commentsListElement = document.getElementById("comments-list");
+    // let likesCounter = 0;
+    const optionsTime = { hour: "2-digit", minute: "2-digit" };
+    const optionsDay = { year: "2-digit", month: "numeric", day: "numeric" };
+    let timeNow =
+      new Date().toLocaleDateString("ru-RU", optionsDay) +
+      " " +
+      new Date().toLocaleTimeString("ru-RU", optionsTime);
+
+    // массив данных
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        textMessage: "Это будет первый комментарий на этой странице",
+        time: "12.02.22 12:18",
+        inputLikes: 3,
+      },
+      {
+        name: "Варвара Н.",
+        textMessage: "Мне нравится как оформлена эта страница! ❤",
+        time: "13.02.22 19:22",
+        inputLikes: 75,
+      },
+    ];
+
+    // обновление списка - рендеринг
+    function renderComments() {
+      const listCommentsElements = document.querySelectorAll(".comment");
+      const commentHtml = comments
+        .map((comments, index) => {
+          let classInputLikes = "";
+          if (comments.inputLikes > 0) {
+            classInputLikes = " -active-like";
+          }
+          return `<li class="comment"><div class="comment-header"><div>${comments.name}</div><div>${comments.time}</div></div><div class="comment-body"><div class="comment-text">${comments.textMessage}</div></div>
+          <div class="comment-footer"><div class="likes"><span class="likes-counter">${comments.inputLikes}</span><button data-index="${index}" class="like-button${classInputLikes}"></button></div></div></li>`;
+        })
+        .join("");
+
+      commentsListElement.innerHTML = commentHtml;
+      inputLikesListeners();
+    }
+
+    renderComments();
+
+    // событие на клик по кнопке "Написать"
+
+    buttonToWrite.addEventListener("click", () => {
+      if (inputName.value === "") {
+        alert("не указано Ваше имя!");
+        inputName.classList.add("error");
+        return;
+      } else if (inputComment.value === "") {
+        alert("Вы не оставили комментарий!");
+        inputComment.classList.add("error");
+        return;
+      } else {
+        comments.push({
+          name: inputName.value,
+          textMessage: inputComment.value,
+          time: timeNow,
+          inputLikes: 0,
+        });
+        renderComments();
+      }
+      inputName.value = "";
+      inputComment.value = "";
+      inputName.classList.remove("error");
+      inputComment.classList.remove("error");
+    });
+
+    function inputLikesListeners() {
+      const likeButtonsElements = document.querySelectorAll(".like-button");
+      for (const likeButtonsElement of likeButtonsElements) {
+        likeButtonsElement.addEventListener("click", () => {
+          const index = likeButtonsElement.dataset.index;
+          comments[index].inputLikes = comments[index].inputLikes + 1;
+          renderComments();
+        });
+      }
+    }
   </script>
 </html>
