@@ -1,9 +1,9 @@
 import { getTodos, login, setToken } from "./api.js";
 import {
-  addCommentOnClick,
   likesActive,
   nameAuthor,
   renderComments,
+  addNewComment,
 } from "./helpers.js";
 import { commentsList } from "./main.js";
 
@@ -47,26 +47,24 @@ export const authnPage = () => {
       .then(() => {
         renderPage();
         // renderComments(commentList, commentsList);
-        const comments = document.querySelector(".comments");
-        const renderCom = () => {
-          getTodos()
-            .then((responseData) => {
-              renderComments(comments, commentsList);
-              likesActive();
-              const addCommentButtonOnClick = document.querySelector(".add-form-button");
-              addCommentButtonOnClick.addEventListener("click", addCommentOnClick);
-            })
-            .catch((error) => {
-              if (error.message === "Сервер сломался. Попробуйте позже.") {
-                alert("Сервер сломался. Попробуйте позже.");
-              } else {
-                alert("Кажется, у вас сломался интернет, попробуйте позже");
-              }
-            });
-        };
         renderCom();
       });
   });
+};
+
+export const renderCom = () => {
+  const comments = document.querySelector(".comments");
+  getTodos()
+    .then((responseData) => {
+      renderComments(comments, commentsList);
+    })
+    .catch((error) => {
+      if (error.message === "Сервер сломался. Попробуйте позже.") {
+        alert("Сервер сломался. Попробуйте позже.");
+      } else {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+      }
+    });
 };
 
 export const regPage = () => {
@@ -101,7 +99,7 @@ export const regPage = () => {
   });
 };
 
-const renderPage = () => {
+export const renderPage = () => {
   document.querySelector(".container").innerHTML = `
   <ul class="comments">
   <!-- Рендерится из JS -->

@@ -1,13 +1,12 @@
 import {
-  currentInputName,
-  currentInputText,
   checkStatus,
   fetchAndRenderTasks,
   commentsList,
   commentList,
   deleteButton,
 } from "./main.js";
-import { getTodos, postComment, token } from "./api.js";
+import { postComment, token } from "./api.js";
+import { renderCom, renderPage } from "./renderAuthorization.js";
 
 export let nameAuthor;
 
@@ -78,7 +77,13 @@ export const reComment = () => {
       const indexElementInClick = [
         ...document.querySelectorAll(".comment"),
       ].indexOf(textElement);
-      let nameComment = commentsList[indexElementInClick].author.name;
+      let nameComment;
+
+      if (commentsList[indexElementInClick].name != null) {
+        nameComment = commentsList[indexElementInClick].name;
+      } else {
+        nameComment = commentsList[indexElementInClick].author.name;
+      }
       currentInputText.value = `>${commentsList[
         indexElementInClick
       ].text.replaceAll("&gt;", ">")}
@@ -129,26 +134,30 @@ export const renderComments = (commentList, commentsList) => {
       return render(elem);
     })
     .join("");
+  if (document.querySelector(".add-form-button") != null) {
+    disableForm();
+    //addOnEnter();
+    reComment();
+    //deleteComment();
+    addCommentOnClick();
+  }
   likesActive();
-  reComment();
 };
 
 export function addNewComment(retry = 3) {
-  let currentInputName = document.querySelector(".add-form-name");
-  let currentInputText = document.querySelector(".add-form-text");
-  if (
-    currentInputName.value.trim().length !== 0 &&
-    currentInputText.value.trim().length !== 0
-  ) {
-    let thisText = currentInputText;
-    let thisName = currentInputName;
+  let InputName = nameAuthor;
+  let InputText = document.querySelector(".add-form-text");
+  if (InputText.value.trim().length !== 0) {
+    let thisText = InputText;
+    let thisName = InputName;
+    const checkStatus = document.querySelector(".add-form");
     checkStatus.style.display = "none";
     let newDiv = document.createElement("div");
     newDiv.classList.add("newComment");
     commentList.insertAdjacentElement("afterend", newDiv);
-    document.querySelector(".newComment").innerHTML = "Комментарий добавляется";
+    newDiv.innerHTML = "Комментарий добавляется";
 
-    postComment(token, currentInputText, currentInputName)
+    postComment(token, InputText, InputName)
       .then(() => {
         return fetchAndRenderTasks();
       })
@@ -156,8 +165,7 @@ export function addNewComment(retry = 3) {
         document.querySelector(".newComment").remove();
         checkStatus.style.display = "flex";
         renderComments(commentList, commentsList);
-        currentInputText.value = "";
-        currentInputName.value = "";
+        InputText.value = "";
       })
       .catch((error) => {
         if (
@@ -175,26 +183,26 @@ export function addNewComment(retry = 3) {
         } else if (!window.navigator.onLine) {
           document.querySelector(".newComment").remove();
           checkStatus.style.display = "flex";
-          currentInputText.value = thisText;
-          currentInputName.value = thisName;
+          InputText.value = thisText;
           throw new Error("Кажется, у вас сломался интернет, попробуйте позже");
         }
-        document.querySelector(".newComment").remove();
+        newDiv.remove();
         checkStatus.style.display = "flex";
-        currentInputText.value = thisText;
-        currentInputName.value = thisName;
       });
+
+    renderPage();
+    renderCom();
+    // renderComments(commentList, commentsList);
   }
 }
 
-export const disableForm = (check) => {
+const disableForm = (check) => {
   const commentButton = document.querySelector(".add-form-button");
   check = document.querySelector(".add-form");
+
   check.addEventListener("input", () => {
-    if (
-      currentInputName.value.trim().length !== 0 &&
-      currentInputText.value.trim().length !== 0
-    ) {
+    let currenText = document.querySelector(".add-form-text");
+    if (currenText.value.trim().length > 2) {
       commentButton.removeAttribute("disabled");
       commentButton.style.backgroundColor = "#bcec30";
     } else {
@@ -204,7 +212,7 @@ export const disableForm = (check) => {
   });
 };
 
-export const addOnEnter = () => {
+const addOnEnter = () => {
   document.addEventListener("keyup", (e) => {
     const commentButton = document.querySelector(".add-form-button");
     if (e.key === "Enter" && !commentButton.hasAttribute("disabled")) {
@@ -213,14 +221,14 @@ export const addOnEnter = () => {
   });
 };
 
-export const addCommentOnClick = () => {
+const addCommentOnClick = () => {
   let clickAddCommentButton = document.querySelector(".add-form-button");
   clickAddCommentButton.addEventListener("click", () => {
     addNewComment();
   });
 };
 
-export const deleteComment = () => {
+const deleteComment = () => {
   deleteButton.addEventListener("click", () => {
     const deleteElement = document.querySelector(".comments");
     if (commentsList.length > 0) {

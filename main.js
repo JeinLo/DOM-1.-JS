@@ -1,8 +1,7 @@
 import { getTodos } from "./api.js";
 import { authnPage } from "./renderAuthorization.js";
 import {
-  addCommentOnClick, addOnEnter,
-  currentDateForComment, disableForm,
+  currentDateForComment,
   likesActive,
   renderComments,
 } from "./helpers.js";
@@ -31,6 +30,7 @@ export const fetchAndRenderTasks = () => {
         };
       });
       renderComments(commentList, commentsList);
+      
     })
     .catch((error) => {
       if (error.message === "Сервер сломался. Попробуйте позже.") {
@@ -78,6 +78,4 @@ export const start = () => {
 
 
 start();
-// disableForm();
-// addCommentOnClick();
-// addOnEnter();
+
