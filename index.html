@@ -68,7 +68,6 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   const commentElements = document.querySelectorAll('.comment');
-  const commentTextElement = document.querySelectorAll('.comment-text');
 
 
   const commentators = [
@@ -94,7 +93,7 @@
         return `<li class="comment" data-name="${commentator.name}">
         <div class="comment-header">
           <div>${commentator.name}</div>
-          <div>${commentator.time}</div>
+          <div>${new Date().toLocaleString()}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">${commentator.comment}</div>
@@ -112,6 +111,8 @@
     listElement.innerHTML = commentatorsHtml;
     initEventListeners();
   };
+
+  ////ЛАЙКИ/////
 
   // добавляет обработчики кликов ко всем классам comment
   const initEventListeners = () => {
@@ -140,20 +141,7 @@
     }
   };
 
-  const answerComment = () => {
-    const commentTextElement = document.querySelectorAll('.comment-text');
-    for (const commentTextElement of commentTextElements) {
-      commentsTextElement.addEventListener('click', (e) => {
-        e.stopPropagation();
-
-        const index = commentTextElelement.dataset.index;
-        textElement.value = `${сommentators[index].comment} ${сommentators[index].name}`;
-
-        renderCommentators();
-        answerComment();
-      });
-    }
-  };
+/// ПУСТЫЕ СТРОКИ И СИМВОЛЫ ///
 
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
@@ -176,10 +164,24 @@
       isLiked: false,
     });
 
-
-
     renderCommentators();
     initEventListeners();
+
+    // ОТВЕТЫ НА КОММЕНТЫ//
+
+    const answerComment = () => {
+    const commentElements = document.querySelectorAll('.comment');
+    for (const commentElement of commentElements) {
+      commentElement.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        const index = commentElement.dataset.index;
+        commentInputElement.value = `${сommentators[index].comment} ${сommentators[index].name}`;
+
+        renderCommentators();
+      });
+    }
+  };
 
     nameInputElement.value = "";
     commentInputElement.value = "";
@@ -202,7 +204,7 @@
     //     </div>
     //   </li>`;
 
-    //добавление комментария энтером
+ ////КОММЕНТ ЭНТЕРОМ////
 
     document.addEventListener('keydown', function (enter) {
       if (enter.key === 'Enter') {
