@@ -58,11 +58,11 @@ export const likesActive = () => {
       if (commentIndex.isLiked) {
         commentIndex.isLiked = false;
         commentIndex.likes = commentIndex.likes - 1;
-        renderComments(commentList, commentsList);
+        renderComments(commentList);
       } else {
         commentIndex.isLiked = true;
         commentIndex.likes = commentIndex.likes + 1;
-        renderComments(commentList, commentsList);
+        renderComments(commentList);
       }
     });
   }
@@ -128,7 +128,9 @@ export function render(element) {
     </li>`;
 }
 
-export const renderComments = (commentList, commentsList) => {
+export const renderComments = (commentList) => {
+  commentList = document.querySelector(".comments");
+  console.log(commentsList);
   commentList.innerHTML = commentsList
     .map((elem) => {
       return render(elem);
@@ -148,8 +150,7 @@ export function addNewComment(retry = 3) {
   let InputName = nameAuthor;
   let InputText = document.querySelector(".add-form-text");
   if (InputText.value.trim().length !== 0) {
-    let thisText = InputText;
-    let thisName = InputName;
+    let thisText = InputText.value;
     const checkStatus = document.querySelector(".add-form");
     checkStatus.style.display = "none";
     let newDiv = document.createElement("div");
@@ -162,16 +163,15 @@ export function addNewComment(retry = 3) {
         return fetchAndRenderTasks();
       })
       .then(() => {
+        InputText.value = "";
         document.querySelector(".newComment").remove();
         checkStatus.style.display = "flex";
-        renderComments(commentList, commentsList);
-        InputText.value = "";
+        renderComments(commentList);
       })
       .catch((error) => {
         if (
           error.message === "Сервер сломался. Попробуйте позже." &&
-          thisText.length > 2 &&
-          thisName.length > 2
+          thisText.length > 2
         ) {
           reAddNewComment(retry);
         } else if (error.message === "Сервер сломался. Попробуйте позже.") {
@@ -188,10 +188,11 @@ export function addNewComment(retry = 3) {
         }
         newDiv.remove();
         checkStatus.style.display = "flex";
+        InputText.value = thisText;
       });
 
-    renderPage();
-    renderCom();
+    // renderPage();
+    // renderCom();
     // renderComments(commentList, commentsList);
   }
 }

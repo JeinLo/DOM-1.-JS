@@ -56,7 +56,7 @@ export const renderCom = () => {
   const comments = document.querySelector(".comments");
   getTodos()
     .then((responseData) => {
-      renderComments(comments, commentsList);
+      renderComments(comments);
     })
     .catch((error) => {
       if (error.message === "Сервер сломался. Попробуйте позже.") {

@@ -23,14 +23,13 @@ export const fetchAndRenderTasks = () => {
         return {
           id: comment.id,
           name: comment.author.name,
-          date: currentDateForComment(comment),
+          date: comment.date,
           text: comment.text,
           likesCounter: comment.likes,
           likeButton: false,
         };
       });
-      renderComments(commentList, commentsList);
-      
+      renderComments();
     })
     .catch((error) => {
       if (error.message === "Сервер сломался. Попробуйте позже.") {
@@ -52,7 +51,7 @@ export const start = () => {
   getTodos()
     .then((responseData) => {
       commentsList = responseData.comments;
-      renderComments(commentList, commentsList);
+      renderComments(commentList);
     })
     .then(() => {
       document.querySelector(".newComment").remove();
