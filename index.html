@@ -109,6 +109,25 @@
       .join("");
 
     listElement.innerHTML = commentatorsHtml;
+
+    // ОТВЕТЫ НА КОММЕНТЫ//
+
+    const answerComment = () => {
+      const commentElements = document.querySelectorAll('.comment');
+      for (const commentElement of commentsElements) {
+        commentElement.addEventListener('click', (e) => {
+
+          const index = commentElement.dataset.index;
+          if (index !== null) {
+            const commentator = commentators[index];
+            commentInput.value = `> ${commentator.name} : ${commentator.text}`;
+            commentInput.value = `> ${commentator.text} \n ${commentator.name}.,`;
+            renderCommentators();
+            const styleQuote = document.querySelectorAll(".quote");
+          }
+        });
+      }
+    };
     initEventListeners();
   };
 
@@ -141,7 +160,7 @@
     }
   };
 
-/// ПУСТЫЕ СТРОКИ И СИМВОЛЫ ///
+  /// ПУСТЫЕ СТРОКИ И СИМВОЛЫ ///
 
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
@@ -167,21 +186,7 @@
     renderCommentators();
     initEventListeners();
 
-    // ОТВЕТЫ НА КОММЕНТЫ//
 
-    const answerComment = () => {
-    const commentElements = document.querySelectorAll('.comment');
-    for (const commentElement of commentElements) {
-      commentElement.addEventListener('click', (e) => {
-        e.stopPropagation();
-
-        const index = commentElement.dataset.index;
-        commentInputElement.value = `${сommentators[index].comment} ${сommentators[index].name}`;
-
-        renderCommentators();
-      });
-    }
-  };
 
     nameInputElement.value = "";
     commentInputElement.value = "";
@@ -204,7 +209,7 @@
     //     </div>
     //   </li>`;
 
- ////КОММЕНТ ЭНТЕРОМ////
+    ////КОММЕНТ ЭНТЕРОМ////
 
     document.addEventListener('keydown', function (enter) {
       if (enter.key === 'Enter') {
