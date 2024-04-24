@@ -1,12 +1,10 @@
 import {
-  checkStatus,
   fetchAndRenderTasks,
   commentsList,
   commentList,
   deleteButton,
 } from "./main.js";
 import { postComment, token } from "./api.js";
-import { renderCom, renderPage } from "./renderAuthorization.js";
 
 export let nameAuthor;
 
@@ -130,7 +128,6 @@ export function render(element) {
 
 export const renderComments = (commentList) => {
   commentList = document.querySelector(".comments");
-  console.log(commentsList);
   commentList.innerHTML = commentsList
     .map((elem) => {
       return render(elem);
@@ -160,10 +157,11 @@ export function addNewComment(retry = 3) {
 
     postComment(token, InputText, InputName)
       .then(() => {
+        InputText.value = "";
         return fetchAndRenderTasks();
       })
       .then(() => {
-        InputText.value = "";
+
         document.querySelector(".newComment").remove();
         checkStatus.style.display = "flex";
         renderComments(commentList);
@@ -188,7 +186,7 @@ export function addNewComment(retry = 3) {
         }
         newDiv.remove();
         checkStatus.style.display = "flex";
-        InputText.value = thisText;
+        //InputText.value = thisText;
       });
 
     // renderPage();

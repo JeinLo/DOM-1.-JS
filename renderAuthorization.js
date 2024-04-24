@@ -1,11 +1,9 @@
 import { getTodos, login, setToken } from "./api.js";
 import {
-  likesActive,
   nameAuthor,
   renderComments,
-  addNewComment,
 } from "./helpers.js";
-import { commentsList } from "./main.js";
+
 
 export const authnPage = () => {
   document.querySelector(".container").innerHTML = `
@@ -17,7 +15,7 @@ export const authnPage = () => {
           placeholder="Введите логин"
         />
         <input
-        type="text"
+        type="password"
         class="add-auth-text auth-password"
         placeholder="Введите пароль"
       />

@@ -7,9 +7,6 @@ import {
 } from "./helpers.js";
 
 export let commentsList = [];
-export const currentInputName = document.querySelector(".add-form-name");
-export const currentInputText = document.querySelector(".add-form-text");
-export const commentButton = document.querySelector(".add-form-button");
 export const commentList = document.querySelector(".comments");
 export const checkStatus = document.querySelector(".add-form");
 export const deleteButton = document.querySelector(".delete-form-button");
@@ -24,7 +21,7 @@ export const fetchAndRenderTasks = () => {
           id: comment.id,
           name: comment.author.name,
           date: comment.date,
-          text: comment.text,
+          text: comment.text, 
           likesCounter: comment.likes,
           likeButton: false,
         };
