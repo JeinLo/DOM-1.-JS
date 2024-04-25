@@ -90,7 +90,7 @@
   const renderCommentators = () => {
     const commentatorsHtml = commentators
       .map((commentator, index) => {
-        return `<li class="comment" data-name="${commentator.name}">
+        return `<li class="comment" data-index="${index}" data-name="${commentator.name}">
         <div class="comment-header">
           <div>${commentator.name}</div>
           <div>${new Date().toLocaleString()}</div>
@@ -113,21 +113,22 @@
     // ОТВЕТЫ НА КОММЕНТЫ//
 
     const answerComment = () => {
-      const commentElements = document.querySelectorAll('.comment');
+      const commentsElements = document.querySelectorAll('.comment');
       for (const commentElement of commentsElements) {
         commentElement.addEventListener('click', (e) => {
 
           const index = commentElement.dataset.index;
+          console.log(index)
           if (index !== null) {
             const commentator = commentators[index];
-            commentInput.value = `> ${commentator.name} : ${commentator.text}`;
-            commentInput.value = `> ${commentator.text} \n ${commentator.name}.,`;
+            commentInputElement.value = `> ${commentator.comment} \n ${commentator.name}.,`;
             renderCommentators();
             const styleQuote = document.querySelectorAll(".quote");
           }
         });
       }
     };
+    answerComment();
     initEventListeners();
   };
 
