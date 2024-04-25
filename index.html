@@ -45,12 +45,10 @@
             </div>
           </div>
         </li>
-		 <div id="wait_for_loading">
-		<p class="comment_start_time">Пожалуйста подождите, комментарии загружаются.</p>
-	</div>
-	-->
+
+		 -->
       </ul>
-	  
+	 
       <div class="add-form" id="addForm">
         <input id="input-accept-name"
           type="text"
@@ -70,6 +68,11 @@
       </div>
     </div>
   </body>
+
+  <script type="module" src="./main.js"></script>
+
+  
+  //hw-2.14
   <script>
     "use strict";
 
@@ -281,20 +284,6 @@
           addNewComment();
           buttonElement.disabled = true;
           buttonElement.textContent = 'Комментарий добавляется...';
-    
-        //});
-            
-        // Очистка поля ввода для комментария и имени после отправления комментария
-		//const clearCommmentTextArea = document.querySelector('.add-form-text');
-		//const clearName = document.querySelector('.add-form-name');
-		//clearCommmentTextArea.value = '';
-		//clearName.value = '';
-		//renderCommentators();
-		//checkInputs();
 	   })
-
-		//renderCommentators();
-		//checkInputs();
-   // console.log("It works!");
   </script>
 </html>
