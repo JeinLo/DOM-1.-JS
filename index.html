@@ -38,13 +38,13 @@
     const inputComment = document.getElementById("input-comment");
     const buttonToWrite = document.getElementById("to-write");
     const commentsListElement = document.getElementById("comments-list");
-    // let likesCounter = 0;
     const optionsTime = { hour: "2-digit", minute: "2-digit" };
     const optionsDay = { year: "2-digit", month: "numeric", day: "numeric" };
     let timeNow =
       new Date().toLocaleDateString("ru-RU", optionsDay) +
       " " +
       new Date().toLocaleTimeString("ru-RU", optionsTime);
+    let dataLink = 0;
 
     // массив данных
     const comments = [
@@ -71,13 +71,14 @@
           if (comments.inputLikes > 0) {
             classInputLikes = " -active-like";
           }
-          return `<li class="comment"><div class="comment-header"><div>${comments.name}</div><div>${comments.time}</div></div><div class="comment-body"><div class="comment-text">${comments.textMessage}</div></div>
-          <div class="comment-footer"><div class="likes"><span class="likes-counter">${comments.inputLikes}</span><button data-index="${index}" class="like-button${classInputLikes}"></button></div></div></li>`;
+          return `<li class="comment"><div class="comment-header"><div>${comments.name}</div><div>${comments.time}</div></div><div class="comment-body"><div data-comment-number="${index}" class="comment-text">${comments.textMessage}</div></div>
+          <div class="comment-footer"><div class="likes"><span class="likes-counter">${comments.inputLikes}</span><button data-index="${index}" data-like="${dataLink}" class="like-button${classInputLikes}"></button></div></div></li>`;
         })
         .join("");
 
       commentsListElement.innerHTML = commentHtml;
       inputLikesListeners();
+      inputReviewListener();
     }
 
     renderComments();
@@ -95,8 +96,18 @@
         return;
       } else {
         comments.push({
-          name: inputName.value,
-          textMessage: inputComment.value,
+          name: inputName.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&prime;"),
+          textMessage: inputComment.value
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&prime;"),
           time: timeNow,
           inputLikes: 0,
         });
@@ -113,10 +124,27 @@
       for (const likeButtonsElement of likeButtonsElements) {
         likeButtonsElement.addEventListener("click", () => {
           const index = likeButtonsElement.dataset.index;
-          comments[index].inputLikes = comments[index].inputLikes + 1;
+          if (likeButtonsElement.dataset.like === "0") {
+            comments[index].inputLikes = comments[index].inputLikes + 1;
+            dataLink = 1;
+          } else {
+            comments[index].inputLikes = comments[index].inputLikes - 1;
+            dataLink = 0;
+          }
           renderComments();
         });
       }
     }
+
+    function inputReviewListener() {
+      const commentTextElements = document.querySelectorAll(".comment-text");
+      for (const commentTextElement of commentTextElements) {
+        commentTextElement.addEventListener("click", () => {
+          const commentNumber = commentTextElement.dataset.commentNumber;
+          inputComment.innerHTML = `\> ${comments[commentNumber].textMessage}\n\n${comments[commentNumber].name}, `;
+        });
+      }
+    }
+    console.log(comments);
   </script>
 </html>
