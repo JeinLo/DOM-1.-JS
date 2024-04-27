@@ -70,7 +70,7 @@
   const commentElements = document.querySelectorAll('.comment');
 
 
-  const commentators = [
+  let commentators = [
     {
       name: "Глеб Фокин",
       time: "12.02.22 12:18",
@@ -86,6 +86,37 @@
       isLiked: true,
     },
   ];
+
+    //API асинхронные запросы
+
+    //GET
+    function getFetchPromise() {
+    const getFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+      {
+        method: "GET",
+        })
+
+      getFetch.then((res) => {
+       const jsonPromise = res.json();
+          jsonPromise.then((resData) => {
+            const appComments = resData.commentators.map((commentator) => {
+              return {
+                name: commentator.author.name,
+                comment: commentator.text,
+                time: new Date(commentator.time).toLocaleDateString,
+                like: commentator.likes,
+                isLike: false,
+              };
+            });
+
+            commentators = appComments;
+            renderCommentators();
+          });
+        renderCommentators();
+      });
+    };
+getFetchPromise();
+
 
   const renderCommentators = () => {
     const commentatorsHtml = commentators
@@ -161,7 +192,7 @@
     }
   };
 
-  /// ПУСТЫЕ СТРОКИ И СИМВОЛЫ ///
+  //ОБРАБОТЧИК КНОПКИ НАПИСАТЬ КОММЕНТАРИЙ//
 
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
@@ -188,6 +219,33 @@
     initEventListeners();
 
 
+  //POST
+
+  const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value,
+          comment: commentInputElement.value,
+        }),
+      }).then((res) => {
+        res.json()
+          .then((resData) => {
+            const appComments = resData.commentators.map((commentator) => {
+              return {
+                name: commentator.author.name,
+                comment: commentator.text,
+                time: new Date(commentator.time).toLocaleDateString,
+                like: commentator.likes,
+                isLike: false,
+              };
+            });
+
+            commentators = appComments;
+            renderCommentators();
+          });
+        renderCommentators();
+      });
 
     nameInputElement.value = "";
     commentInputElement.value = "";
