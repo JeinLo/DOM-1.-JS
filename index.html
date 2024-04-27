@@ -90,33 +90,66 @@
     //API асинхронные запросы
 
     //GET
-    function getFetchPromise() {
+    function getComment () {
     const getFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
         method: "GET",
-        })
-
-      getFetch.then((res) => {
-       const jsonPromise = res.json();
-          jsonPromise.then((resData) => {
-            const appComments = resData.commentators.map((commentator) => {
-              return {
-                name: commentator.author.name,
-                comment: commentator.text,
-                time: new Date(commentator.time).toLocaleDateString,
-                like: commentator.likes,
-                isLike: false,
-              };
+        });
+        getFetch
+        .then((response) => {
+          if (response.status === 500) {
+                    throw new Error("Ошибка сервера");
+                } if (response.status === 400) {
+                    throw new Error("Неверный запрос");
+                }
+                return response.json();
+            })
+            .then(data => {
+              commnetators = data.commentators;
+              renderCommentators();
             });
+          }
 
-            commentators = appComments;
-            renderCommentators();
-          });
-        renderCommentators();
+     //POST
+function postComment() {
+    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value, 
+          text: commentInputElement.value, 
+          forceError: true, 
+        }),
       });
-    };
-getFetchPromise();
 
+      fetchPromise
+        .then((response) => {
+          console.log(response);
+          if (response.status === 400) {
+            alert("слишком короткий комментарий");
+            return Promise.reject(new Error ('слишком короткий комментарий'));
+          }
+          else if (response.status === 500) {
+            alert("Ошибка сервера");
+            return Promise.reject(new Error("Ошибка сервера"));
+          } else {
+                    return response.json();
+                }
+      })
+      .then((data) => {
+        renderCommentators();
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+      })
+      .catch((error) => { if(error.message === 'Failed to fetch') {
+        alert(error.message)
+      } else {
+        alert(error.message)}
+      });
+      getComment();
+    };
+
+    
 
   const renderCommentators = () => {
     const commentatorsHtml = commentators
@@ -218,39 +251,6 @@ getFetchPromise();
     renderCommentators();
     initEventListeners();
 
-
-  
-
-    //POST
-
-    const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: nameInputElement.value,
-          comment: commentInputElement.value
-        }),
-      }).then((res) => {
-        res.json()
-          .then((resData) => {
-            const appComments = resData.commentators.map((commentator) => {
-              return {
-                name: commentator.author.name,
-                comment: commentator.text,
-                time: new Date(commentator.time).toLocaleDateString,
-                like: commentator.likes,
-                isLike: false,
-              };
-            });
-
-            commentators = appComments;
-            renderCommentators();
-          });
-        renderCommentators();
-      });
-
-    nameInputElement.value = "";
-    commentInputElement.value = "";
 
 
     // const oldListHtml = listElement.innerHTML;
