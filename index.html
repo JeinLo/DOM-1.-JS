@@ -219,14 +219,16 @@ getFetchPromise();
     initEventListeners();
 
 
-  //POST
+  
 
-  const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+    //POST
+
+    const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
         method: "POST",
         body: JSON.stringify({
           name: nameInputElement.value,
-          comment: commentInputElement.value,
+          comment: commentInputElement.value
         }),
       }).then((res) => {
         res.json()
