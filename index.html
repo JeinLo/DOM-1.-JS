@@ -75,79 +75,133 @@
       name: "Глеб Фокин",
       time: "12.02.22 12:18",
       comment: "Это будет первый комментарий на этой странице",
-      likes: 3,
+      like: 3,
       isLiked: false,
     },
     {
       name: "Варвара Н.",
       time: "13.02.22 19:22",
       comment: "Мне нравится как оформлена эта страница! ❤️",
-      likes: 75,
+      like: 75,
       isLiked: true,
     },
   ];
 
     //API асинхронные запросы
-
     //GET
-    function getComment () {
+    function getFetchPromise() {
     const getFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
         method: "GET",
-        });
-        getFetch
-        .then((response) => {
-          if (response.status === 500) {
-                    throw new Error("Ошибка сервера");
-                } if (response.status === 400) {
-                    throw new Error("Неверный запрос");
-                }
-                return response.json();
-            })
-            .then(data => {
-              commnetators = data.commentators;
-              renderCommentators();
+        })
+      getFetch.then((res) => {
+       const jsonPromise = res.json();
+          jsonPromise.then((resData) => {
+            const appComments = resData.comments.map((commentator) => {
+              return {
+                name: commentator.author.name,
+                comment: commentator.text,
+                time: new Date(commentator.time).toLocaleDateString,
+                like: commentator.like,
+                isLike: false,
+              };
             });
-          }
+            commentators = appComments;
+            renderCommentators();
+          });
+      });
+    };
+getFetchPromise();
 
-     //POST
-function postComment() {
-    let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+
+    // //GET
+    // function getComment () {
+    // const getFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+    //   {
+    //     method: "GET",
+    //     });
+    //     getFetch
+    //     .then((response) => {
+    //       if (response.status === 500) {
+    //                 throw new Error("Ошибка сервера");
+    //             } if (response.status === 400) {
+    //                 throw new Error("Неверный запрос");
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => {
+    //           commnetators = data.commentators;
+    //           renderCommentators();
+    //         });
+    //       }
+
+    //POST
+
+    const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
         method: "POST",
         body: JSON.stringify({
-          name: nameInputElement.value, 
-          text: commentInputElement.value, 
-          forceError: true, 
+          name: nameInputElement.value,
+          text: commentInputElement.value,
         }),
+      }).then((res) => {
+        res.json()
+          .then((resData) => {
+            const appComments = resData.comments.map((commentator) => {
+              return {
+                name: commentator.author.name,
+                comment: commentator.text,
+                time: new Date(commentator.time).toLocaleDateString,
+                like: commentator.like,
+                isLike: false,
+              };
+            });
+            commentators = appComments;
+            renderCommentators();
+          });
       });
 
-      fetchPromise
-        .then((response) => {
-          console.log(response);
-          if (response.status === 400) {
-            alert("слишком короткий комментарий");
-            return Promise.reject(new Error ('слишком короткий комментарий'));
-          }
-          else if (response.status === 500) {
-            alert("Ошибка сервера");
-            return Promise.reject(new Error("Ошибка сервера"));
-          } else {
-                    return response.json();
-                }
-      })
-      .then((data) => {
-        renderCommentators();
-        nameInputElement.value = "";
-        commentInputElement.value = "";
-      })
-      .catch((error) => { if(error.message === 'Failed to fetch') {
-        alert(error.message)
-      } else {
-        alert(error.message)}
-      });
-      getComment();
-    };
+    nameInputElement.value = "";
+    commentInputElement.value = "";
+
+     //POST
+// function postComment() {
+//     let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+//       {
+//         method: "POST",
+//         body: JSON.stringify({
+//           name: nameInputElement.value, 
+//           text: commentInputElement.value, 
+//           forceError: true, 
+//         }),
+//       });
+
+//       fetchPromise
+//         .then((response) => {
+//           console.log(response);
+//           if (response.status === 400) {
+//             alert("слишком короткий комментарий");
+//             return Promise.reject(new Error ('слишком короткий комментарий'));
+//           }
+//           else if (response.status === 500) {
+//             alert("Ошибка сервера");
+//             return Promise.reject(new Error("Ошибка сервера"));
+//           } else {
+//                     return response.json();
+//                 }
+//       })
+//       .then((data) => {
+//         renderCommentators();
+//         nameInputElement.value = "";
+//         commentInputElement.value = "";
+//       })
+//       .catch((error) => { if(error.message === 'Failed to fetch') {
+//         alert(error.message)
+//       } else {
+//         alert(error.message)}
+//       });
+//       getComment();
+//     };
 
     
 
@@ -164,7 +218,7 @@ function postComment() {
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">${commentator.likes}</span>
+            <span class="likes-counter">${commentator.like}</span>
             <button data-like="${index}" data-index="${index}" class="like-button ${commentator.isLiked ? '-active-like' : ''}"></button>
           </div>
         </div>
@@ -215,9 +269,9 @@ function postComment() {
         event.stopPropagation();
         const index = likeButton.dataset.index;
         const commentator = commentators[index];
-        commentator.likes = commentator.isLiked
-          ? commentator.likes - 1
-          : commentator.likes + 1;
+        commentator.like = commentator.isLiked
+          ? commentator.like - 1
+          : commentator.like + 1;
         commentator.isLiked = !commentator.isLiked;
 
         renderCommentators();
