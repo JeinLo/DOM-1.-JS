@@ -1,28 +1,29 @@
-const listElement = document.getElementById('comment-script');
+const listCommentsElement = document.getElementById('list-comments');
 
-export const renderCommentators = ({comments, addEventListenerB, replyToCommentFunction}) => {
-  const commentatorHTML = comments.map((commentator, index) => {
-        return `<li class="comment">
-        <div data-user="${commentator.name}" class="comment-header">
-          ${commentator.name}
-          <div>${commentator.data}</div>
-        </div>
-        <div class="comment-body">
-          <div data-text=">-${commentator.comment}" class="comment-text">
-            ${commentator.comment}
+export const renderComments = ({comments, initEventListeners, answerComment}) => {
+    const commentsHtml = comments
+    .map((comment, index) => {
+      return ` <li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.time}</div>
           </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span data-like="0" class="likes-counter">${commentator.like}</span>
-            <button class="like-button ${commentator.isLike ? '-active-like' : ''}" data-index="${index}" ></button>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.comment}
+            </div>
           </div>
-        </div>
-        </li>`;
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comments[index].likes}</span>
+              <button data-index= "${index}" class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+            </div>
+          </div>
+        </li> `
     }).join("");
-    listElement.innerHTML = commentatorHTML;
-    addEventListenerB()
-    //addLikeButtonEventListener();
-    replyToCommentFunction();
-    inactiveDeleteButton();
-  };
+    
+    listCommentsElement.innerHTML = commentsHtml;   
+    
+    initEventListeners({comments, initEventListeners, answerComment});     
+    answerComment();
+    };
