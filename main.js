@@ -7,7 +7,7 @@ import { normalizeComments } from "./helpers.js";
 const inputNameElement = document.querySelector(".add-form-name");
 const inputTextElement = document.querySelector(".add-form-text");
 const buttonElement = document.querySelector(".add-form-button");
-const buttonElementDel = document.querySelector(".delete-form-button");
+const buttonElementDel = document.querySelector(".add-form-button");
 // Переносим данные из разметки
 export let comments = [];
 export function setComments(newComments) {
@@ -48,5 +48,5 @@ inputTextElement.addEventListener("keydown", function (event) {
 //удаление последнего комментария
 buttonElementDel.addEventListener("click", () => {
   comments.pop();
-  renderComments({comments, initEventListeners, answerComment});
+ renderComments({comments, initEventListeners, answerComment});
 });
