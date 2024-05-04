@@ -1,7 +1,7 @@
 export{render, commetForm}
 const listEL = document.getElementById('list');
 
-const initlikeButton = () => {
+const initlikeButton = ({peoples}) => {
     const likeButtonEls = document.querySelectorAll('.like-button');
     for (const likeButtonEl of likeButtonEls) {
       likeButtonEl.addEventListener('click', () => {
@@ -20,7 +20,7 @@ const initlikeButton = () => {
     }
   }
 
-  const initDeleteButton = () => {
+  const initDeleteButton = ({peoples}) => {
     const deleteButtonEls = document.querySelectorAll('.deleteButton');
     for (const deleteButtonEl of deleteButtonEls) {
       deleteButtonEl.addEventListener('click', (e) => {
@@ -34,7 +34,7 @@ const initlikeButton = () => {
     }
   }
 
-  const commetForm = () => {
+  const commetForm = ({peoples}) => {
     const commentBodyElements = document.querySelectorAll('.comment-body');
     for (const commentBodyElement of commentBodyElements) {
       commentBodyElement.addEventListener('click', () => {
@@ -70,7 +70,7 @@ const render = ({peoples}) => {
                </li>`
          }).join('');
          listEL.innerHTML = peopleHtml;
-         initDeleteButton();
-         initlikeButton();
-         commetForm();
+         initDeleteButton({peoples});
+         initlikeButton({peoples});
+         commetForm({peoples});
 }
