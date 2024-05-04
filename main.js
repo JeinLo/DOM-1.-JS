@@ -76,7 +76,7 @@ if (error.message === "Сервер упал") {
 
       getTodo();
 
-commetForm();
+commetForm({peoples});
 
 render({peoples});
 
