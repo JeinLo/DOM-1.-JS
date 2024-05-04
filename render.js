@@ -1,4 +1,5 @@
 export{render, commetForm}
+
 const listEL = document.getElementById('list');
 
 const initlikeButton = ({peoples}) => {
@@ -35,6 +36,7 @@ const initlikeButton = ({peoples}) => {
   }
 
   const commetForm = ({peoples}) => {
+    const commentInputEl = document.getElementById('commentInput');
     const commentBodyElements = document.querySelectorAll('.comment-body');
     for (const commentBodyElement of commentBodyElements) {
       commentBodyElement.addEventListener('click', () => {
