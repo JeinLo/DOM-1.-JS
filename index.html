@@ -9,7 +9,7 @@
   
   <body>
     <div class="container">
-      <ul class="comments">
+      <ul class="comments" id="list-coments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -27,7 +27,7 @@
             </div>
           </div>
         </li>
-        <li class="comment">
+        <li class="comment"> 
           <div class="comment-header">
             <div>Варвара Н.</div>
             <div>13.02.22 19:22</div>
@@ -50,12 +50,14 @@
           type="text"
           class="add-form-name"
           placeholder="Введите ваше имя"
+          id="input-name"
         />
         <textarea
           type="textarea"
           class="add-form-text"
           placeholder="Введите ваш коментарий"
           rows="4"
+          id="input-text"
         ></textarea>
         <div class="add-form-row">
           <button class="add-form-button" id="add-button">Написать</button>
@@ -67,10 +69,51 @@
   <script>
     "use strict";
     const addButtonEl = document.getElementById('add-button');
+    const listComentsEl = document.getElementById('list-coments');
+    const inputNameEl = document.getElementById('input-name');
+    const inputTextEl = document.getElementById('input-text');
+    let myDate  = new Date();
+    function rusDateTime(myDate){
+    let minuta = myDate.getMinutes();
+    let minutaUser;
+    minuta < 10 ? minutaUser = '0' + myDate.getMinutes(): minutaUser =  minuta;
+    let day = myDate.getDate();
+    let deyUser;
+    day < 10 ? deyUser = '0' + myDate.getDate(): deyUser =  day;
+    let month = myDate.getMonth();
+    let monthUser;
+    month < 10 ? monthUser = '0' + myDate.getMonth(): monthUser =  month;
+    let hours = myDate.getHours();
+    let hoursUser;
+    hours < 10 ? hoursUser = '0' + myDate.getHours(): hoursUser =  hours;
+    let userDate = [deyUser , monthUser , myDate.getFullYear()];
+    let userTime = [hoursUser,minutaUser];
+    return  userDate.join('.') + ' ' + userTime.join(':');
+    }
+    rusDateTime(myDate)
+  
     addButtonEl.addEventListener('click', () => {
-      alert("It's wark")
+      const oldListComents = listComentsEl.innerHTML;
+      listComentsEl.innerHTML = oldListComents + `<li class="comment">
+          <div class="comment-header">
+            <div>${inputNameEl.value}</div>
+            <div>${rusDateTime(myDate)}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${inputTextEl.value}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`
     })
     console.log(addButtonEl);
+    console.log(listComentsEl.innerHTML);
     console.log("It works!");
   </script>
 </html>
