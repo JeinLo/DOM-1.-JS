@@ -1,100 +1,103 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
 
-  
-  <body>
-    <div class="container">
-      <ul class="comments" id="list-coments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment"> 
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-          id="input-name"
-        />
-        <textarea
-          type="textarea"
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-          id="input-text"
-        ></textarea>
-        <div class="add-form-row">
-          <button class="add-form-button" id="add-button">Написать</button>
+<head>
+  <title>Проект "Комменты"</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+
+<body>
+  <div class="container">
+    <ul class="comments" id="list-coments">
+      <li class="comment">
+        <div class="comment-header">
+          <div>Глеб Фокин</div>
+          <div>12.02.22 12:18</div>
         </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Это будет первый комментарий на этой странице
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">3</span>
+            <button class="like-button"></button>
+          </div>
+        </div>
+      </li>
+      <li class="comment">
+        <div class="comment-header">
+          <div>Варвара Н.</div>
+          <div>13.02.22 19:22</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            Мне нравится как оформлена эта страница! ❤
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">75</span>
+            <button class="like-button -active-like"></button>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div class="add-form">
+      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
+      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
+        id="input-text"></textarea>
+      <div class="add-form-row">
+        <button class="add-form-button" id="add-button">Написать</button>
       </div>
     </div>
-  </body>
+  </div>
+</body>
 
-  <script>
-    "use strict";
-    const addButtonEl = document.getElementById('add-button');
-    const listComentsEl = document.getElementById('list-coments');
-    const inputNameEl = document.getElementById('input-name');
-    const inputTextEl = document.getElementById('input-text');
-    let myDate  = new Date();
-    function rusDateTime(myDate){
+<script>
+  "use strict";
+  const addButtonEl = document.getElementById('add-button');
+  const listComentsEl = document.getElementById('list-coments');
+  const inputNameEl = document.getElementById('input-name');
+  const inputTextEl = document.getElementById('input-text');
+
+  let myDate = new Date();
+  function rusDateTime(myDate) {
     let minuta = myDate.getMinutes();
     let minutaUser;
-    minuta < 10 ? minutaUser = '0' + myDate.getMinutes(): minutaUser =  minuta;
+    minuta < 10 ? minutaUser = '0' + myDate.getMinutes() : minutaUser = minuta;
     let day = myDate.getDate();
     let deyUser;
-    day < 10 ? deyUser = '0' + myDate.getDate(): deyUser =  day;
+    day < 10 ? deyUser = '0' + myDate.getDate() : deyUser = day;
     let month = myDate.getMonth();
     let monthUser;
-    month < 10 ? monthUser = '0' + myDate.getMonth(): monthUser =  month;
+    month < 10 ? monthUser = '0' + myDate.getMonth() : monthUser = month;
     let hours = myDate.getHours();
     let hoursUser;
-    hours < 10 ? hoursUser = '0' + myDate.getHours(): hoursUser =  hours;
-    let userDate = [deyUser , monthUser , myDate.getFullYear()];
-    let userTime = [hoursUser,minutaUser];
-    return  userDate.join('.') + ' ' + userTime.join(':');
-    }
-    rusDateTime(myDate)
+    hours < 10 ? hoursUser = '0' + myDate.getHours() : hoursUser = hours;
+    let userDate = [deyUser, monthUser, myDate.getFullYear()];
+    let userTime = [hoursUser, minutaUser];
+    return userDate.join('.') + ' ' + userTime.join(':');
+  }
   
-    addButtonEl.addEventListener('click', () => {
-      const oldListComents = listComentsEl.innerHTML;
-      listComentsEl.innerHTML = oldListComents + `<li class="comment">
+  addButtonEl.addEventListener('click', () => {
+    inputNameEl.classList.remove('error');
+    inputTextEl.classList.remove('error');
+    
+    if (inputNameEl.value === '') {
+      inputNameEl.classList.add('error');
+      return;
+    }
+    if (inputTextEl.value === '') {
+      inputTextEl.classList.add('error');
+      return;
+    }
+   
+    const oldListComents = listComentsEl.innerHTML;
+    listComentsEl.innerHTML = oldListComents + `<li class="comment">
           <div class="comment-header">
             <div>${inputNameEl.value}</div>
             <div>${rusDateTime(myDate)}</div>
@@ -111,9 +114,10 @@
             </div>
           </div>
         </li>`
-    })
-    console.log(addButtonEl);
-    console.log(listComentsEl.innerHTML);
-    console.log("It works!");
-  </script>
+  })
+  console.log(addButtonEl);
+  console.log(listComentsEl.innerHTML);
+  console.log("It works!");
+</script>
+
 </html>
