@@ -3,11 +3,10 @@ const loginURL = "https://wedev-api.sky.pro/api/user/login";
 const host = "https://wedev-api.sky.pro/api/v1/Angellina/comments"
 
 export let token;
-
 export let user;
 
 export const setToken = (newToken) => {
-   token = newToken;
+  token = newToken;
 } 
 
 export const setUser = (newUser) => {
@@ -55,8 +54,7 @@ export function getPromise () {
       throw new Error("Недопустимое количество символов")
     }
     
-    })
-   
+    }) 
    }
 
    export function loginUser ({ login, password }) {
