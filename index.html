@@ -9,6 +9,7 @@
 
 
 <body>
+ 
   <div class="container">
     <ul class="comments" id="list-coments">
       <li class="comment">
@@ -46,14 +47,14 @@
         </div>
       </li>
     </ul>
-    <div class="add-form">
+    <form id="add-form" class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="input-name" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"
         id="input-text"></textarea>
       <div class="add-form-row">
-        <button class="add-form-button" id="add-button">Написать</button>
+        <button type="submit" class="add-form-button" id="add-button">Написать</button>
       </div>
-    </div>
+    </form>
   </div>
 </body>
 
@@ -63,6 +64,7 @@
   const listComentsEl = document.getElementById('list-coments');
   const inputNameEl = document.getElementById('input-name');
   const inputTextEl = document.getElementById('input-text');
+  const formEl = document.getElementById('add-form');
 
   let myDate = new Date();
   function rusDateTime(myDate) {
@@ -83,16 +85,33 @@
     return userDate.join('.') + ' ' + userTime.join(':');
   }
   
-  addButtonEl.addEventListener('click', () => {
+  
+  formEl.addEventListener('submit', (klickUser ));
+  inputTextEl.addEventListener('keyup', (handleInput ));
+
+  function handleInput (e) {
+    console.log(e)
+    if (e.keyCode === 13 ) {
+      klickUser(e);
+    }
+
+    
+  }
+  
+  function klickUser(e) {
+   e.preventDefault();
     inputNameEl.classList.remove('error');
     inputTextEl.classList.remove('error');
+    addButtonEl.classList.remove('error-button');
     
     if (inputNameEl.value === '') {
       inputNameEl.classList.add('error');
+      addButtonEl.classList.add('error-button');
       return;
     }
     if (inputTextEl.value === '') {
       inputTextEl.classList.add('error');
+      addButtonEl.classList.add('error-button');
       return;
     }
    
@@ -116,7 +135,8 @@
         </li>`
         inputNameEl.value = '';
         inputTextEl.value = '';
-  })
+  }
+ 
   console.log(addButtonEl);
   console.log(listComentsEl.innerHTML);
   console.log("It works!");

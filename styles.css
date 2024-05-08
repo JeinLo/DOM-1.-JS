@@ -139,3 +139,6 @@ body {
 .error {
   background-color: orangered;
 }
+.error-button {
+  background-color: gray;
+}
