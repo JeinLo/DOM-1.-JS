@@ -8,6 +8,7 @@
 
   <body>
     <div class="container">
+      <div id="loading">Комментарии подгружаются, подождите</div>
       <ul id="list" class="comments">
         <!-- Список рендерится в JS -->
       </ul>
@@ -40,6 +41,7 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
+    const loadingElement = document.getElementById("loading");
 
     let comments = [];
 
@@ -51,8 +53,11 @@
         }
       );
 
-      fetchPromise.then((response) => {
-        response.json().then((responseData) => {
+      fetchPromise
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
           const addComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
@@ -63,10 +68,15 @@
             };
           });
 
+          //Удалить лоудер рендера
+          loadingElement.remove();
+          //Делаем кнопку добавления актуивной и возвращаем прежний текст
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Написать";
+
           comments = addComments;
           renderComments();
         });
-      });
     };
 
     const renderComments = () => {
@@ -181,6 +191,10 @@
         commentInputElement.classList.add("error");
         return;
       }
+
+      //Блокируем кнопку и делаем лоадер
+      buttonElement.disabled = true;
+      buttonElement.textContent = "Комментарий добавляется...";
 
       const fetchPromise = fetch(
         "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",
