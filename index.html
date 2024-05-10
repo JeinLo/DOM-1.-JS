@@ -9,6 +9,7 @@
 
 <body>
   <div class="container">
+    <div id="loading" style="display: none;">Комментарии загружаются...</div>
     <ul id="list" class="comments">
       <!-- <li class="comment">
         <div class="comment-header">
@@ -45,6 +46,7 @@
         </div>
       </li> -->
     </ul>
+    <div id="loading-message" style="display: none;">Комментарий добавляется...</div>
     <div class="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -58,6 +60,9 @@
     .error {
       background-color: #bcec30;
     }
+    .hide {
+    display: none;
+}
   </style>
 </body>
 
@@ -68,7 +73,54 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   const commentElements = document.querySelectorAll('.comment');
+  let isLoaded = false
 
+//GET
+  //API асинхронные запросы
+  function getComments() {
+    const loadingElement = document.getElementById('loading');
+    if (isLoaded === false) {loadingElement.style.display = 'block';}
+    return fetch(
+      'https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments',
+      {
+        method: "GET"
+      }
+    )
+      .then((res) => {
+        isLoaded = true
+        if (!response.ok) {
+            if (response.status === 500) {
+              alert("Сервер сломался, попробуйте позже")
+            }
+            throw new Error('Ответ с сервера не приходит')
+          }
+        return res.json();
+      })
+      .then((resData) => {
+        const appComments = resData.comments.map((comment) => {
+          return {
+            name: commentator.author.name,
+            date: new Date(commentator.time).toLocaleDateString(),
+            text: commentator.comment,
+            likeCount: commentator.likes,
+            isLiked: false,
+          };
+        });
+        commentators = appComments;
+        renderCommentators();
+        loadingElement.style.display = 'none';
+      })
+      .catch ((error) => {
+          if (error.messeg !== 'Ответ не был успешным') {
+            console.error('Возникла проблема с операцией fetch:', error);
+            alert("Кажется, у вас сломался интернет, попробуйте позже.")
+          }
+        })
+        .finally(() => {
+          loadingElement.textContent = 'Не удалось загрузить страницу...';
+        })
+  };
+  getComments();
 
   let commentators = [
     {
@@ -87,123 +139,6 @@
     },
   ];
 
-    //API асинхронные запросы
-    //GET
-    function getFetchPromise() {
-    const getFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
-      {
-        method: "GET",
-        })
-      getFetch.then((res) => {
-       const jsonPromise = res.json();
-          jsonPromise.then((resData) => {
-            const appComments = resData.comments.map((commentator) => {
-              return {
-                name: commentator.author.name,
-                comment: commentator.text,
-                time: new Date(commentator.time).toLocaleDateString,
-                like: commentator.like,
-                isLike: false,
-              };
-            });
-            commentators = appComments;
-            renderCommentators();
-          });
-      });
-    };
-getFetchPromise();
-
-
-    // //GET
-    // function getComment () {
-    // const getFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
-    //   {
-    //     method: "GET",
-    //     });
-    //     getFetch
-    //     .then((response) => {
-    //       if (response.status === 500) {
-    //                 throw new Error("Ошибка сервера");
-    //             } if (response.status === 400) {
-    //                 throw new Error("Неверный запрос");
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => {
-    //           commnetators = data.commentators;
-    //           renderCommentators();
-    //         });
-    //       }
-
-    //POST
-
-    const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: nameInputElement.value,
-          text: commentInputElement.value,
-        }),
-      }).then((res) => {
-        res.json()
-          .then((resData) => {
-            const appComments = resData.comments.map((commentator) => {
-              return {
-                name: commentator.author.name,
-                comment: commentator.text,
-                time: new Date(commentator.time).toLocaleDateString,
-                like: commentator.like,
-                isLike: false,
-              };
-            });
-            commentators = appComments;
-            renderCommentators();
-          });
-      });
-
-    nameInputElement.value = "";
-    commentInputElement.value = "";
-
-     //POST
-// function postComment() {
-//     let fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
-//       {
-//         method: "POST",
-//         body: JSON.stringify({
-//           name: nameInputElement.value, 
-//           text: commentInputElement.value, 
-//           forceError: true, 
-//         }),
-//       });
-
-//       fetchPromise
-//         .then((response) => {
-//           console.log(response);
-//           if (response.status === 400) {
-//             alert("слишком короткий комментарий");
-//             return Promise.reject(new Error ('слишком короткий комментарий'));
-//           }
-//           else if (response.status === 500) {
-//             alert("Ошибка сервера");
-//             return Promise.reject(new Error("Ошибка сервера"));
-//           } else {
-//                     return response.json();
-//                 }
-//       })
-//       .then((data) => {
-//         renderCommentators();
-//         nameInputElement.value = "";
-//         commentInputElement.value = "";
-//       })
-//       .catch((error) => { if(error.message === 'Failed to fetch') {
-//         alert(error.message)
-//       } else {
-//         alert(error.message)}
-//       });
-//       getComment();
-//     };
-
-    
 
   const renderCommentators = () => {
     const commentatorsHtml = commentators
@@ -291,19 +226,69 @@ getFetchPromise();
       commentInputElement.classList.add("error");
       return;
     }
-    commentators.push({
-      name: nameInputElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
-      comment: commentInputElement.value
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;"),
-      likes: 0,
-      isLiked: false,
-    });
 
-    renderCommentators();
-    initEventListeners();
+
+//POST
+    function addComment() {
+      const loadingMessageElement = document.getElementById('loading-message');
+      loadingMessageElement.style.display = 'block';
+
+//Скрываем форму комментария
+      const textFormElement = document.querySelector('.add-form');
+      textFormElement.style.display = 'none';
+
+
+ fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: nameInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          text: commentInputElement.value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;"),
+          forceError: true
+        })
+      }).catch(() => {
+      throw new Error('Возникла проблема с операцией fetch:')
+    }).then((response) => {
+          if (!res.ok) {
+            if (res.status === 400) {
+              throw new Error("Имя и комментарий должны быть не меньше 3 символов")
+            } else if (res.status === 500) {
+              throw new Error("Сервер сломался, попробуйте позже")
+            }
+            throw new Error('Ответ сервера не был успешным')
+          }
+          return res.json();
+        })
+        .then(() => {
+          return getComments();
+        })
+        .then(() => {
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+        })
+        .catch ((error) => {
+          alert(error.message)
+        })
+        .finally(() => {
+          loadingMessageElement.style.display = 'none';
+          textFormElement.style.display = 'flex';
+        })
+    }
+            // renderCommentators();
+            // initEventListeners();
+            addComment();
+          });
+          
+          renderCommentators();
+  
 
 
 
@@ -334,7 +319,6 @@ getFetchPromise();
 
     renderCommentators();
     // initEventListeners();
-  });
   renderCommentators();
 
 </script>
