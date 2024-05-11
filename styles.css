@@ -98,7 +98,14 @@ body {
     flex-direction: column;
   }
 
-  .add-form-name,
+  .add-form-name{
+    font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    background-color: unset;
+  }
   .add-form-text {
     font-size: 16px;
     font-family: Helvetica;
@@ -147,3 +154,38 @@ body {
   .passivButton{
     cursor: default;
   }
+.login-input,
+.password-input{
+  font-size: 16px;
+    font-family: Helvetica;
+    border-radius: 8px;
+    border: none;
+    padding: 11px 22px;
+}
+.login-button{
+  margin-top: 24px;
+    font-size: 24px;
+    padding: 10px 20px;
+    background-color: #bcec30;
+    border: none;
+    border-radius: 18px;
+    cursor: pointer;
+}
+.reg-link,
+.login-link{
+  text-align: center;
+  text-decoration: underline;
+}
+.reg-link,
+.login-link:hover{
+  cursor: pointer;
+}
+.main-authorization{
+  text-align: center;
+}
+.main-autho-button{
+  text-decoration: underline;
+}
+.main-autho-button:hover{
+  cursor: pointer;
+}

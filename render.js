@@ -1,8 +1,8 @@
-export{render, commetForm}
+import {postTodo, peoples, setPeoples} from "./main.js"
 
 const listEL = document.getElementById('list');
 
-const initlikeButton = ({peoples}) => {
+export const initlikeButton = () => {
     const likeButtonEls = document.querySelectorAll('.like-button');
     for (const likeButtonEl of likeButtonEls) {
       likeButtonEl.addEventListener('click', () => {
@@ -16,26 +16,26 @@ const initlikeButton = ({peoples}) => {
       peoples[index].isLike = false;
        }
   
-      render({peoples});
+      render();
       });
     }
   }
 
-  const initDeleteButton = ({peoples}) => {
+  export const initDeleteButton = () => {
     const deleteButtonEls = document.querySelectorAll('.deleteButton');
     for (const deleteButtonEl of deleteButtonEls) {
       deleteButtonEl.addEventListener('click', (e) => {
        const id = deleteButtonEl.dataset.id;
-       fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments/" + id, {
-              method: "DELETE",
-            })
-            getTodo();
-            e.stopPropagation();
+       const newPeople = peoples.filter((comment)=>{
+        return comment.id !== id;
+       });
+       setPeoples(newPeople);
+       render();
       });
     }
   }
 
-  const commetForm = ({peoples}) => {
+ export const commetForm = () => {
     const commentInputEl = document.getElementById('commentInput');
     const commentBodyElements = document.querySelectorAll('.comment-body');
     for (const commentBodyElement of commentBodyElements) {
@@ -44,12 +44,15 @@ const initlikeButton = ({peoples}) => {
         const index = commentBodyElement.dataset.index;
         const commetandname = `${peoples[index].text} \n ${peoples[index].name}`
         commentInputEl.value = commetandname ;
-        render({peoples});
+        render();
       });
     }
   }
 
-const render = ({peoples}) => {
+
+
+export const render = () => {
+  const appEl = document.getElementById('app');
         const peopleHtml = peoples.map((people, index) => {
            return `<li data-name="${people.name}" data-id="${people.id}" class="comment">
                  <div class="comment-header">
@@ -71,8 +74,55 @@ const render = ({peoples}) => {
                  </div>
                </li>`
          }).join('');
-         listEL.innerHTML = peopleHtml;
-         initDeleteButton({peoples});
-         initlikeButton({peoples});
-         commetForm({peoples});
-}
+         
+         const appHtml = `<div id="management"></div>
+         <div id="app"></div>
+        <ul id="list" class="comments">${peopleHtml}
+         </ul>
+         <div id="form" class="add-form">
+           <input
+             id="nameInput"
+             type="text"
+             class="add-form-name"
+             readonly="readonly"
+           />
+           <textarea
+             id="commentInput"
+             type="textarea"
+             class="add-form-text"
+             placeholder="Введите ваш коментарий"
+             rows="4"
+           ></textarea>
+           <div class="add-form-row">
+             <button disabled id="writeButton"  class="add-form-button">Написать</button>
+         </div>
+         </div>`
+
+         appEl.innerHTML = appHtml;
+         initDeleteButton();
+         initlikeButton();
+         commetForm();
+
+        const commentInputEl = document.getElementById('commentInput');
+        const writeButtonEl = document.getElementById('writeButton');
+ 
+        const nameInputEl = document.getElementById('nameInput');
+         nameInputEl.value = `Һарыбаш`
+
+        commentInputEl.addEventListener('input', function(event) {
+          writeButtonEl.disabled = (commentInputEl.value === '');
+        });
+              writeButtonEl.addEventListener('click', () => {
+                setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 0.5);
+
+                    if (commentInputEl.value === '') {
+                      commentInputEl.classList.add('err');
+                      return;
+                    } 
+                    if (commentInputEl.value != '') {
+                      writeButtonEl.disabled = true;
+                      writeButtonEl.textContent = 'Элемент добавляется...'  
+                postTodo();
+            }});
+      }
+

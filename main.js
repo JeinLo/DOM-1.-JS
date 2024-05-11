@@ -1,11 +1,6 @@
 import { getfunction, postFunction } from "./api.js";
-import { render, commetForm } from "./render.js";
-
-const nameInputEl = document.getElementById('nameInput');
-const commentInputEl = document.getElementById('commentInput');
-const writeButtonEl = document.getElementById('writeButton');
-const timeEl = document.getElementById('time');
-const comEL = document.getElementById('com');
+import { render, commetForm, initlikeButton } from "./render.js";
+import { renderLogin} from "./renderLogin.js";
 
 function MinSec() {
     let currentDate = new Date();
@@ -13,11 +8,11 @@ function MinSec() {
     return (currentDate.toLocaleTimeString('ru-RU', options)); 
 }
 
-function Year() {
+ function Year() {
     const months = [1, 2, 3, 4, 5, 6,
         7, 8, 9, 10, 11, 12];
         let myDate = new Date();
-        
+      
         let fullDate =  myDate.getDate() +
         "." + months[myDate.getMonth()] +
         "." + myDate.getFullYear() ;
@@ -25,8 +20,8 @@ function Year() {
         return (fullDate);
         MinSec();
 }
-    const getTodo = ()=>{
-      getfunction()
+    export const getTodo = ()=>{
+       getfunction()
       .then((resData) =>{
         const appComments = resData.comments.map((comment) => {
         return{
@@ -39,13 +34,14 @@ function Year() {
           };
         })
         peoples = appComments;
-        render({peoples});
+        render();
       });
   }
 
-  const postTodo = () =>{ 
+  export const postTodo = () =>{
+    const commentInputEl = document.getElementById('commentInput'); 
+    const writeButtonEl = document.getElementById('writeButton');
     postFunction({
-      name:nameInputEl.value,
       text:commentInputEl.value,
     })
       .then((resData) => { 
@@ -54,9 +50,7 @@ function Year() {
   .then(()=>{
   writeButtonEl.disabled = false;
   writeButtonEl.textContent = 'Написать';
-  nameInputEl.value = (''); 
   commentInputEl.value = ('');
-
 })
 .catch((error)=>{
 writeButtonEl.disabled = false;
@@ -68,38 +62,56 @@ if (error.message === "Ошибка в запросе") {
 if (error.message === "Сервер упал") {
   alert("Сервер не отвечает, попробуйте позже");
   return;
+   }
+ })
 }
-})
+
+export const mainView = ()=>{
+  getfunction()
+  .then((resData) =>{
+    const appComments = resData.comments.map((comment) => {
+    return{
+      id: comment.id,
+      name: comment.author.name,
+      text: comment.text,
+      time: Year(comment.date),
+      like: comment.likes,
+      isLike: false
+      };
+    })
+    peoples = appComments;
+    const appEl = document.getElementById('app');
+    const appHtml = peoples.map((people, index) => {
+       return `<li data-name="${people.name}" data-id="${people.id}" class="comment">
+             <div class="comment-header">
+               <div >${people.name}</div>
+               <div id="time"> ${people.time}</div>
+             </div>
+             <div class="comment-body" data-index="${index}">
+               <div id="text" class="comment-text">
+                ${people.text}
+               </div>
+             </div>   
+             <div class="comment-footer">
+             </div>
+           </li>
+           <br>` 
+     }).join('');
+
+     appEl.innerHTML = appHtml + `<div class="main-authorization">
+      <span id="mainAutho" class="main-autho-button">Авторизуйтесь
+      </span>, чтобы оставить комментарий </div>`;
+    const mainAuthoEl = document.getElementById('mainAutho');
+    mainAuthoEl.addEventListener('click', ()=>{
+      renderLogin({render});
+    })
+  });
 }
  
-    let peoples = [];
+    export let peoples = [];
+    export const setPeoples = (newComment)=>{
+      peoples = newComment
+    }
+      mainView();
+      commetForm();
 
-      getTodo();
-
-commetForm({peoples});
-
-render({peoples});
-
-  nameInputEl.addEventListener('input', function(event) {
-  writeButtonEl.disabled = (nameInputEl.value === '');
-});
-
-      writeButtonEl.addEventListener('click', () => {
-        setTimeout(() => { nameInputEl.classList.remove('err');}, 1000 * 0.5);
-        setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 0.5);
-
-            if (nameInputEl.value === '') {
-              nameInputEl.classList.add("err");
-              return;
-            }
-            if (commentInputEl.value === '') {
-              commentInputEl.classList.add('err');
-              return;
-            } 
-            if (nameInputEl.value != '') {
-              writeButtonEl.disabled = true;
-              writeButtonEl.textContent = 'Элемент добавляется...'  
-        postTodo();
-       render({peoples});
-  
-    }});
