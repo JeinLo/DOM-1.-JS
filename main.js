@@ -1,11 +1,10 @@
 import { getfunction, postFunction } from "./api.js";
 import { render, commetForm } from "./render.js";
+import { renderLogin } from "./renderLogin.js";
 
-const nameInputEl = document.getElementById('nameInput');
-const commentInputEl = document.getElementById('commentInput');
-const writeButtonEl = document.getElementById('writeButton');
 const timeEl = document.getElementById('time');
 const comEL = document.getElementById('com');
+
 
 function MinSec() {
     let currentDate = new Date();
@@ -43,7 +42,7 @@ function Year() {
       });
   }
 
-  const postTodo = () =>{ 
+  export const postTodo = () =>{ 
     postFunction({
       name:nameInputEl.value,
       text:commentInputEl.value,
@@ -56,7 +55,6 @@ function Year() {
   writeButtonEl.textContent = 'Написать';
   nameInputEl.value = (''); 
   commentInputEl.value = ('');
-
 })
 .catch((error)=>{
 writeButtonEl.disabled = false;
@@ -68,38 +66,13 @@ if (error.message === "Ошибка в запросе") {
 if (error.message === "Сервер упал") {
   alert("Сервер не отвечает, попробуйте позже");
   return;
-}
-})
+   }
+ })
 }
  
     let peoples = [];
 
-      getTodo();
+      // getTodo();
+      renderLogin({render});
+      commetForm({peoples});
 
-commetForm({peoples});
-
-render({peoples});
-
-  nameInputEl.addEventListener('input', function(event) {
-  writeButtonEl.disabled = (nameInputEl.value === '');
-});
-
-      writeButtonEl.addEventListener('click', () => {
-        setTimeout(() => { nameInputEl.classList.remove('err');}, 1000 * 0.5);
-        setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 0.5);
-
-            if (nameInputEl.value === '') {
-              nameInputEl.classList.add("err");
-              return;
-            }
-            if (commentInputEl.value === '') {
-              commentInputEl.classList.add('err');
-              return;
-            } 
-            if (nameInputEl.value != '') {
-              writeButtonEl.disabled = true;
-              writeButtonEl.textContent = 'Элемент добавляется...'  
-        postTodo();
-       render({peoples});
-  
-    }});

@@ -1,5 +1,4 @@
-export{render, commetForm}
-
+import {postTodo} from "./main.js"
 const listEL = document.getElementById('list');
 
 const initlikeButton = ({peoples}) => {
@@ -21,21 +20,21 @@ const initlikeButton = ({peoples}) => {
     }
   }
 
-  const initDeleteButton = ({peoples}) => {
-    const deleteButtonEls = document.querySelectorAll('.deleteButton');
-    for (const deleteButtonEl of deleteButtonEls) {
-      deleteButtonEl.addEventListener('click', (e) => {
-       const id = deleteButtonEl.dataset.id;
-       fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments/" + id, {
-              method: "DELETE",
-            })
-            getTodo();
-            e.stopPropagation();
-      });
-    }
-  }
+  // const initDeleteButton = ({peoples}) => {
+  //   const deleteButtonEls = document.querySelectorAll('.deleteButton');
+  //   for (const deleteButtonEl of deleteButtonEls) {
+  //     deleteButtonEl.addEventListener('click', (e) => {
+  //      const id = deleteButtonEl.dataset.id;
+  //      fetch("https://wedev-api.sky.pro/api/v1/gazim-akbutin/comments/" + id, {
+  //             method: "DELETE",
+  //           })
+  //           getTodo();
+  //           e.stopPropagation();
+  //     });
+  //   }
+  // }
 
-  const commetForm = ({peoples}) => {
+ export const commetForm = ({peoples}) => {
     const commentInputEl = document.getElementById('commentInput');
     const commentBodyElements = document.querySelectorAll('.comment-body');
     for (const commentBodyElement of commentBodyElements) {
@@ -49,7 +48,8 @@ const initlikeButton = ({peoples}) => {
     }
   }
 
-const render = ({peoples}) => {
+export const render = ({peoples}) => {
+  const appEl = document.getElementById('app');
         const peopleHtml = peoples.map((people, index) => {
            return `<li data-name="${people.name}" data-id="${people.id}" class="comment">
                  <div class="comment-header">
@@ -71,8 +71,60 @@ const render = ({peoples}) => {
                  </div>
                </li>`
          }).join('');
-         listEL.innerHTML = peopleHtml;
-         initDeleteButton({peoples});
+
+         const appHtml = ` <div id="management"></div>
+         <div id="app"></div>
+        <ul id="list" class="comments">${peopleHtml}
+         </ul>
+         <div id="form" class="add-form">
+           <input
+             id="nameInput"
+             type="text"
+             class="add-form-name"
+             placeholder="Введите ваше имя"
+           />
+           <textarea
+             id="commentInput"
+             type="textarea"
+             class="add-form-text"
+             placeholder="Введите ваш коментарий"
+             rows="4"
+           ></textarea>
+           <div class="add-form-row">
+             <button disabled id="writeButton"  class="add-form-button">Написать</button>
+         </div>
+         </div>
+   `
+
+         appEl.innerHTML = appHtml;
+        //  initDeleteButton({peoples});
          initlikeButton({peoples});
          commetForm({peoples});
-}
+
+        const nameInputEl = document.getElementById('nameInput');
+        const commentInputEl = document.getElementById('commentInput');
+        const writeButtonEl = document.getElementById('writeButton');
+ 
+        nameInputEl.addEventListener('input', function(event) {
+          writeButtonEl.disabled = (nameInputEl.value === '');
+        });
+              writeButtonEl.addEventListener('click', () => {
+                setTimeout(() => { nameInputEl.classList.remove('err');}, 1000 * 0.5);
+                setTimeout(() => { commentInputEl.classList.remove('err');}, 1000 * 0.5);
+        
+                    if (nameInputEl.value === '') {
+                      nameInputEl.classList.add("err");
+                      return;
+                    }
+                    if (commentInputEl.value === '') {
+                      commentInputEl.classList.add('err');
+                      return;
+                    } 
+                    if (nameInputEl.value != '') {
+                      writeButtonEl.disabled = true;
+                      writeButtonEl.textContent = 'Элемент добавляется...'  
+                postTodo();
+               render({peoples});
+            }});
+      }
+
