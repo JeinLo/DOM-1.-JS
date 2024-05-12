@@ -35,13 +35,15 @@
     const textElement = document.querySelector('.add-form-text')
     const commentsElement = document.querySelector('.comments')
 
-    const comments = [{
-      name: 'Ina',
-      text: 'Hello, World!',
-      date: '01.01.2024',
-      likes: 3,
-      yourLike: true,
-    }]
+    let comments = [
+    //         {
+    //   name: 'Ina',
+    //   text: 'Hello, World!',
+    //   date: '01.01.2024',
+    //   likes: 3,
+    //   yourLike: true,
+    // }
+    ]
 
     String.prototype.sanitize = function () {
       return this
@@ -55,10 +57,41 @@
               .replaceAll("\n", "<br>")
     }
 
+    function readCommentsFromServer() {
+      fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments")
+              .then((response) => response.json())
+              .then((data) => {
+                comments = data.comments.map((comment) => {
+                  return {
+                    name: comment.author.name,
+                    text: comment.text,
+                    date: new Date(comment.date).toLocaleString().replaceAll(',' , ''),
+                    likes: comment.likes,
+                    yourLike: comment.isLiked,
+                  }
+                })
+                render()
+              })
+    }
+
+    function writeCommentToServer(name, text) {
+      fetch("https://wedev-api.sky.pro/api/v1/gleb-fokin/comments", {
+        method: 'POST',
+        body: JSON.stringify({
+          name: name,
+          text: text,
+        }),
+      })
+              .then((response) => response.json())
+              .then(() => {
+                readCommentsFromServer()
+              })
+    }
+
     function render() {
       const text = comments.map((item, index) => {
         const style = item.yourLike ? '-active-like' : ''
-        return ` <li class="comment" data-id="${index}">
+        return `<li class="comment" data-id="${index}">
           <div class="comment-header">
             <div>${item.name}</div>
             <div>${item.date}</div>
@@ -110,21 +143,13 @@
         alert('Заполните поле')
         return
       }
-      const newDate = new Date()
-      comments.push({
-        name: nameElement.value.sanitize(),
-        text: textElement.value.sanitize(),
-        date: newDate.toLocaleString(),
-        likes: 0,
-        yourLike: false,
-      })
 
-      render()
+      writeCommentToServer(nameElement.value.sanitize(), textElement.value.sanitize())
 
       nameElement.value = ''
       textElement.value = ''
     })
     console.log("It works!");
-    render()
+    readCommentsFromServer()
   </script>
 </html>
