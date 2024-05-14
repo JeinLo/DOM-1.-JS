@@ -21,7 +21,6 @@ export const renderLogin = () => {
       <button class="button-reg">Зарегистрироваться</button>
     </div>`
      //создаем элемент app
-
     appElement.innerHTML = loginHtml;
 
     const buttonGet = document.getElementById("login-button");
@@ -41,6 +40,7 @@ buttonGet.addEventListener("click", () => {
         fetchPromiseGet();
     })
     .catch((error) => {
+     ///////////////// alert(error.message);
       console.error("Произошла ошибка при установке имени пользователя:", error);
 });
 })

@@ -115,7 +115,6 @@ export const addComment = () => {
         return
       }
     const comment = document.querySelectorAll(".comment");
-    const nameInputElement = document.querySelector(".add-form-name");
     const textInputElement = document.querySelector(".add-form-text");
     comment.forEach((el, index) => {
       el.addEventListener("click", () => {
