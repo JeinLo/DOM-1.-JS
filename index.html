@@ -9,7 +9,7 @@
 
 <body>
   <div class="container">
-    <div id="loading" style="display: none;">Комментарии загружаются...</div>
+    <div id="loader"></div>
     <ul id="list" class="comments">
       <!-- <li class="comment">
         <div class="comment-header">
@@ -46,7 +46,7 @@
         </div>
       </li> -->
     </ul>
-    <div id="loading-message" style="display: none;">Комментарий добавляется...</div>
+    <div id="loader-message"></div>
     <div class="add-form">
       <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
       <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
@@ -60,9 +60,10 @@
     .error {
       background-color: #bcec30;
     }
+
     .hide {
-    display: none;
-}
+      display: none;
+    }
   </style>
 </body>
 
@@ -73,54 +74,8 @@
   const nameInputElement = document.getElementById("name-input");
   const commentInputElement = document.getElementById("comment-input");
   const commentElements = document.querySelectorAll('.comment');
-  let isLoaded = false
-
-//GET
-  //API асинхронные запросы
-  function getComments() {
-    const loadingElement = document.getElementById('loading');
-    if (isLoaded === false) {loadingElement.style.display = 'block';}
-    return fetch(
-      'https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments',
-      {
-        method: "GET"
-      }
-    )
-      .then((res) => {
-        isLoaded = true
-        if (!response.ok) {
-            if (response.status === 500) {
-              alert("Сервер сломался, попробуйте позже")
-            }
-            throw new Error('Ответ с сервера не приходит')
-          }
-        return res.json();
-      })
-      .then((resData) => {
-        const appComments = resData.comments.map((comment) => {
-          return {
-            name: commentator.author.name,
-            date: new Date(commentator.time).toLocaleDateString(),
-            text: commentator.comment,
-            likeCount: commentator.likes,
-            isLiked: false,
-          };
-        });
-        commentators = appComments;
-        renderCommentators();
-        loadingElement.style.display = 'none';
-      })
-      .catch ((error) => {
-          if (error.messeg !== 'Ответ не был успешным') {
-            console.error('Возникла проблема с операцией fetch:', error);
-            alert("Кажется, у вас сломался интернет, попробуйте позже.")
-          }
-        })
-        .finally(() => {
-          loadingElement.textContent = 'Не удалось загрузить страницу...';
-        })
-  };
-  getComments();
+  const loaderEl = document.getElementById("loader");
+  const loaderMessageEl = document.getElementById('loader-message');
 
   let commentators = [
     {
@@ -140,13 +95,44 @@
   ];
 
 
+  //GET
+  //API асинхронные запросы
+  loaderEl.innerHTML = "Комментарии загружаются..."
+  function getComments() {
+    return fetch(
+      'https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments',
+      {
+        method: "GET"
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((resData) => {
+        const appComments = resData.comments.map((commentator) => {
+          return {
+            name: commentator.author.name,
+            time: new Date(commentator.date).toLocaleString(),
+            comment: commentator.text,
+            like: commentator.likes,
+            isLiked: commentator.isLiked,
+          };
+        });
+        commentators = appComments;
+        renderCommentators();
+        loaderEl.textContent = "";
+      });
+  };
+  getComments();
+
+
   const renderCommentators = () => {
     const commentatorsHtml = commentators
       .map((commentator, index) => {
         return `<li class="comment" data-index="${index}" data-name="${commentator.name}">
         <div class="comment-header">
           <div>${commentator.name}</div>
-          <div>${new Date().toLocaleString()}</div>
+          <div>${commentator.time}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">${commentator.comment}</div>
@@ -228,97 +214,60 @@
     }
 
 
-//POST
-    function addComment() {
-      const loadingMessageElement = document.getElementById('loading-message');
-      loadingMessageElement.style.display = 'block';
+    //POST
+    loaderMessageEl.innerHTML = "комментарий добавляется..."
 
-//Скрываем форму комментария
-      const textFormElement = document.querySelector('.add-form');
-      textFormElement.style.display = 'none';
-
-
- fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+    const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
         method: "POST",
         body: JSON.stringify({
-          name: nameInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          text: commentInputElement.value
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;"),
-          forceError: true
-        })
-      }).catch(() => {
-      throw new Error('Возникла проблема с операцией fetch:')
-    }).then((response) => {
-          if (!res.ok) {
-            if (res.status === 400) {
-              throw new Error("Имя и комментарий должны быть не меньше 3 символов")
-            } else if (res.status === 500) {
-              throw new Error("Сервер сломался, попробуйте позже")
-            }
-            throw new Error('Ответ сервера не был успешным')
-          }
-          return res.json();
-        })
-        .then(() => {
-          return getComments();
-        })
-        .then(() => {
-          nameInputElement.value = "";
-          commentInputElement.value = "";
-        })
-        .catch ((error) => {
-          alert(error.message)
-        })
-        .finally(() => {
-          loadingMessageElement.style.display = 'none';
-          textFormElement.style.display = 'flex';
-        })
-    }
-            // renderCommentators();
-            // initEventListeners();
-            addComment();
-          });
-          
-          renderCommentators();
-  
+          name: nameInputElement.value,
+          text: commentInputElement.value,
+        }),
+      }).then((res) => {
+        res.json()
+          .then((resData) => {
+            getComments();
+            renderCommentators();
+            loaderMessageEl.textContent = "";
+            nameInputElement.value = "";
+            commentInputElement.value = "";
+          })
+      })
+  });
 
 
+  // renderCommentators();
+  // initEventListeners();
 
-    // const oldListHtml = listElement.innerHTML;
-    // listElement.innerHTML = oldListHtml + `<li class="comment" data-name="${nameInputElement.value}">
-    //     <div class="comment-header">
-    //       <div>${nameInputElement.value}</div>
-    //       <div>${new Date().toLocaleString()}</div>
-    //     </div>
-    //     <div class="comment-body">
-    //       <div class="comment-text">${commentInputElement.value}</div>
-    //     </div>
-    //     <div class="comment-footer">
-    //       <div class="likes">
-    //         <span class="likes-counter">'0'</span>
-    //         <button class="like-button -active-like"></button>
-    //       </div>
-    //     </div>
-    //   </li>`;
 
-    ////КОММЕНТ ЭНТЕРОМ////
+  // const oldListHtml = listElement.innerHTML;
+  // listElement.innerHTML = oldListHtml + `<li class="comment" data-name="${nameInputElement.value}">
+  //     <div class="comment-header">
+  //       <div>${nameInputElement.value}</div>
+  //       <div>${new Date().toLocaleString()}</div>
+  //     </div>
+  //     <div class="comment-body">
+  //       <div class="comment-text">${commentInputElement.value}</div>
+  //     </div>
+  //     <div class="comment-footer">
+  //       <div class="likes">
+  //         <span class="likes-counter">'0'</span>
+  //         <button class="like-button -active-like"></button>
+  //       </div>
+  //     </div>
+  //   </li>`;
 
-    document.addEventListener('keydown', function (enter) {
-      if (enter.key === 'Enter') {
-        buttonElement.click();
-      };
-    });
+  ////КОММЕНТ ЭНТЕРОМ////
 
-    renderCommentators();
-    // initEventListeners();
+  // document.addEventListener('keydown', function (enter) {
+  //   if (enter.key === 'Enter') {
+  //     buttonElement.click();
+  //   };
+  // });
+
+  // renderCommentators();
+  initEventListeners();
   renderCommentators();
 
 </script>
