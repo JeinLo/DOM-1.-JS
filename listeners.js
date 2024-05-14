@@ -25,7 +25,6 @@ export const addLike = ({comments}) => {
           comments[index].isLiked = true;
           comments[index].likes++;
         }
-    
         renderComments({comments});
     
       });
