@@ -217,6 +217,10 @@
     //POST
     loaderMessageEl.innerHTML = "комментарий добавляется..."
 
+    //СКРЫВАЕМ ФОРМУ
+    const hideFormEl = document.querySelector('.add-form');
+    hideFormEl.style.display = 'none';
+
     const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
         method: "POST",
@@ -232,6 +236,7 @@
             loaderMessageEl.textContent = "";
             nameInputElement.value = "";
             commentInputElement.value = "";
+            hideFormEl.style.display = 'flex';
           })
       })
   });
