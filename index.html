@@ -8,10 +8,12 @@
 
   <body>
     <div class="container">
+      <div id="loadingList">Комментарии подгружаются, подождите</div>
       <ul id="list" class="comments">
         <!-- Список рендерится в JS -->
       </ul>
-      <div class="add-form">
+      <div id="loadingComment" class="loading">Комментарий добавляется...</div>
+      <div id="commentDiv" class="add-form">
         <input
           id="name-input"
           type="text"
@@ -40,8 +42,14 @@
     const nameInputElement = document.getElementById("name-input");
     const commentInputElement = document.getElementById("comment-input");
     const listElement = document.getElementById("list");
+    const loadingListElement = document.getElementById("loadingList");
+    const loadingCommentElement = document.getElementById("loadingComment");
+    const commentDivElement = document.getElementById("commentDiv");
 
     let comments = [];
+
+    //Чтобы при загрузке страницы не было надписи "Комментарий добавляется..."
+    loadingCommentElement.style.display = "none";
 
     const fetchAndRenderComments = () => {
       const fetchPromise = fetch(
@@ -51,8 +59,11 @@
         }
       );
 
-      fetchPromise.then((response) => {
-        response.json().then((responseData) => {
+      fetchPromise
+        .then((response) => {
+          return response.json();
+        })
+        .then((responseData) => {
           const addComments = responseData.comments.map((comment) => {
             return {
               name: comment.author.name,
@@ -63,10 +74,16 @@
             };
           });
 
+          //В конце рендера удаляет лоудер рендера
+          loadingListElement.style.display = "none";
+          //Убирает надпись "Комментарий добавляется..."
+          loadingCommentElement.style.display = "none";
+          //Появляется блок где можно ввести коммент 
+          commentDivElement.style.display = "flex";
+
           comments = addComments;
           renderComments();
         });
-      });
     };
 
     const renderComments = () => {
@@ -181,6 +198,12 @@
         commentInputElement.classList.add("error");
         return;
       }
+
+      //После нажатия надпись "Комментарий добавляется..." появляется
+      loadingCommentElement.style.display = "flex";
+
+      //Во время загрузки убираем блок заполнения коммента
+      commentDivElement.style.display = "none";
 
       const fetchPromise = fetch(
         "https://wedev-api.sky.pro/api/v1/giorgi-bahuta/comments",

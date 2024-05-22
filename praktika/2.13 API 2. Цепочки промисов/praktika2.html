@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Counter</title>
+  </head>
+
+  <body>
+    <button>Click me</button>
+  </body>
+
+  <script>
+    document.querySelector("button").addEventListener("click", () => {
+      document.body.innerHTML = "6";
+      delayForSecond()
+        .then(() => {
+          document.body.innerHTML = "5";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "4";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "3";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "2";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "1";
+          return delayForSecond();
+        })
+        .then(() => {
+          document.body.innerHTML = "0";
+        });
+    });
+
+    function delayForSecond() {
+    //нужно добавить return
+      return delay(1000);
+    }
+
+    function delay(interval = 1000) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, interval);
+      });
+    }
+  </script>
+</html>
