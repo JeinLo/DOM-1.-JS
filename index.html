@@ -46,19 +46,21 @@
         </div>
       </li> -->
     </ul>
-    <div id="loader-message"></div>
-    <div class="add-form">
-      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button id="add-button" class="add-form-button">Написать</button>
+    <form id="myForm">
+      <div id="loader-message"></div>
+      <div class="add-form">
+        <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        <textarea id="comment-input" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+          rows="4"></textarea>
+        <div class="add-form-row">
+          <button id="add-button" class="add-form-button">Написать</button>
+        </div>
       </div>
-    </div>
+    </form>
   </div>
   <style>
     .error {
-      background-color: #bcec30;
+      background-color: red;
     }
 
     .hide {
@@ -76,6 +78,7 @@
   const commentElements = document.querySelectorAll('.comment');
   const loaderEl = document.getElementById("loader");
   const loaderMessageEl = document.getElementById('loader-message');
+  const addForm = document.getElementById("add-form");
 
   let commentators = [
     // {
@@ -102,11 +105,13 @@
     return fetch(
       'https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments',
       {
-        method: "GET"
-      }
-    )
-      .then((res) => {
-        return res.json();
+        method: "GET",
+        forceError: true,
+      }).then((response) => {
+        if (response.status === 500) {
+          throw new Error("Сервер упал");
+        }
+        return response.json();
       })
       .then((resData) => {
         const appComments = resData.comments.map((commentator) => {
@@ -121,8 +126,15 @@
         commentators = appComments;
         renderCommentators();
         loaderEl.textContent = "";
+        // addForm.classList.remove("hidden");  //отобразить форму ввода
+        // loaderEl.classList.add('loader-hidden');
+      }).catch((error) => {
+        if (error.message === "Сервер упал") {
+          alert("Нет интернета");
+          return;
+        };
       });
-  };
+  }
   getComments();
 
 
@@ -205,21 +217,26 @@
   buttonElement.addEventListener("click", () => {
     nameInputElement.classList.remove("error");
     commentInputElement.classList.remove("error");
-    if (nameInputElement.value === "") {
+    if (nameInputElement.value.trim() === "") {
       nameInputElement.classList.add("error");
       return;
-    } if (commentInputElement.value === "") {
+    } if (commentInputElement.value.trim() === "") {
       commentInputElement.classList.add("error");
       return;
     }
 
+    // сохранить значения полей ввода
+    const nameValue = nameInputElement.value;
+    const commentValue = commentInputElement.value;
+
 
     //POST
+    buttonElement.disabled = true;
     loaderMessageEl.innerHTML = "комментарий добавляется..."
 
-    //СКРЫВАЕМ ФОРМУ
-    const hideFormEl = document.querySelector('.add-form');
-    hideFormEl.style.display = 'none';
+    // //СКРЫВАЕМ ФОРМУ
+    // const hideFormEl = document.querySelector('.add-form');
+    // hideFormEl.style.display = 'none';
 
     const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
       {
@@ -227,19 +244,86 @@
         body: JSON.stringify({
           name: nameInputElement.value,
           text: commentInputElement.value,
+          forceError: true,
         }),
+      }).then((response) => {
+        if (response.status === 400 && (nameValue.lenght < 3 || commentValue.length < 3)) {
+          throw new Error("Короткие вводимые данные");
+        }
+        if (response.status === 500) {
+          throw new Error("Сервер упал");
+        }
+        else {
+          return response.json();
+        }
       }).then((res) => {
-        res.json()
-          .then((resData) => {
-            getComments();
-            renderCommentators();
-            loaderMessageEl.textContent = "";
-            nameInputElement.value = "";
-            commentInputElement.value = "";
-            hideFormEl.style.display = 'flex';
-          })
+        getComments();
+        loaderMessageEl.textContent = "";
+        nameInputElement.value = "";
+        commentInputElement.value = "";
+        // hideFormEl.style.display = 'flex';
+        renderCommentators();
       })
+      .then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+      })
+      .catch((error) => {
+        if (error.message === "Сервер упал") {
+          alert("Нет интернета");
+          nameInputElement.value = nameValue;
+          commentInputElement.value = commentValue;
+          return;
+
+        } if (error.message === "Короткие вводимые данные") {
+          alert("Имя или комментарий слишком короткие");
+          nameInputElement.value = nameValue;
+          commentInputElement.value = commentValue;
+        } if (error instanceof TypeError) {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+          return;
+        }
+        console.log(error);
+      })
+      .finally(() => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+        loaderMessageEl.textContent = '';
+        addForm.classList.remove("hidden");
+      });
   });
+
+
+  // const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+  //     {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         name: nameInputElement.value,
+  //         text: commentInputElement.value,
+  //       }),
+  //     })
+  //     .then((response) => {
+  //       console.log(response);
+  //       if (response.status === 500) {
+  //         throw new error('Сервер не отвечает, попробуй позже');
+  //       } else {
+  //       return response.json();
+  //       }
+  //     }).then((res) => { 
+  //         res.json() 
+  //     .then((resData) => {
+  //           getComments();
+  //           renderCommentators()
+  //           loaderMessageEl.textContent = "";
+  //           nameInputElement.value = "";
+  //           commentInputElement.value = "";
+  //           hideFormEl.style.display = 'flex';
+  //         }) .catch((error) => {
+  //       alert("что-то пошло не так...");
+  //       console.warn(error);
+  //     })
+  //     })
+  // });
 
 
   // renderCommentators();
@@ -272,6 +356,14 @@
   // });
 
   // renderCommentators();
+
+  // очищаем форму после отправки заполненного комментария
+  const form = document.getElementById('myForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault(); // добавили, чтобы не перезагружалась страница
+    e.target.reset();
+  });
+
   initEventListeners();
   renderCommentators();
 
