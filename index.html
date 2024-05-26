@@ -78,7 +78,7 @@
           loadingListElement.style.display = "none";
           //Убирает надпись "Комментарий добавляется..."
           loadingCommentElement.style.display = "none";
-          //Появляется блок где можно ввести коммент 
+          //Появляется блок где можно ввести коммент
           commentDivElement.style.display = "flex";
 
           comments = addComments;
@@ -227,15 +227,38 @@
 
       fetchPromise
         .then((response) => {
-          return response.json();
+          if (response.status === 201) {
+            return response.json();
+          }
+
+          if (response.status === 400) {
+            throw new Error("Валидация");
+          } else {
+            throw new Error("Сервер упал");
+          }
         })
         .then(() => {
           fetchAndRenderComments();
-        });
+          //Обнуление импутов
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+        })
+        .catch((error) => {
+          if (error.message === "Валидация") {
+            alert("Имя или текст короче 3 символов");
+            fetchAndRenderComments();
+          }
 
-      //Обнуление импутов
-      nameInputElement.value = "";
-      commentInputElement.value = "";
+          if (error.message === "Сервер упал") {
+            alert("Сервер сломался, попробуй позже");
+            fetchAndRenderComments();
+          } else {
+            commentDivElement.style.display = "flex";
+            loadingCommentElement.style.display = "none";
+            alert("У пользователя пропал интернет");
+            fetchAndRenderComments();
+          }
+        });
     });
 
     fetchAndRenderComments();
