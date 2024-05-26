@@ -106,7 +106,6 @@
       'https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments',
       {
         method: "GET",
-        forceError: true,
       }).then((response) => {
         if (response.status === 500) {
           throw new Error("Сервер упал");
@@ -136,6 +135,107 @@
       });
   }
   getComments();
+
+
+  //ОБРАБОТЧИК КНОПКИ НАПИСАТЬ КОММЕНТАРИЙ//
+
+  buttonElement.addEventListener("click", () => {
+    nameInputElement.classList.remove("error");
+    commentInputElement.classList.remove("error");
+    if (nameInputElement.value.trim() === "") {
+      nameInputElement.classList.add("error");
+      return;
+    } if (commentInputElement.value.trim() === "") {
+      commentInputElement.classList.add("error");
+      return;
+    }
+
+    // сохранить значения полей ввода
+    const nameValue = nameInputElement.value;
+    const commentValue = commentInputElement.value;
+
+    sendMessage(nameValue, commentValue)
+      .then((result) => {
+        if (result === "ok"){
+          nameInputElement.value = "";
+          commentInputElement.value = "";
+        }
+        else {
+          nameInputElement.value = nameValue;
+          commentInputElement.value = commentValue;
+        }
+
+        loaderMessageEl.textContent = "";
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Написать';
+      })
+  });
+
+  function sendMessage(name, text) {
+    let status = 0
+
+    buttonElement.disabled = true;
+    loaderMessageEl.innerHTML = "комментарий добавляется..."
+
+    // //СКРЫВАЕМ ФОРМУ
+    // const hideFormEl = document.querySelector('.add-form');
+    // hideFormEl.style.display = 'none';
+
+    return fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          name: name,
+          text: text,
+         // forceError: true,
+        }),
+      }).then((response) => {
+        status = response.status
+        
+        return response.json();
+      }).then((data) => {
+        if (status >= 400) {
+          throw new Error(data.error);
+        }
+
+        getComments();
+        // loaderMessageEl.textContent = "";
+        // nameInputElement.value = "";
+        // commentInputElement.value = "";
+        //// hideFormEl.style.display = 'flex';
+        // renderCommentators();
+
+        return "ok"
+      })
+      .catch((error) => {
+        if (error === "Failed to fetch") {
+          alert("Проверьте интернет")
+        }
+        else {
+          alert(error.message)
+        }
+        // if (error.message === "Сервер упал") {
+        //   alert("Нет интернета");
+        //   nameInputElement.value = nameValue;
+        //   commentInputElement.value = commentValue;
+        //   return;
+        // }
+        // else if (error.message === "Короткие вводимые данные") {
+        //   alert("Имя или комментарий слишком короткие");
+        //   nameInputElement.value = nameValue;
+        //   commentInputElement.value = commentValue;
+        // }
+        // else if (error instanceof TypeError) {
+        //   alert("Кажется, у вас сломался интернет, попробуйте позже");
+        //   nameInputElement.value = nameValue;
+        //   commentInputElement.value = commentValue;
+        //   return;
+        // }
+        // console.log(error);
+
+        return "error"
+      })
+  }
 
 
   const renderCommentators = () => {
@@ -211,87 +311,6 @@
       });
     }
   };
-
-  //ОБРАБОТЧИК КНОПКИ НАПИСАТЬ КОММЕНТАРИЙ//
-
-  buttonElement.addEventListener("click", () => {
-    nameInputElement.classList.remove("error");
-    commentInputElement.classList.remove("error");
-    if (nameInputElement.value.trim() === "") {
-      nameInputElement.classList.add("error");
-      return;
-    } if (commentInputElement.value.trim() === "") {
-      commentInputElement.classList.add("error");
-      return;
-    }
-
-    // сохранить значения полей ввода
-    const nameValue = nameInputElement.value;
-    const commentValue = commentInputElement.value;
-
-
-    //POST
-    buttonElement.disabled = true;
-    loaderMessageEl.innerHTML = "комментарий добавляется..."
-
-    // //СКРЫВАЕМ ФОРМУ
-    // const hideFormEl = document.querySelector('.add-form');
-    // hideFormEl.style.display = 'none';
-
-    const postFetch = fetch("https://wedev-api.sky.pro/api/v1/jacqueline-eller/comments",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          name: nameInputElement.value,
-          text: commentInputElement.value,
-          forceError: true,
-        }),
-      }).then((response) => {
-        if (response.status === 400 && (nameValue.lenght < 3 || commentValue.length < 3)) {
-          throw new Error("Короткие вводимые данные");
-        }
-        if (response.status === 500) {
-          throw new Error("Сервер упал");
-        }
-        else {
-          return response.json();
-        }
-      }).then((res) => {
-        getComments();
-        loaderMessageEl.textContent = "";
-        nameInputElement.value = "";
-        commentInputElement.value = "";
-        // hideFormEl.style.display = 'flex';
-        renderCommentators();
-      })
-      .then((data) => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = 'Написать';
-      })
-      .catch((error) => {
-        if (error.message === "Сервер упал") {
-          alert("Нет интернета");
-          nameInputElement.value = nameValue;
-          commentInputElement.value = commentValue;
-          return;
-
-        } if (error.message === "Короткие вводимые данные") {
-          alert("Имя или комментарий слишком короткие");
-          nameInputElement.value = nameValue;
-          commentInputElement.value = commentValue;
-        } if (error instanceof TypeError) {
-          alert("Кажется, у вас сломался интернет, попробуйте позже");
-          return;
-        }
-        console.log(error);
-      })
-      .finally(() => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = 'Написать';
-        loaderMessageEl.textContent = '';
-        addForm.classList.remove("hidden");
-      });
-  });
 
 
   // const oldListHtml = listElement.innerHTML;
