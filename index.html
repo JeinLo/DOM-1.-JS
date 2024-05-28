@@ -70,49 +70,57 @@
   const formEl = document.getElementById('add-form');
   const delButtonEl = document.getElementById('del-button');
 
-  let myDate = new Date();
-  function rusDateTime(myDate) {
-    let minuta = myDate.getMinutes();
-    let minutaUser;
-    minuta < 10 ? minutaUser = '0' + myDate.getMinutes() : minutaUser = minuta;
+ 
+  function rusDateTime() {
+    let myDate = new Date();
     let day = myDate.getDate();
     let deyUser;
-    day < 10 ? deyUser = '0' + myDate.getDate() : deyUser = day;
+    day < 10 ? deyUser = '0' + day : deyUser = day;
     let month = myDate.getMonth();
     let monthUser;
-    month < 10 ? monthUser = '0' + myDate.getMonth() : monthUser = month;
+    month < 10 ? monthUser = '0' + (month + 1) : monthUser = month + 1;
     let hours = myDate.getHours();
     let hoursUser;
-    hours < 10 ? hoursUser = '0' + myDate.getHours() : hoursUser = hours;
+    hours < 10 ? hoursUser = '0' + hours : hoursUser = hours;
+    let minuta = myDate.getMinutes();
+    let minutaUser;
+    minuta < 10 ? minutaUser = '0' + minuta : minutaUser = minuta;
     let userDate = [deyUser, monthUser, myDate.getFullYear()];
     let userTime = [hoursUser, minutaUser];
     return userDate.join('.') + ' ' + userTime.join(':');
   }
   
   
-  formEl.addEventListener('submit', (klickUser ));
+  formEl.addEventListener('submit', (clickUser ));
   inputTextEl.addEventListener('keyup', (handleInput ));
-  delButtonEl.addEventListener('click', (delitkUser ));
+  delButtonEl.addEventListener('click', (deletekUser ));
 
+  inputTextEl.addEventListener('keyup', (cleanState));
+  inputNameEl.addEventListener('keyup', (cleanState));
 
-  function handleInput (e) {
-        if (e.keyCode === 13 ) {
-      klickUser(e);
-    } 
-  }
-  
-  function klickUser(e) {
-   e.preventDefault();
+  function cleanState () {
     inputNameEl.classList.remove('error');
     inputTextEl.classList.remove('error');
     addButtonEl.classList.remove('error-button');
+  }
+
+  function handleInput (e) {
+        if (e.keyCode === 13 ) {
+      clickUser(e);
+
+    } 
+  }
+  
+  function clickUser(e) {
+   e.preventDefault();
+   cleanState();
     
-    if (inputNameEl.value === '') {
+    if (inputNameEl.value === '' || inputNameEl.value.trim() === '') {
       inputNameEl.classList.add('error');
       addButtonEl.classList.add('error-button');
       return;
     }
-    if (inputTextEl.value === '') {
+    if (inputTextEl.value === '' || inputTextEl.value.trim() === '') {
       inputTextEl.classList.add('error');
       addButtonEl.classList.add('error-button');
       return;
@@ -122,7 +130,7 @@
     listComentsEl.innerHTML = oldListComents + `<li class="comment">
           <div class="comment-header">
             <div>${inputNameEl.value}</div>
-            <div>${rusDateTime(myDate)}</div>
+            <div>${rusDateTime()}</div>
           </div>
           <div class="comment-body">
             <div class="comment-text">
@@ -140,7 +148,7 @@
         inputTextEl.value = '';
   }
  
-function delitkUser () {
+function deletekUser () {
   let index = listComentsEl.innerHTML.lastIndexOf('<li class="comment">');
     listComentsEl.innerHTML = listComentsEl.innerHTML.slice(0, index);
   
