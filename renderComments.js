@@ -1,7 +1,7 @@
+import { comments } from "./main.js";
+
 const listElement = document.getElementById("list");
 const commentInputElement = document.getElementById("comment-input");
-
-let comments = [];
 
 const initLikeButtons = () => {
   const likeButtons = document.querySelectorAll(".like-button");

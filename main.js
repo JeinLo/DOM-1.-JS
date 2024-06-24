@@ -11,7 +11,7 @@ const loadingListElement = document.getElementById("loadingList");
 const loadingCommentElement = document.getElementById("loadingComment");
 const commentDivElement = document.getElementById("commentDiv");
 
-let comments = [];
+export let comments = [];
 
 //Чтобы при загрузке страницы не было надписи "Комментарий добавляется..."
 loadingCommentElement.style.display = "none";
