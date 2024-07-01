@@ -121,16 +121,14 @@ buttonElement.addEventListener("click", () => {
     .catch((error) => {
       if (error.message === "Валидация") {
         alert("Имя или текст короче 3 символов");
-        fetchAndRenderComments();
       } else if (error.message === "Сервер упал") {
         alert("Сервер сломался, попробуй позже");
-        fetchAndRenderComments();
       } else {
         commentDivElement.style.display = "flex";
         loadingCommentElement.style.display = "none";
         alert("У пользователя пропал интернет");
-        fetchAndRenderComments();
       }
+      fetchAndRenderComments();
     });
 });
 
