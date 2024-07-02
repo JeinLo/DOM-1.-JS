@@ -12,5 +12,4 @@ export const fetchAndRenderTasks = () => {
   });
 };
 
-// fetchAndRenderTasks();
 renderLogin({ fetchAndRenderTasks });

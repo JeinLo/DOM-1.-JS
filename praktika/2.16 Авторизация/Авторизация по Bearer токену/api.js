@@ -1,20 +1,22 @@
-//Импортировали fetchAndRenderTasks
-// import { fetchAndRenderTasks } from "./main.js";
-
 //Чтобы каждый раз не вводить адрес, создали переменную
 const todosURL = "https://wedev-api.sky.pro/api/v2/todos";
 const loginURL = "https://wedev-api.sky.pro/api/user/login";
 
-// 1) Сделали на пароль let, чтобы его можно было менять
-// 2) Присвоили ему prompt, чтобы пользователь вводил пароль
 export let token;
 
 export const setToken = (newToken) => {
   token = newToken;
 };
 
+//Создал новую переменную userName, так как она будет меняться пишем let
+export let userName;
+//Для того чтобы переопределить имя, создаем функция, она принимает новое имя и меняет старое
+export const setName = (newName) => {
+  userName = newName;
+};
+
 export function getTodos() {
-  //Заменили адрес на host
+  //Заменили адрес на todosURL
   return fetch(todosURL, {
     method: "GET",
     //Добавили headers в котором загаловку "Authorization" передаем пароль "password". Верный пароль в документации 123456
@@ -66,6 +68,10 @@ export function login({ login, password }) {
       password,
     }),
   }).then((response) => {
+    if (response.status === 400) {
+      alert("неверный логин или пароль");
+    }
     return response.json();
   });
 }
+ 

@@ -1,6 +1,4 @@
-import { deleteTodo, postTodo } from "./api.js";
-
-const listElement = document.getElementById("list");
+import { deleteTodo, postTodo, userName } from "./api.js";
 
 export const renderTasks = ({ tasks, fetchAndRenderTasks }) => {
   const appElement = document.getElementById("app");
@@ -25,7 +23,7 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks }) => {
       <!— Должна появиться после входа —>
       <div class="form">
         <h3 class="form-title">Форма добавления</h3>
-        <p class="form-name">Имя пользователя:</p>
+        <p class="form-name">Имя пользователя: ${userName}</p>
         <div class="form-row">
           Что нужно сделать:
           <input
@@ -42,6 +40,7 @@ export const renderTasks = ({ tasks, fetchAndRenderTasks }) => {
       `;
 
   appElement.innerHTML = appHtml;
+  
   const deleteButtons = document.querySelectorAll(".delete-button");
 
   for (const deleteButton of deleteButtons) {
