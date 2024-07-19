@@ -46,7 +46,12 @@
     fetch("https://wedev-api.sky.pro/api/v1/dmitry-karabanov/comments", {
       method: "GET"
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Ошибка при загрузке комментариев');
+        }
+        return response.json();
+      })
       .then((responseData) => {
         // Сохраняем комментарии в массив
         comments = responseData.comments;
@@ -54,6 +59,10 @@
         renderComments();
         // Скрываем сообщение о загрузке после получения комментариев
         loadingMessageEl.style.display = 'none';
+      })
+      .catch((error) => {
+        loadingMessageEl.style.display = 'none';
+        alert(`Не удалось загрузить комментарии. Что-то с интернетом.`);
       });
   };
 
@@ -87,7 +96,7 @@
         </div>
         <div class="comment-body">
           <div class="comment-text">
-            ${comment.text}
+            ${filter(comment.text)}
           </div>
         </div>
         <div class="comment-footer">
@@ -167,10 +176,29 @@
       method: "POST",
       body: JSON.stringify({
         text: inputCommentEl.value,
-        name: inputNameEl.value
+        name: inputNameEl.value,
+        forceError: false  // Добавляем параметр forceError для имитации ошибок 500
       })
     })
-      .then(() => getCommentsFromServer())  // Получаем обновленные комментарии с сервера
+      .then(response => {
+        // Обработка 400-й ошибки
+        if (response.status === 400) {
+          return response.json().then(error => {
+            throw new Error(`${error.error}`);
+          });
+        }
+        // Обработка 500-й ошибки
+        if (response.status === 500) {
+          throw new Error('Ошибка 500: Серверная ошибка.');
+        }
+        // Обработка успешного ответа
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(() => {
+        getCommentsFromServer();  // Получаем обновленные комментарии с сервера
+      })
       .then(() => {
         // Очищаем поля ввода после добавления комментария
         inputNameEl.value = '';
@@ -181,14 +209,21 @@
         // Показываем форму и скрываем сообщение о добавлении комментария
         document.querySelector('.add-form').style.display = 'block';
         addingMessageEl.style.display = 'none';
+      })
+      .catch((error) => {
+        // Обработка ошибок сети и других ошибок
+        alert(`Не удалось добавить комментарий: ${error.message}`);
+        document.querySelector('.add-form').style.display = 'block';
+        addingMessageEl.style.display = 'none';
       });
   });
 
-  // Функция для ответа на комментарии
+  // Функция обработчика клика на комментах
   function replyComment() {
     const commentEl = document.querySelectorAll('.comment');
     commentEl.forEach((el, index) => {
       el.addEventListener('click', function (e) {
+
         // Дублирование комментария для ответа
         inputCommentEl.value = filter(`QUOTE_BEGIN>${comments[index].author.name}\n${comments[index].text}QUOTE_END\n`);
       });
@@ -201,12 +236,28 @@
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
 
-      // Выделение репоста комментария 
+      // Выделение репоста коммента 
       .replaceAll('QUOTE_BEGIN', '<div class="quote">')
       .replaceAll('QUOTE_END', '</div>');
   }
 
-  // Первоначальный вывод комментариев
+  // Проверка заполненности полей и активация/деактивация кнопки "Написать"
+  function checkInputFields() {
+    const name = inputNameEl.value.trim();
+    const comment = inputCommentEl.value.trim();
+
+    if (name && comment) {
+      writeEl.classList.remove('disabled');
+    } else {
+      writeEl.classList.add('disabled');
+    }
+  }
+
+  // Слушатели событий для полей ввода
+  inputNameEl.addEventListener('input', checkInputFields);
+  inputCommentEl.addEventListener('input', checkInputFields);
+
+  // Получение комментариев при загрузке страницы
   getCommentsFromServer();
 
   // **************************************** ДОПОЛНИТЕЛЬНО ********************************
