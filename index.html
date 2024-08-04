@@ -8,8 +8,7 @@
 
   <body>
     <div class="container">
-      <ul id="list" class="comments">
-      </ul>
+      <ul id="list" class="comments"></ul>
       <div class="add-form">
         <input
           type="text"
@@ -18,170 +17,148 @@
           placeholder="Введите ваше имя"
         />
         <textarea
-          type="textarea"
           id="userComment"
           class="add-form-text"
-          placeholder="Введите ваш коментарий"
+          placeholder="Введите ваш комментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
           <button id="writeButton" class="add-form-button">Написать</button>
         </div>
-        <div>
-          <button id="delete-button" class="delete-form-button">Удалить последний комментарий</button>
-        </div>
       </div>
     </div>
-  </body>
+    <script>
+      "use strict";
 
-  <script>
-    "use strict";
-    
-    const writeButton = document.getElementById('writeButton');
-    const deleteButton = document.getElementById('delete-button');
-    const commentsList = document.getElementById('list');
-    const userName = document.getElementById('userName');
-    const userComment = document.getElementById('userComment');
+      const writeButton = document.getElementById("writeButton");
+      const commentsList = document.getElementById("list");
+      const userName = document.getElementById("userName");
+      const userComment = document.getElementById("userComment");
 
-    const comments = [
-      {
-        name: 'Глеб Фокин',
-        comment: 'Это будет первый комментарий на этой странице',
-        date: '12.02.22 12:18',
-        numLikes: 3,
-        isLiked: false
-      },
-      {
-        name: 'Варвара Н.',
-        comment: 'Мне нравится как оформлена эта страница! ❤',
-        date: '13.02.22 19:22',
-        numLikes: 75,
-        isLiked: true
-      }
-    ];
+      const API_URL =
+        "https://wedev-api.sky.pro/api/v1/julia-galchenko/comments";
 
-    const renderComments = () => {
-      const commentsHTML = comments.map((userComment, index) => {
-      let textHTML;
-      const sanitizedComment = sanitize(userComment.comment);
-      const sanitizedName = sanitize(userComment.name);
-      textHTML = `<li class="comment">
-        <div class="comment-header">
-          <div>${userComment.name}</div>
-          <div>${userComment.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${userComment.comment}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${userComment.numLikes}</span>
-            <button class="like-button ${userComment.isLiked ? "-active-like" : ""}" data-index='${index}'></button>
-          </div>
-        </div>
-      </li>`
+      let usersComments = [];
 
-      return textHTML;
-      }).join('');
-      commentsList.innerHTML = commentsHTML;
-      likeEvent();
-      answerComment();
-    }
-    renderComments();
-    deleteComment();
-
-    function likeEvent () {
-      const likes = document.querySelectorAll('.like-button');
-      
-      for (const likeElement of likes) {
-        likeElement.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const index = likeElement.dataset.index;
-          const direction = comments[index].isLiked ? -1 : +1;
-          comments[index].numLikes += direction;
-          comments[index].isLiked = !comments[index].isLiked;
+      // Получение списка комментариев из API
+      fetch(API_URL, {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((responseData) => {
+          usersComments = responseData.comments;
           renderComments();
         })
-      } 
-    }
+        .catch((error) => console.error("Error:", error));
 
-    function deleteComment() {
-      deleteButton.addEventListener('click', () => {
-        comments.pop();
-        renderComments();
-      })
-    }
+      const renderComments = () => {
+        const commentsHtml = usersComments.map((comment, index) => {
+          return `<li class="comment" data-text="${index}">
+            <div class="comment-header">
+              <div>${comment.author.name}</div>
+              <div>${comment.date}</div>
+            </div>
+            <div class="comment-body">
+              <div class="comment-text">
+                ${comment.text}
+              </div>
+            </div>
+            <div class="comment-footer">
+              <div class="likes">
+                <span class="likes-counter">${comment.likes}</span>
+                <button data-index="${index}" class="like-button ${
+                  comment.likeButton ? "-active-like" : ""
+                }"></button>
+              </div>
+            </div>
+          </li>`;
+        }).join("");
 
-    writeButton.disabled = true;
+        commentsList.innerHTML = commentsHtml;
+        initLikesCounter();
+        addReplyToComment();
+      };
 
-    userName.addEventListener('input', (e) => {
-      if (userName.value.trim() === '' || e.target.value.trim() === '') {
-        writeButton.disabled = true;
-      } else {
-        writeButton.disabled = false;
-      }
-    })
-    userComment.addEventListener('input', (e) => {
-      if (userComment.value.trim() === '' || e.target.value.trim() === '') {
-        writeButton.disabled = true;
-      } else {
-        writeButton.disabled = false;
-      }
-    })
+      const initLikesCounter = () => {
+        const likeButtonsElements = document.querySelectorAll(".like-button");
 
-    function sanitize(text) {
-            return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+        for (const likeButtonsElement of likeButtonsElements) {
+          const index = likeButtonsElement.dataset.index;
+
+          likeButtonsElement.addEventListener("click", (event) => {
+            event.stopPropagation();
+
+            usersComments[index].likeButton
+              ? usersComments[index].likes -= 1
+              : usersComments[index].likes += 1;
+            usersComments[index].likeButton = !usersComments[index].likeButton;
+
+            renderComments();
+          });
+        }
+      };
+
+      const addReplyToComment = () => {
+        const commentElements = document.querySelectorAll(".comment");
+
+        for (const comment of commentElements) {
+          const index = comment.dataset.text;
+
+          comment.addEventListener("click", () => {
+            userComment.value = `> ${usersComments[index].text} \\n ${usersComments[index].author.name},`;
+            userName.focus();
+          });
+        }
+      };
+
+      writeButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        const currentDate = new Date();
+        const actualDate = `${currentDate.getDate()}.${
+          currentDate.getMonth() + 1
+        }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+        userName.classList.remove("error");
+        userComment.classList.remove("error");
+
+        if (userName.value.trim() === "" || userComment.value.trim() === "") {
+          userName.classList.toggle("error", userName.value.trim() === "");
+          userComment.classList.toggle("error", userComment.value.trim() === "");
+          return;
         }
 
-      writeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      let date = new Date();
-      let currentDate = date.toLocaleDateString() + " ";
-      + date.getHours() + ":" + date.getMinutes();
+        const newComment = {
+          author: {
+            name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+          },
+          date: actualDate,
+          text: userComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+          likes: 0,
+          likeButton: false,
+        };
 
-      userName.classList.remove('error');
-      userComment.classList.remove('error');
-
-      if (userName.value === '') {
-        userName.classList.add('error');
-
-      } else if (userComment.value === '') {
-        userComment.classList.add('error');
-
-      } else {
-        comments.push({
-          name: sanitize(userName.value),
-          comment: sanitize(userComment.value),
-          date: currentDate,
-          numLikes: 0,
-          isLiked: false
+        fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            name: userName.value,
+            text: userComment.value,
+          }),
         })
+          .then(() => {
+            usersComments.push(newComment);
+            renderComments();
+            userName.value = "";
+            userComment.value = "";
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            if (error.response) {
+              error.response.json().then((data) => console.log(data));
+            }
+          });
 
-        renderComments();
-        userName.value = '';
-        userComment.value = '';
-        writeButton.disabled = true;
-      }
-    })
-    
-    function answerComment() {
-            const commentElements = document.querySelectorAll('.comment');
-            commentElements.forEach((el, i) => {
-                el.addEventListener('click', () => {
-                    const quote = `>${comments[i].name}:\n${comments[i].comment}\n`;
-                    userComment.value = quote;
-                    userName.focus();
-                })
-            })
-        }
-    document.addEventListener('keyup', (el) => {
-      if (el.keyCode === 13) {
-        writeButton.click();
-      }
-    })
-  
-    console.log("It works!");
-  </script>
+        console.log("It works!!");
+      });
+    </script>
+  </body>
 </html>
