@@ -155,3 +155,7 @@ body {
   .quote {
     background: #bcec30;
   }
+  .error {
+    border: 1px solid red;
+    background-color: #fdd; 
+}
