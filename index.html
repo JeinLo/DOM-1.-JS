@@ -119,41 +119,49 @@ const formatDate = (dateString) => {
         }
       };
 
-      writeButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        const currentDate = new Date();
-        const actualDate = `${currentDate.getDate()}.${
-          currentDate.getMonth() + 1
-        }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+      const escapeHtml = (unsafe) => {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
 
-        userName.classList.remove("error");
-        userComment.classList.remove("error");
+writeButton.addEventListener("click", (event) => {
+  event.preventDefault();
+  const currentDate = new Date();
+  const actualDate = `${currentDate.getDate()}.${
+    currentDate.getMonth() + 1
+  }.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-        if (userName.value.trim() === "" || userComment.value.trim() === "") {
-          userName.classList.toggle("error", userName.value.trim() === "");
-          userComment.classList.toggle("error", userComment.value.trim() === "");
-          return;
-        }
+  userName.classList.remove("error");
+  userComment.classList.remove("error");
 
-    const newComment = {
-      author: {
-      name: userName.value.replaceAll("&lt;", "&lt;").replaceAll(">", "&gt;"),
-  },
-      date: actualDate,
-      text: userComment.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"), // Заменить < и > на &lt; и &gt;
-      likes: 0,
-      likeButton: false,
+  if (userName.value.trim() === "" || userComment.value.trim() === "") {
+    userName.classList.toggle("error", userName.value.trim() === "");
+    userComment.classList.toggle("error", userComment.value.trim() === "");
+    return;
+  }
+
+  const newComment = {
+    author: {
+      name: escapeHtml(userName.value),
+    },
+    date: actualDate,
+    text: escapeHtml(userComment.value),
+    likes: 0,
+    likeButton: false,
   };
 
         fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({
-            name: userName.value,
-            text: userComment.value,
+            name: newComment.author.name,
+            text: newComment.text,
           }),
         })
           .then(() => {
-            usersComments.push(newComment);
             renderComments();
             userName.value = "";
             userComment.value = "";
@@ -164,6 +172,18 @@ const formatDate = (dateString) => {
               error.response.json().then((data) => console.log(data));
             }
           });
+          fetch(API_URL, {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((responseData) => {
+          usersComments = responseData.comments;
+          renderComments();
+        })
+        .catch((error) => console.error("Error:", error));
+
+      userName.value = "";
+      userComment.value = "";
 
         console.log("It works!!");
       });
