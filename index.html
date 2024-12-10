@@ -65,7 +65,87 @@
 
   <script>
     "use strict";
-    // Код писать здесь
+  // Функция для обработки лайков
+function setupButtons() {
+  document.querySelectorAll('.like-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const likesCounter = button.previousElementSibling; 
+      let likes = parseInt(likesCounter.textContent); 
+
+      // Проверяем, активна ли кнопка
+      if (button.classList.contains('-active-like')) {
+        likes--; // Уменьшаем лайки
+        button.classList.remove('-active-like');
+      } else {
+        likes++; // Увеличиваем лайки
+        button.classList.add('-active-like'); // Добавляем активное состояние
+      }
+
+      likesCounter.textContent = likes; // Обновляем значение счётчика
+    });
+  });
+}
+
+setupButtons();
+
+// Находим элементы формы и список комментариев
+const nameInput = document.querySelector('.add-form-name');
+const commentInput = document.querySelector('.add-form-text');
+const addButton = document.querySelector('.add-form-button');
+const commentsList = document.querySelector('.comments');
+
+// Функция для получения текущей даты и времени
+function getTime() {
+  const date = new Date();
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
+}
+
+// Обработчик нажатия на кнопку "Добавить"
+addButton.addEventListener('click', () => {
+  const name = nameInput.value.trim();
+  const commentText = commentInput.value.trim();
+
+  // Проверка на заполненность полей
+  if (!name || !commentText) {
+    alert('Пожалуйста, заполните оба поля!');
+    return;
+  }
+
+  // Создаем новый комментарий
+  const newComment = `
+    <li class="comment">
+      <div class="comment-header">
+        <div>${name}</div>
+        <div>${getTime()}</div>
+      </div>
+      <div class="comment-body">
+        <div class="comment-text">${commentText}</div>
+      </div>
+      <div class="comment-footer">
+        <div class="likes">
+          <span class="likes-counter">0</span>
+          <button class="like-button"></button>
+        </div>
+      </div>
+    </li>
+  `;
+
+  // Добавляем новый комментарий в список
+  commentsList.innerHTML += newComment;
+
+  // Привязываем обработчики событий к новым кнопкам лайков
+  setupButtons();
+
+  // Очищаем поля формы
+  nameInput.value = '';
+  commentInput.value = '';
+});
     console.log("It works!");
   </script>
 </html>
