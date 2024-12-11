@@ -65,6 +65,58 @@
 
   <script>
     "use strict";
+    let input = document.querySelector('.add-form-name'); 
+    let textInput = document.querySelector('.add-form-text');
+    let btn = document.querySelector('.add-form-button');
+    let list = document.querySelector('.comments');
+    let cont = document.querySelector('.container');
+
+    btn.addEventListener('click', function (e) {
+      console.log('rerer');
+      
+      let boxLi = document.createElement("li")
+      console.log(boxLi);
+      
+      boxLi.classList = 'comment'
+      list.appendChild(boxLi);
+      let nameInputHead = document.createElement('div')
+      boxLi.appendChild(nameInputHead)
+      nameInputHead.classList = 'comment-header'
+
+      let comName = document.createElement("div")
+      // comName.setAttribute('id', 'nameUser');
+      nameInputHead.appendChild(comName)
+      comName.textContent = input.value
+
+      let comDate = document.createElement("div")
+      nameInputHead.appendChild(comDate)
+      let options = {hour: '2-digit', minute:'2-digit'};
+      let optDate = {year: '2-digit', month: '2-digit', day: '2-digit'}
+      comDate.innerHTML =  new Date().toLocaleDateString('ru-RU', optDate) + " " + new Date().toLocaleTimeString('ru-RU', options)
+
+      let comBox = document.createElement("div")
+      comBox.classList = 'comment-body'
+      boxLi.appendChild(comBox)
+
+      let userCom = document.createElement("div")
+      userCom.classList = 'comment-text'
+      userCom.textContent = textInput.value
+      comBox.appendChild(userCom);
+
+      let boxFooter = document.createElement("div");
+      boxFooter.classList = 'comment-footer'
+      boxLi.appendChild(boxFooter)
+
+      let likeBox = document.createElement("div")
+      likeBox.classList = 'likes'
+      boxFooter.appendChild(likeBox)
+
+      let likeBtn = document.createElement("button")
+      likeBtn.classList = 'like-button'
+      likeBox.appendChild(likeBtn)
+
+      textInput.value = ""
+      input.value = ""   
     // Код писать здесь
     console.log("It works!");
   </script>
