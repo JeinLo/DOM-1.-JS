@@ -9,40 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
+        //Комменты перенесены в JS
       </ul>
       <div class="add-form">
         <input
@@ -64,11 +31,65 @@
   </body>
 
   <script>
+    const comments = [
+      {
+        name: "Глеб Фокин",
+        date: "12.02.22 12:18",
+        text: "Это будет первый комментарий на этой странице",
+      },
+      {
+        name: "Варвара Н.",
+        date: "13.02.22 19:22",
+        text: "Мне нравится как оформлена эта страница! ❤",
+      },
+    ];
+
     const nameEl = document.querySelector(".add-form-name");
     const commentEl = document.querySelector(".add-form-text");
     const buttonEl = document.querySelector(".add-form-button");
-    const commentsEl = document.querySelector(".comments");
-    const currentDate = getCurrentFormattedTime();
+    const list = document.querySelector(".comments");
+    const currentTime = getCurrentFormattedTime();
+
+    const renderComments = () => {
+      const commentsHtml = comments
+        .map((comment, index) => {
+          return `<li class="comment">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">0</span>
+              <button class="like-button"></button>
+            </div>
+          </div>
+        </li>`;
+        })
+        .join("");
+
+      list.innerHTML = commentsHtml;
+    };
+
+    renderComments();
+
+    buttonEl.addEventListener("click", function (e) {
+      comments.push({
+        name: nameEl.value,
+        date: currentTime,
+        text: commentEl.value,
+      });
+
+      renderComments();
+
+      nameEl.value = "";
+      commentEl.value = "";
+    });
 
     function getCurrentFormattedTime() {
       const now = new Date();
@@ -81,34 +102,5 @@
 
       return `${day}.${month}.${year} ${hours}:${minutes}`;
     }
-
-    nameEl.addEventListener("click", function (e) {});
-
-    commentEl.addEventListener("click", function (e) {});
-
-    buttonEl.addEventListener("click", function (e) {
-      const newCommentEl = document.createElement("li");
-
-      newCommentEl.innerHTML = `<li class="comment">
-          <div class="comment-header">
-            <div>${nameEl.value}</div>
-            <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentEl.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`;
-      commentsEl.append(newCommentEl);
-      nameEl.value = "";
-      commentEl.value = "";
-    });
   </script>
 </html>
