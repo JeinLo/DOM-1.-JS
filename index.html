@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <ul class="comments">
-        <li class="comment">
+        <!-- <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
             <div>12.02.22 12:18</div>
@@ -42,30 +42,134 @@
               <button class="like-button -active-like"></button>
             </div>
           </div>
-        </li>
+        </li> -->
       </ul>
       <div class="add-form">
         <input
           type="text"
           class="add-form-name"
+          id="input_name"
           placeholder="Введите ваше имя"
         />
         <textarea
           type="textarea"
           class="add-form-text"
+          id="input_comment"
           placeholder="Введите ваш коментарий"
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button">Написать</button>
+          <button class="add-form-button" id="write_button">Написать</button>
         </div>
       </div>
     </div>
   </body>
 
   <script>
-    "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    //массив
+    const comments = [
+
+      {
+        name: "Глеб Фокин",
+        date: new Date(),
+        text: "Это будет первый комментарий на этой странице",
+        likes: 3,
+        likedIt: false,
+      }, 
+      {
+        name: "Варвара Н.",
+        date: new Date(),
+        text: "Мне нравится как оформлена эта страница! ❤",
+        likes: 75,
+        liked: true,
+      }
+
+    ];
+
+    //рендеринг функция комментариев
+    const renderFunction = () => {
+      const list = document.querySelector(".comments");
+
+      list.innerHTML = comments.map((comment, index) => {
+        return `
+        <li class="comment" data-index="${index}">
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date.toLocaleDateString()}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">
+              ${comment.text}
+            </div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button data-index="${index}" class="like-button ${comment.liked ? "-active-like" : ""}"></button>
+            </div>
+          </div>
+        </li>
+        `;
+      }).join('');
+
+      //счётчик лайков
+      const likeButton = document.querySelectorAll(".like-button");
+
+      for (const likeButtons of likeButton) {
+
+        likeButtons.addEventListener("click", () => {
+          const index = likeButtons.dataset.index;
+          const comment = comments[index];
+
+          if (comments.likes = comment.liked) {
+            comment.likes--;
+          } else {
+            comment.likes++;
+          }
+          comment.liked = !comment.liked;
+
+          renderFunction();
+        });
+
+      };
+
+      
+
+    };
+    renderFunction();
+
+    //переменные имя, текст комментария и кнопки "написать"
+    const inputName = document.getElementById("input_name");
+    const inputComment = document.getElementById("input_comment");
+    const writeButton = document.getElementById("write_button");
+
+    //обработчик события имя
+    inputName.addEventListener("input", () => {
+      console.log("change inputName");
+    });
+
+    //обработчик события коммент
+    inputComment.addEventListener("input", () =>{
+      console.log("change inputComment");
+    });
+    
+    //обработчик события кнопка
+    writeButton.addEventListener("click", () => {
+      console.log("click write button");
+
+      //новый комментарий пользователя
+      const userComment = {
+        name: inputName.value,
+        date: new Date(),
+        text: inputComment.value,
+        likes: 0,
+      };
+
+      inputName.value = '';
+      inputComment.value = '';
+
+      comments.push(userComment);
+      renderFunction();
+    });
   </script>
 </html>
