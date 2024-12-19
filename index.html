@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Проект "Комменты"</title>
     <link rel="stylesheet" href="styles.css" />
-    <style>
-      .error {
-        border: 2px solid red;
-      }
-    </style>
   </head>
   <body>
     <div class="container">
-      <ul class="comments" id="commentsList">
+      <ul class="comments">
         <li class="comment">
           <div class="comment-header">
             <div>Глеб Фокин</div>
@@ -58,7 +53,6 @@
         />
         <textarea
           id="inpText"
-          type="textarea"
           class="add-form-text"
           placeholder="Введите ваш комментарий"
           rows="4"
@@ -70,73 +64,119 @@
     </div>
 
     <script>
+      'use strict'
+
+      const commentsList = document.querySelector('.comments')
       const inputName = document.getElementById('inpName')
       const inputText = document.getElementById('inpText')
       const buttonAdd = document.getElementById('btn')
-      const commentsList = document.getElementById('commentsList')
 
-      function formatDate(date) {
-        const day = String(date.getDate()).padStart(2, '0')
-        const month = String(date.getMonth() + 1).padStart(2, '0')
-        const year = String(date.getFullYear()).slice(-2)
-        const hours = String(date.getHours()).padStart(2, '0')
-        const minutes = String(date.getMinutes()).padStart(2, '0')
-        return `${day}.${month}.${year} ${hours}:${minutes}`
+      let commentsData = [
+        {
+          name: 'Глеб Фокин',
+          date: '12.02.22 12:18',
+          text: 'Это будет первый комментарий на этой странице',
+          likes: 3,
+          isLiked: false,
+        },
+        {
+          name: 'Варвара Н.',
+          date: '13.02.22 19:22',
+          text: 'Мне нравится как оформлена эта страница! ❤',
+          likes: 75,
+          isLiked: true,
+        },
+      ]
+
+      function renderComments() {
+        commentsList.innerHTML = ''
+        commentsData.forEach((comment, index) => {
+          const commentElement = document.createElement('li')
+          commentElement.classList.add('comment')
+
+          commentElement.innerHTML = `
+          <div class="comment-header">
+            <div>${comment.name}</div>
+            <div>${comment.date}</div>
+          </div>
+          <div class="comment-body">
+            <div class="comment-text">${comment.text}</div>
+          </div>
+          <div class="comment-footer">
+            <div class="likes">
+              <span class="likes-counter">${comment.likes}</span>
+              <button class="like-button ${
+                comment.isLiked ? '-active-like' : ''
+              }" data-index="${index}"></button>
+            </div>
+          </div>
+        `
+
+          commentsList.appendChild(commentElement)
+        })
+
+        attachLikeEventListeners()
       }
 
-      function addComment() {
+      function attachLikeEventListeners() {
+        const likeButtons = document.querySelectorAll('.like-button')
+
+        likeButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const index = button.getAttribute('data-index')
+            const comment = commentsData[index]
+
+            comment.isLiked = !comment.isLiked
+
+            if (comment.isLiked) {
+              comment.likes++
+              button.classList.add('-active-like')
+            } else {
+              comment.likes--
+              button.classList.remove('-active-like')
+            }
+
+            renderComments()
+          })
+        })
+      }
+
+      buttonAdd.addEventListener('click', () => {
         const name = inputName.value.trim()
         const text = inputText.value.trim()
 
-        inputName.classList.remove('error')
-        inputText.classList.remove('error')
+        if (name === '' || text === '') {
+          if (name === '') inputName.classList.add('error')
+          else inputName.classList.remove('error')
 
-        let isValid = true
+          if (text === '') inputText.classList.add('error')
+          else inputText.classList.remove('error')
 
-        if (name === '') {
-          inputName.classList.add('error')
-          isValid = false
-        }
-
-        if (text === '') {
-          inputText.classList.add('error')
-          isValid = false
-        }
-
-        if (!isValid) {
           return
         }
 
-        const currentDate = new Date()
-        const dateString = formatDate(currentDate)
+        const date = new Date()
+        const formattedDate = `${date.getDate()}.${
+          date.getMonth() + 1
+        }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
 
-        const newComment = `
-          <li class="comment">
-            <div class="comment-header">
-              <div>${name}</div>
-              <div>${dateString}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">
-                ${text}
-              </div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">0</span>
-                <button class="like-button"></button>
-              </div>
-            </div>
-          </li>
-        `
+        const newComment = {
+          name: name,
+          date: formattedDate,
+          text: text,
+          likes: 0,
+          isLiked: false,
+        }
 
-        commentsList.innerHTML += newComment
+        commentsData.push(newComment)
 
         inputName.value = ''
         inputText.value = ''
-      }
 
-      buttonAdd.addEventListener('click', addComment)
+        renderComments()
+      })
+
+      renderComments()
     </script>
   </body>
 </html>
