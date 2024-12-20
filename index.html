@@ -116,6 +116,7 @@
         })
 
         attachLikeEventListeners()
+        attachCommentClickListeners()
       }
 
       function attachLikeEventListeners() {
@@ -141,6 +142,17 @@
         })
       }
 
+      function attachCommentClickListeners() {
+        const commentElements = document.querySelectorAll('.comment-body')
+
+        commentElements.forEach((commentElement, index) => {
+          commentElement.addEventListener('click', () => {
+            const comment = commentsData[index]
+            inputText.value = `> ${comment.name}: ${comment.text}\n`
+          })
+        })
+      }
+
       buttonAdd.addEventListener('click', () => {
         const name = inputName.value.trim()
         const text = inputText.value.trim()
@@ -155,15 +167,18 @@
           return
         }
 
+        const escapedText = escapeHTML(text)
+        const escapedName = escapeHTML(name)
+
         const date = new Date()
         const formattedDate = `${date.getDate()}.${
           date.getMonth() + 1
         }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
 
         const newComment = {
-          name: name,
+          name: escapedName,
           date: formattedDate,
-          text: text,
+          text: escapedText,
           likes: 0,
           isLiked: false,
         }
@@ -173,8 +188,19 @@
         inputName.value = ''
         inputText.value = ''
 
+        inputName.classList.remove('error')
+        inputText.classList.remove('error')
+
         renderComments()
       })
+
+      function escapeHTML(str) {
+        return str
+          .replaceAll('<', '&lt;')
+          .replaceAll('&', '&amp;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;')
+      }
 
       renderComments()
     </script>
