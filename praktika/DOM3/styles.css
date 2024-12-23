@@ -1,0 +1,21 @@
+li {
+  margin-bottom: 10px;
+  width: 500px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid lightgray;
+  padding: 10px;
+}
+
+li:hover {
+  background-color: aliceblue;
+}
+
+li button {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.error {
+  background-color: red;
+}
