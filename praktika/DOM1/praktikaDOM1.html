@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Урок "Управление html содержимым из js"</title>
+  </head>
+
+  <body>
+    <h1 class="hedding">студенты</h1>
+    <ul id="list">
+      <li>Глеб</li>
+      <li>Иван</li>
+      <li>Люси</li>
+    </ul>
+
+    <div>
+      <h3>Форма добавления</h3>
+      Имя:
+      <input type="text" id="field" />
+      <br /><br />
+      <button class="btnRemove" type="button">Удалить последний элемент</button>
+      <button class="btnTextChange" type="button">Изменить заголовок</button>
+      <button class="btnAdd" type="button">Добавить студента</button>
+      <button class="btnColorChange" type="button">
+        Сделать заголовок красным
+      </button>
+    </div>
+  </body>
+  <style>
+    .error {
+      color: red;
+    }
+  </style>
+  <script>
+    const heddingEl = document.querySelector(".hedding");
+    const btnTextChangeEl = document.querySelector(".btnTextChange");
+    const btnAddEl = document.querySelector(".btnAdd");
+    const btnRemoveEl = document.querySelector(".btnRemove");
+    const btnColorChangeEl = document.querySelector(".btnColorChange");
+
+    //Изменение заголовка
+    btnTextChangeEl.addEventListener("click", function (e) {
+      console.log(heddingEl);
+      if (heddingEl.textContent === "студенты") {
+        heddingEl.innerHTML = "самые любимые студенты";
+        console.log(heddingEl);
+      } else if (heddingEl.textContent === "самые любимые студенты") {
+        heddingEl.innerHTML = "студенты";
+      }
+    });
+
+    //Добавление студента
+    btnAddEl.addEventListener("click", function (e) {
+      const listEl = document.querySelector("#list");
+      const newNameEl = document.createElement("li");
+      const fieldEl = document.querySelector("#field");
+
+      newNameEl.textContent = fieldEl.value;
+      listEl.append(newNameEl);
+      fieldEl.value = "";
+    });
+
+    //Удаление последнего студента
+    btnRemoveEl.addEventListener("click", function (e) {
+      const lastChild = document.querySelector("li:last-child");
+
+      lastChild.remove();
+    });
+
+    //Изменить цвет заголовка
+    btnColorChangeEl.addEventListener("click", function (e) {
+      heddingEl.classList.add("error");
+    });
+  </script>
+</html>
