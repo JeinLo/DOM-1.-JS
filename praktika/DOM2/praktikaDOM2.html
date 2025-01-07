@@ -63,29 +63,29 @@
             }
 
             // Функция рендеринга студентов. (Тут я отлючил форматирование, так как тупо переносится при ватосохранении)
-            //prettier-ignore
             const renderStudents = () => {
-        const studentsHtml = students
-          .map((student, index) =>
-              `<li><span data-age="${student.age}" class="student">${student.name} - ${student.isMale ? "Мужчина" : "Женщина"}, Возраст: ${student.age}</span> <button data-index="${index}" class="delete">удалить</button></li>`
-          )
-          .join(""); // склеивам массив в одну строку с помощью join
+                const studentsHtml = students
+                    .map(
+                        (student, index) =>
+                            `<li><span data-age="${student.age}" class="student">${student.name} - ${student.isMale ? 'Мужчина' : 'Женщина'}, Возраст: ${student.age}</span> <button data-index="${index}" class="delete">удалить</button></li>`,
+                    )
+                    .join('') // склеивам массив в одну строку с помощью join
 
-        list.innerHTML = studentsHtml; //Вставляем разметку в список
+                list.innerHTML = studentsHtml //Вставляем разметку в список
 
-        //Добавьте возможность выводить возраст студента при клике на его имя.
-        const studentElements = document.querySelectorAll('.student');
-        
-        for (const studentElement of studentElements) {
-          const age = studentElement.dataset.age;
+                //Добавьте возможность выводить возраст студента при клике на его имя.
+                const studentElements = document.querySelectorAll('.student')
 
-          studentElement.addEventListener('click', function (e) {
-          console.log(`Возраст: ${age}`);
-        });
-        }
+                for (const studentElement of studentElements) {
+                    const age = studentElement.dataset.age
 
-        initDeleteListeners(); //Обработчик клика на "удалить"
-      };
+                    studentElement.addEventListener('click', function (e) {
+                        console.log(`Возраст: ${age}`)
+                    })
+                }
+
+                initDeleteListeners() //Обработчик клика на "удалить"
+            }
 
             renderStudents() // Вызов функции рендеринга. на этом этапе на странице появляется разметка
             renderFormHeader() //Рендерим заголовок формы + обрабочик клика на заголовок
