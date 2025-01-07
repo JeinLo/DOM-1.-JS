@@ -1,70 +1,70 @@
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Урок "Управление html содержимым из js"</title>
-    <link rel="stylesheet" href="" />
-  </head>
+    <head>
+        <meta charset="utf-8" />
+        <title>Урок "Управление html содержимым из js"</title>
+        <link rel="stylesheet" href="" />
+    </head>
 
-  <body>
-    <h1>студенты</h1>
-    <ul id="list">
-      <!-- <li><span>Глеб</span><button>удалить</button></li>
+    <body>
+        <h1>студенты</h1>
+        <ul id="list">
+            <!-- <li><span>Глеб</span><button>удалить</button></li>
       <li><span>Иван</span><button>удалить</button></li>
       <li><span>Люси</span><button>удалить</button></li> -->
-    </ul>
+        </ul>
 
-    <div id="form-container">
-      <!-- <h3>Форма добавления</h3> -->
-      Имя:
-      <input type="text" id="field" />
-      <br /><br />
-      <button type="button" id="add">Добавить</button>
-    </div>
+        <div id="form-container">
+            <!-- <h3>Форма добавления</h3> -->
+            Имя:
+            <input type="text" id="field" />
+            <br /><br />
+            <button type="button" id="add">Добавить</button>
+        </div>
 
-    <script>
-      const button = document.getElementById("add");
-      const list = document.getElementById("list");
-      const removeButton = document.getElementById("remove");
-      const input = document.getElementById("field");
-      const formContainer = document.querySelector("#form-container");
+        <script>
+            const button = document.getElementById('add')
+            const list = document.getElementById('list')
+            const removeButton = document.getElementById('remove')
+            const input = document.getElementById('field')
+            const formContainer = document.querySelector('#form-container')
 
-      const students = [
-        { name: "Глеб", isMale: true, age: 20 },
-        { name: "Иван", isMale: true, age: 22 },
-        { name: "Люси", isMale: false, age: 19 },
-      ];
+            const students = [
+                { name: 'Глеб', isMale: true, age: 20 },
+                { name: 'Иван', isMale: true, age: 22 },
+                { name: 'Люси', isMale: false, age: 19 },
+            ]
 
-      //Функция рендеринга загаловка + обрабочик клика на заголовок
-      const renderFormHeader = () => {
-        const headerEl = document.createElement("h3");
-        headerEl.textContent = "Форма добавления";
-        headerEl.classList.add("header");
-        formContainer.prepend(headerEl); //Добавляем заголовок перед остальной разметкой формы
+            //Функция рендеринга загаловка + обрабочик клика на заголовок
+            const renderFormHeader = () => {
+                const headerEl = document.createElement('h3')
+                headerEl.textContent = 'Форма добавления'
+                headerEl.classList.add('header')
+                formContainer.prepend(headerEl) //Добавляем заголовок перед остальной разметкой формы
 
-        const header = document.querySelector(".header");
+                const header = document.querySelector('.header')
 
-        header.addEventListener("click", () => {
-          console.log("клик на заголовок");
-        }); //
-      };
+                header.addEventListener('click', () => {
+                    console.log('клик на заголовок')
+                }) //
+            }
 
-      //Обработчик клика на "удалить"
-      const initDeleteListeners = () => {
-        const buttonElements = document.querySelectorAll(".delete");
+            //Обработчик клика на "удалить"
+            const initDeleteListeners = () => {
+                const buttonElements = document.querySelectorAll('.delete')
 
-        for (const buttonElement of buttonElements) {
-          buttonElement.addEventListener("click", () => {
-            const index = buttonElement.dataset.index;
+                for (const buttonElement of buttonElements) {
+                    buttonElement.addEventListener('click', () => {
+                        const index = buttonElement.dataset.index
 
-            students.splice(index, 1);
-            renderStudents();
-          });
-        }
-      };
+                        students.splice(index, 1)
+                        renderStudents()
+                    })
+                }
+            }
 
-      // Функция рендеринга студентов. (Тут я отлючил форматирование, так как тупо переносится при ватосохранении)
-      //prettier-ignore
-      const renderStudents = () => {
+            // Функция рендеринга студентов. (Тут я отлючил форматирование, так как тупо переносится при ватосохранении)
+            //prettier-ignore
+            const renderStudents = () => {
         const studentsHtml = students
           .map((student, index) =>
               `<li><span data-age="${student.age}" class="student">${student.name} - ${student.isMale ? "Мужчина" : "Женщина"}, Возраст: ${student.age}</span> <button data-index="${index}" class="delete">удалить</button></li>`
@@ -87,23 +87,23 @@
         initDeleteListeners(); //Обработчик клика на "удалить"
       };
 
-      renderStudents(); // Вызов функции рендеринга. на этом этапе на странице появляется разметка
-      renderFormHeader(); //Рендерим заголовок формы + обрабочик клика на заголовок
+            renderStudents() // Вызов функции рендеринга. на этом этапе на странице появляется разметка
+            renderFormHeader() //Рендерим заголовок формы + обрабочик клика на заголовок
 
-      //Добавление нового студента
-      button.addEventListener("click", () => {
-        input.classList.remove("error");
+            //Добавление нового студента
+            button.addEventListener('click', () => {
+                input.classList.remove('error')
 
-        if (input.value === "") {
-          input.classList.add("error");
-          return;
-        }
+                if (input.value === '') {
+                    input.classList.add('error')
+                    return
+                }
 
-        students.push({ name: input.value });
-        renderStudents();
+                students.push({ name: input.value })
+                renderStudents()
 
-        input.value = "";
-      });
-    </script>
-  </body>
+                input.value = ''
+            })
+        </script>
+    </body>
 </html>
