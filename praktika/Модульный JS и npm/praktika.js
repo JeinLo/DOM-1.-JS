@@ -1,4 +1,4 @@
-// import { renderStudents } from './modules/renderStudents.js'
+import { renderStudents } from './modules/renderStudents.js'
 import { students } from './modules/students.js'
 
 renderStudents()
