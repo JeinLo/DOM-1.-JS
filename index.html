@@ -65,7 +65,14 @@
 
   <script>
     "use strict";
-    // Код писать здесь
-    console.log("It works!");
+    const commentEl = document.querySelector('.comment')
+    const wright = document.querySelector('.add-form-button')
+    const commentOld = commentEl.innerHTML;
+    wright.addEventListener('click', function() {
+      
+      console.log("It works!");
+    });
+    console.log(commentEl.innerHTML);
+    
   </script>
 </html>
