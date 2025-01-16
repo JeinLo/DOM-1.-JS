@@ -57,7 +57,7 @@
 
 <script>
   // Код писать здесь
-  document.querySelector(".add-form-button").addEventListener("click", function () {
+  document.querySelector(".add-form-button").addEventListener("click", () => {
     const nameInput = document.querySelector(".add-form-name");
     const commentInput = document.querySelector(".add-form-text");
 
@@ -68,11 +68,13 @@
 
     if (nameInput.value.trim() === "") {
       nameInput.style.backgroundColor = "red";
+      nameInput.style.color = "white";
       valid = false;
     }
 
     if (commentInput.value.trim() === "") {
       commentInput.style.backgroundColor = "red";
+      commentInput.style.color = "white";
       valid = false;
     }
 
