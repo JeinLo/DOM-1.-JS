@@ -1,8 +1,12 @@
 import { renderComments } from './modules/renderComments.js'
-import { getCurrentFormattedTime } from './modules/date.js'
-import { comments } from './modules/comments.js'
+import { formatCustomDate } from './modules/date.js'
+import { comments, updateComments } from './modules/comments.js'
+import { fetchComments, postComment } from './modules/api.js'
 
-renderComments()
+fetchComments().then((data) => {
+    updateComments(data)
+    renderComments()
+})
 
 const nameEl = document.querySelector('.add-form-name')
 const commentEl = document.querySelector('.add-form-text')
@@ -24,18 +28,13 @@ buttonEl.addEventListener('click', function (e) {
         return
     }
 
-    const currentTime = getCurrentFormattedTime()
-
-    comments.push({
-        name: nameEl.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        date: currentTime,
-        text: commentEl.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
-        isLike: false,
-        numLikes: 0,
+    postComment(
+        commentEl.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+        nameEl.value.replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
+    ).then((data) => {
+        updateComments(data)
+        renderComments()
+        nameEl.value = ''
+        commentEl.value = ''
     })
-
-    renderComments()
-
-    nameEl.value = ''
-    commentEl.value = ''
 })

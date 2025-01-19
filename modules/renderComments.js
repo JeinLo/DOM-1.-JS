@@ -18,9 +18,9 @@ export const renderComments = () => {
   </div>
   <div class="comment-footer">
     <div class="likes">
-      <span class="likes-counter">${comment.numLikes}</span>
+      <span class="likes-counter">${comment.likes}</span>
       <button data-index=${index} class="${
-          comment.isLike ? 'like-button -active-like' : 'like-button'
+          comment.isLiked ? 'like-button -active-like' : 'like-button'
       }"></button>
     </div>
   </div>
@@ -38,9 +38,9 @@ export const renderComments = () => {
             const index = likeButton.dataset.index
             const comment = comments[index]
 
-            comment.isLike ? comment.numLikes-- : comment.numLikes++
+            comment.isLiked ? comment.likes-- : comment.likes++
 
-            comment.isLike = !comment.isLike
+            comment.isLiked = !comment.isLiked
 
             renderComments()
         })

@@ -1,5 +1,5 @@
-export function getCurrentFormattedTime() {
-    const now = new Date()
+export const formatCustomDate = (date) => {
+    const now = new Date(date)
 
     const day = String(now.getDate()).padStart(2, '0')
     const month = String(now.getMonth() + 1).padStart(2, '0')
