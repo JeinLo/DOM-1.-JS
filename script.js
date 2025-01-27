@@ -13,11 +13,15 @@ const buttonAdd = document.getElementById('btn')
 
 function attachLikeEventListeners() {
   const likeButtons = document.querySelectorAll('.like-button')
-  likeButtons.forEach(button => {
+  likeButtons.forEach((button) => {
     button.addEventListener('click', () => {
       const index = button.getAttribute('data-index')
       handleLike(commentsData, index)
-      renderComments(commentsList, commentsData)
+      renderComments(
+        commentsList,
+
+        commentsData,
+      )
       attachLikeEventListeners()
     })
   })
