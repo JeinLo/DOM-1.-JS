@@ -1,4 +1,31 @@
-const host = 'https://webdev-hw-api.vercel.app/api/v1/vladislav-chechulin'
+// const host = 'https://webdev-hw-api.vercel.app/api/v1/vladislav-chechulin'
+const host = ' https://wedev-api.sky.pro/api/v2/vladislav-chechulin'
+const authHost = 'https://wedev-api.sky.pro/api/user'
+
+export let token = ''
+export let name = ''
+
+export const setToken = (newToken) => {
+    token = newToken
+}
+
+export const setName = (newName) => {
+    name = newName
+}
+
+export const login = (login, password) => {
+    return fetch(authHost + '/login', {
+        method: 'POST',
+        body: JSON.stringify({ login: login, password: password }),
+    })
+}
+
+export const registration = (name, login, password) => {
+    return fetch(authHost, {
+        method: 'POST',
+        body: JSON.stringify({ name: name, login: login, password: password }),
+    })
+}
 
 export const fetchComments = () => {
     return fetch(host + '/comments')
@@ -21,6 +48,9 @@ export const fetchComments = () => {
 export const postComment = (text, name) => {
     return fetch(host + '/comments', {
         method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
             text,
             name,
@@ -29,6 +59,10 @@ export const postComment = (text, name) => {
         .then((response) => {
             if (response.status === 500) {
                 throw new Error('Ошибка сервера')
+            }
+
+            if (response.status === 401) {
+                throw new Error('Пользователь не авторизован')
             }
 
             if (response.status === 400) {
