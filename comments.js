@@ -1,21 +1,28 @@
-export const commentsData = [
-  {
-    name: 'Глеб Фокин',
-    date: '12.02.22 12:18',
-    text: 'Это будет первый комментарий на этой странице',
-    likes: 3,
-    isLiked: false,
-  },
-  {
-    name: 'Варвара Н.',
-    date: '13.02.22 19:22',
-    text: 'Мне нравится как оформлена эта страница! ❤',
-    likes: 75,
-    isLiked: true,
-  },
+import { fetchComments, postComments } from './api.js'
+import {
+  attachCommentClickListeners,
+  attachLikeEventListeners,
+} from './listeners.js'
+
+export let commentsData = [
+  // {
+  //   name: 'Глеб Фокин',
+  //   date: '12.02.22 12:18',
+  //   text: 'Это будет первый комментарий на этой странице',
+  //   likes: 3,
+  //   isLiked: false,
+  // },
+  // {
+  //   name: 'Варвара Н.',
+  //   date: '13.02.22 19:22',
+  //   text: 'Мне нравится как оформлена эта страница! ❤',
+  //   likes: 75,
+  //   isLiked: true,
+  // },
 ]
 
-export function renderComments(commentsList, commentsData) {
+export function renderComments(commentsData) {
+  const commentsList = document.querySelector('.comments')
   commentsList.innerHTML = ''
   commentsData.forEach((comment, index) => {
     const commentElement = document.createElement('li')
@@ -24,7 +31,7 @@ export function renderComments(commentsList, commentsData) {
     commentElement.innerHTML = `
       <div class="comment-header">
         <div>${comment.name}</div>
-        <div>${comment.date}</div>
+        <div>${comment.date.toLocaleDateString()} ${comment.date.toLocaleTimeString()}</div>
       </div>
       <div class="comment-body">
         <div class="comment-text">${comment.text}</div>
@@ -40,6 +47,8 @@ export function renderComments(commentsList, commentsData) {
     `
     commentsList.appendChild(commentElement)
   })
+  attachLikeEventListeners()
+  attachCommentClickListeners()
 }
 
 export function handleLike(commentsData, index) {
@@ -48,17 +57,34 @@ export function handleLike(commentsData, index) {
   comment.isLiked ? comment.likes++ : comment.likes--
 }
 
-export function addComment(name, text, commentsData) {
-  const date = new Date()
-  const formattedDate = `${date.getDate()}.${
-    date.getMonth() + 1
-  }.${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}`
+export function addComment(name, text) {
+  postComments(name, text)
+    .then(() => {
+      return fetchComments()
+    })
+    .then((data) => {
+      document.querySelector('.form-loading').style.display = 'none'
+      document.querySelector('.add-form').style.display = 'flex'
+      updateComments(data)
+      renderComments(data)
+    })
+    .catch((error) => {
+      document.querySelector('.form-loading').style.display = 'none'
+      document.querySelector('.add-form').style.display = 'flex'
 
-  commentsData.push({
-    name,
-    date: formattedDate,
-    text,
-    likes: 0,
-    isLiked: false,
-  })
+      if (error.message === 'Failed to fetch') {
+        alert('Нет интернета, попробуйте снова')
+      }
+      if (error.message === 'Ошибка сервера') {
+        alert('Ошибка сервера')
+      }
+
+      if (error.message === 'Неверный запрос') {
+        alert('Имя и комментарий должны быть не короче 3-х символов')
+      }
+    })
+}
+
+export const updateComments = (newComments) => {
+  commentsData = newComments
 }
