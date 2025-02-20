@@ -63,7 +63,6 @@
                         toggleLike(index);
                     });
                 });
-
                 document.querySelectorAll('.reply-button').forEach(button => {
                     button.addEventListener('click', (event) => {
                         const index = event.target.getAttribute('data-index');
@@ -78,14 +77,12 @@
                 comment.likes += comment.liked ? 1 : -1; 
                 renderComments(); 
             }
-
             function setReplyToComment(index) {
                 const comment = comments[index];
                 nameInput.value = comment.name + ': ';
                 commentInput.value = comment.text + ' ';
                 commentInput.focus();
             }
-
             addCommentButton.addEventListener('click', () => {
                 const name = nameInput.value.trim();
                 const comment = commentInput.value.trim();
@@ -99,6 +96,7 @@
                 const formattedDate = currentDateTime.toLocaleString();
 
                 comments.push({ name, date: formattedDate, text: escapeHTML(comment), likes: 0, liked: false });
+
                 nameInput.value = '';
                 commentInput.value = '';
                 renderComments(); 
@@ -115,3 +113,5 @@
     </script>
 </body>
 </html>
+
+ main
