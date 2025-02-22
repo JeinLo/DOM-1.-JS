@@ -37,12 +37,12 @@
                     const commentHTML = `
                         <li class="comment">
                             <div class="comment-header">
-                                <div>${comment.name}</div>
+                                <div>${escapeHTML(comment.name)}</div>
                                 <div>${comment.date}</div>
                             </div>
-                            <div class="comment-body">
+                            <div class="comment-body" onclick="setReplyToComment(${index})">
                                 <div class="comment-text">
-                                    ${comment.text}
+                                    ${escapeHTML(comment.text)}
                                 </div>
                             </div>
                             <div class="comment-footer">
@@ -71,6 +71,13 @@
                 renderComments(); 
             }
 
+            window.setReplyToComment = function(index) {
+                const comment = comments[index];
+                nameInput.value = comment.name + ': ';
+                commentInput.value = comment.text + ' ';
+                commentInput.focus();
+            };
+
             addCommentButton.addEventListener('click', () => {
                 const name = nameInput.value.trim();
                 const comment = commentInput.value.trim();
@@ -83,17 +90,23 @@
                 const currentDateTime = new Date();
                 const formattedDate = currentDateTime.toLocaleString();
 
-                comments.push({ name, date: formattedDate, text: comment, likes: 0, liked: false });
+                comments.push({ name: escapeHTML(name), date: formattedDate, text: escapeHTML(comment), likes: 0, liked: false });
                 nameInput.value = '';
                 commentInput.value = '';
                 renderComments(); 
             });
 
-         
+            function escapeHTML(html) {
+                return html
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#39;');
+            }
+
             renderComments();
         });
     </script>
 </body>
 </html>
-
- main
